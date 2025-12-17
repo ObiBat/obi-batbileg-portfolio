@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Obi Batbileg — Design Technologist crafting intelligent digital experiences">
+    <title>Obi Batbileg — Design Technologist</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Newsreader:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Core Styles -->
+    <link rel="stylesheet" href="assets/css/style.css?v=1.0">
+
+
+    <!-- GSAP (Must load before modules) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        /* CRITICAL CURSOR RESET - Injected to bypass cache */
+        html,
+        body,
+        * {
+            cursor: auto !important;
+        }
+
+        a,
+        button,
+        .btn,
+        [role="button"],
+        input[type="submit"],
+        select,
+        .project-card,
+        .journey-row {
+            cursor: pointer !important;
+        }
+
+        p,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        input[type="text"],
+        textarea {
+            cursor: text !important;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <span class="loader-text">INITIALIZING SYSTEMS...</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="#" class="nav-logo">Obi Batbileg</a>
+        <div class="nav-actions" style="display:flex; align-items:center; gap:2rem;">
+            <div class="nav-links">
+                <a href="#projects">Work</a>
+                <a href="#experience">Journey</a>
+                <a href="#skills">Arsenal</a>
+                <a href="#education">Foundation</a>
+                <a href="mailto:obi@craefto.com">Contact</a>
+            </div>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <!-- Sun Icon -->
+                <svg class="theme-icon sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <!-- Moon Icon -->
+                <svg class="theme-icon moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div id="hero-canvas-container"></div>
+        <div class="hero-content">
+            <span class="hero-label">
+                <span class="hero-label-dot"
+                    style="display:inline-block; width:8px; height:8px; background:#22C55E; border-radius:50%; margin-right:8px;"></span>
+                Available for Projects
+            </span>
+            <h1 class="hero-title">
+                <span class="u-block">Design</span>
+                <span class="u-block italic">Technologist</span>
+            </h1>
+            <p class="hero-description" style="max-width: 500px; font-size: 1.125rem; margin-bottom: 2rem;">
+                I bridge the gap between design and development, creating intelligent
+                digital experiences that feel as good as they perform.
+            </p>
+            <div class="hero-actions" style="display:flex; gap:1rem;">
+                <a href="#projects" class="btn-primary">View My Work</a>
+                <a href="#contact" class="btn-secondary">Let's Talk</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects (Horizontal Scroll) -->
+    <section id="projects" class="project-section">
+        <div class="projects-wrapper">
+
+            <!-- Intro Slide / Title -->
+            <div class="project-item" style="justify-content: flex-end; align-items: flex-start; width: 60vw;">
+                <span class="section-label">Selected Works</span>
+                <h2 class="section-title" style="font-size: clamp(4rem, 10vw, 8rem);">
+                    Recent<br><span class="italic">Dispatch</span>
+                </h2>
+                <div style="font-family: var(--font-mono); margin-top: 1rem; color: var(--gray-500);">
+                    // SCROLL TO EXPLORE ARCHIVES
+                </div>
+            </div>
+
+            <!-- Project 1: TACTIX -->
+            <div class="project-item">
+                <div class="project-content">
+                    <div class="project-info">
+                        <span class="project-number">001 — REAL-TIME ENGINE</span>
+                        <h3 class="project-heading">Tactix</h3>
+                        <p style="margin-bottom: 2rem; max-width: 500px; color: var(--gray-600); line-height: 1.6;">
+                            A cinematic 3D chess platform combining a WebGL rendering engine, client-side Stockfish
+                            analysis, and an event-driven real-time multiplayer stack.
+                        </p>
+                        <div class="project-meta">
+                            <span>Founder / Lead Systems Engineer</span>
+                            <span>2025</span>
+                        </div>
+                        <div class="project-tech-tags">
+                            <span class="tech-tag">React 19</span>
+                            <span class="tech-tag">Three.js</span>
+                            <span class="tech-tag">Stockfish (WASM)</span>
+                            <span class="tech-tag">WebSockets</span>
+                        </div>
+                        <a href="#" class="btn-primary" data-id="tactix">Initialize Case Study</a>
+                    </div>
+                    <div class="project-visual">
+                        <div
+                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem;">
+                            ♟️
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2: GlobFam -->
+            <div class="project-item">
+                <div class="project-content">
+                    <div class="project-info">
+                        <span class="project-number">002 — GROWTH ENGINE</span>
+                        <h3 class="project-heading">GlobFam</h3>
+                        <p style="margin-bottom: 2rem; max-width: 500px; color: var(--gray-600); line-height: 1.6;">
+                            An event-driven growth platform pairing high-performance acquisition with a secure admin
+                            control plane. Ingests waitlist signups with attribution and enforces Core Web Vitals.
+                        </p>
+                        <div class="project-meta">
+                            <span>Founding Engineer</span>
+                            <span>2025</span>
+                        </div>
+                        <div class="project-tech-tags">
+                            <span class="tech-tag">Next.js 15</span>
+                            <span class="tech-tag">Supabase</span>
+                            <span class="tech-tag">Resend</span>
+                            <span class="tech-tag">Playwright</span>
+                        </div>
+                        <a href="#" class="btn-secondary" data-id="globfam">View Case Study</a>
+                    </div>
+                    <div class="project-visual">
+                        <div
+                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem;">
+                            🌐
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 3: NUU -->
+            <div class="project-item">
+                <div class="project-content">
+                    <div class="project-info">
+                        <span class="project-number">003 — GENAI SEARCH</span>
+                        <h3 class="project-heading">NUU</h3>
+                        <p style="margin-bottom: 2rem; max-width: 500px; color: var(--gray-600); line-height: 1.6;">
+                            A retrieval-augmented rental discovery engine. Converts free-form conversations into
+                            structured constraints and ranks listings via hybrid vector similarity.
+                        </p>
+                        <div class="project-meta">
+                            <span>Founder & Architect</span>
+                            <span>2025</span>
+                        </div>
+                        <div class="project-tech-tags">
+                            <span class="tech-tag">OpenAI (GPT-4o)</span>
+                            <span class="tech-tag">pgvector</span>
+                            <span class="tech-tag">React 19</span>
+                            <span class="tech-tag">Three.js</span>
+                        </div>
+                        <a href="#" class="btn-secondary" data-id="nuu">View Case Study</a>
+                    </div>
+                    <div class="project-visual">
+                        <div
+                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem;">
+                            🔍
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 4: Craefto Lab -->
+            <div class="project-item">
+                <div class="project-content">
+                    <div class="project-info">
+                        <span class="project-number">004 — GENERATIVE OPS</span>
+                        <h3 class="project-heading">Craefto Lab</h3>
+                        <p style="margin-bottom: 2rem; max-width: 500px; color: var(--gray-600); line-height: 1.6;">
+                            Generative project-operations platform converting client intake into structured handbooks.
+                            Dependency-graph multi-agent orchestration with robust error handling.
+                        </p>
+                        <div class="project-meta">
+                            <span>Founder / Architect</span>
+                            <span>2025</span>
+                        </div>
+                        <div class="project-tech-tags">
+                            <span class="tech-tag">Next.js 14</span>
+                            <span class="tech-tag">TypeScript</span>
+                            <span class="tech-tag">Supabase (RLS)</span>
+                            <span class="tech-tag">Multi-Agent</span>
+                        </div>
+                        <a href="#" class="btn-secondary" data-id="craefto">View Case Study</a>
+                    </div>
+                    <div class="project-visual">
+                        <div
+                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem;">
+                            🧪
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 5: Artisan -->
+            <div class="project-item">
+                <div class="project-content">
+                    <div class="project-info">
+                        <span class="project-number">005 — WORKFORCE OPS</span>
+                        <h3 class="project-heading">Artisan</h3>
+                        <p style="margin-bottom: 2rem; max-width: 500px; color: var(--gray-600); line-height: 1.6;">
+                            Multi-surface workforce operations platform for construction teams. Turborepo monorepo with
+                            shared Prisma kernel and edge-authenticated routing.
+                        </p>
+                        <div class="project-meta">
+                            <span>Founder & Lead Eng</span>
+                            <span>2025</span>
+                        </div>
+                        <div class="project-tech-tags">
+                            <span class="tech-tag">Next.js</span>
+                            <span class="tech-tag">Expo Router</span>
+                            <span class="tech-tag">Prisma</span>
+                            <span class="tech-tag">Postgres</span>
+                        </div>
+                        <a href="#" class="btn-secondary" data-id="artisan">View Case Study</a>
+                    </div>
+                    <div class="project-visual">
+                        <div
+                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem;">
+                            🔨
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 6: Framer Deck -->
+            <div class="project-item">
+                <div class="project-content">
+                    <div class="project-info">
+                        <span class="project-number">006 — INTERACTIVE DECK</span>
+                        <h3 class="project-heading">Pitch Deck</h3>
+                        <p style="margin-bottom: 2rem; max-width: 500px; color: var(--gray-600); line-height: 1.6;">
+                            Event-driven investor deck experience with animated orchestration and responsive data
+                            visualizations using Recharts and Framer Motion.
+                        </p>
+                        <div class="project-meta">
+                            <span>Founder & Lead Eng</span>
+                            <span>2025</span>
+                        </div>
+                        <div class="project-tech-tags">
+                            <span class="tech-tag">React 19</span>
+                            <span class="tech-tag">Vite</span>
+                            <span class="tech-tag">Framer Motion</span>
+                            <span class="tech-tag">Recharts</span>
+                        </div>
+                        <a href="#" class="btn-secondary" data-id="pitch">View Case Study</a>
+                    </div>
+                    <div class="project-visual">
+                        <div
+                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:4rem;">
+                            📊
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience">
+        <span class="section-label">03 — Bio</span>
+        <h2 class="section-title">Professional <span class="italic">Journey</span></h2>
+
+        <div class="journey-grid">
+            <!-- Item 1: Craefto -->
+            <div class="journey-row">
+                <span class="journey-time">2024 — PRESENT</span>
+                <div class="journey-main">
+                    <span class="journey-company">CRAEFTO</span>
+                    <span class="journey-role">Design Technologist</span>
+                    <ul
+                        style="margin-top: 1rem; list-style: none; color: var(--gray-600); line-height: 1.6; font-size: 0.95rem;">
+                        <li style="margin-bottom: 0.5rem;">+ Built integrated studio combining brand systems, digital
+                            product development, and automation strategy.</li>
+                        <li style="margin-bottom: 0.5rem;">+ Architected technical infrastructure including analytics
+                            dashboards and AI-assisted workflows.</li>
+                        <li>+ Capstone project "Zippy" applied AI to generate code from Figma designs.</li>
+                    </ul>
+                </div>
+                <div class="journey-status">
+                    <span class="status-dot" style="background-color: #22C55E; box-shadow: 0 0 5px #22C55E;"></span>
+                    Active
+                </div>
+            </div>
+
+            <!-- Item 2: Apple -->
+            <div class="journey-row">
+                <span class="journey-time">2022 — PRESENT</span>
+                <div class="journey-main">
+                    <span class="journey-company">APPLE</span>
+                    <span class="journey-role">Product Specialist</span>
+                    <ul
+                        style="margin-top: 1rem; list-style: none; color: var(--gray-600); line-height: 1.6; font-size: 0.95rem;">
+                        <li style="margin-bottom: 0.5rem;">+ Delivering tailored tech solutions for individual and
+                            business customers.</li>
+                        <li>+ Training fellow associates on existing and new practices.</li>
+                    </ul>
+                </div>
+                <div class="journey-status">
+                    <span class="status-dot"></span>
+                    Ongoing
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education - Humble & Foundational -->
+    <section id="education">
+        <span class="section-label">04 — Foundation</span>
+        <h2 class="section-title">Academic <span class="italic">Background</span></h2>
+
+        <div class="journey-grid" style="border-top: none; margin-top: 2rem;">
+            <!-- Education Item 1 -->
+            <div class="journey-row" style="grid-template-columns: 200px 1fr;">
+                <span class="journey-time">2024</span>
+                <div class="journey-main">
+                    <span class="journey-company" style="font-size: 2rem;">Western Sydney University</span>
+                    <span class="journey-role" style="font-size: 1.2rem;">BIS Information Systems</span>
+                </div>
+            </div>
+
+            <!-- Education Item 2 -->
+            <div class="journey-row" style="grid-template-columns: 200px 1fr;">
+                <span class="journey-time">2021</span>
+                <div class="journey-main">
+                    <span class="journey-company" style="font-size: 2rem;">TAFE NSW</span>
+                    <span class="journey-role" style="font-size: 1.2rem;">Diploma IT</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills / Expertise -->
+    <section id="skills">
+        <span class="section-label">05 — Capabilities</span>
+        <h2 class="section-title">Technical <span class="italic">Arsenal</span></h2>
+
+        <div class="capabilities-grid">
+
+            <!-- Card 1: Frontend/Creative -->
+            <div class="capability-card">
+                <div class="cap-header">
+                    <span>[SYS.01]</span>
+                    <span>CREATIVE ENGINEERING</span>
+                </div>
+                <h3 class="cap-title">Immersive<br>Frontend</h3>
+                <p class="cap-description">
+                    Building high-performance interfaces that blend motion, interactivity, and utility. I specialize in
+                    WebGL and animation libraries to create memorable web experiences.
+                </p>
+                <div class="cap-stack">
+                    <span class="cap-tag">Three.js</span>
+                    <span class="cap-tag">React Three Fiber</span>
+                    <span class="cap-tag">GSAP</span>
+                    <span class="cap-tag">GLSL Shaders</span>
+                    <span class="cap-tag">Next.js</span>
+                </div>
+            </div>
+
+            <!-- Card 2: System Arch -->
+            <div class="capability-card">
+                <div class="cap-header">
+                    <span>[SYS.02]</span>
+                    <span>SYSTEM ARCHITECTURE</span>
+                </div>
+                <h3 class="cap-title">Scalable<br>Infra</h3>
+                <p class="cap-description">
+                    Designing robust backend systems and APIs. I focus on serverless architectures, database
+                    optimization, and secure authentication flows for production-grade apps.
+                </p>
+                <div class="cap-stack">
+                    <span class="cap-tag">Node.js</span>
+                    <span class="cap-tag">Python / FastAPI</span>
+                    <span class="cap-tag">Supabase</span>
+                    <span class="cap-tag">PostgreSQL</span>
+                    <span class="cap-tag">Redis</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Design -->
+            <div class="capability-card">
+                <div class="cap-header">
+                    <span>[SYS.03]</span>
+                    <span>PRODUCT DESIGN</span>
+                </div>
+                <h3 class="cap-title">Interface<br>Systems</h3>
+                <p class="cap-description">
+                    Translating complex requirements into intuitive design systems. I bridge the gap between Figma and
+                    Code, ensuring pixel-perfect implementation of brand identities.
+                </p>
+                <div class="cap-stack">
+                    <span class="cap-tag">Figma</span>
+                    <span class="cap-tag">Design Systems</span>
+                    <span class="cap-tag">UI/UX Strategy</span>
+                    <span class="cap-tag">Motion Design</span>
+                </div>
+            </div>
+
+            <!-- Card 4: Strategy -->
+            <div class="capability-card">
+                <div class="cap-header">
+                    <span>[SYS.04]</span>
+                    <span>TECHNICAL LEADERSHIP</span>
+                </div>
+                <h3 class="cap-title">Product<br>Strategy</h3>
+                <p class="cap-description">
+                    Leading technical teams and defining product roadmaps. I help businesses iterate rapidly, validate
+                    modules, and ship software that drives growth.
+                </p>
+                <div class="cap-stack">
+                    <span class="cap-tag">Agile / Scrum</span>
+                    <span class="cap-tag">Tech Strategy</span>
+                    <span class="cap-tag">Mentorship</span>
+                    <span class="cap-tag">CI/CD</span>
+                </div>
+            </div>
+
+            <!-- Card 5: AI & Automation -->
+            <div class="capability-card">
+                <div class="cap-header">
+                    <span>[SYS.05]</span>
+                    <span>AI & AUTOMATION</span>
+                </div>
+                <h3 class="cap-title">Agentic<br>Workflows</h3>
+                <p class="cap-description">
+                    Architecting autonomous systems and content pipelines. I use low-code orchestration to build
+                    self-optimizing agents that handle complex generative tasks.
+                </p>
+                <div class="cap-stack">
+                    <span class="cap-tag">n8n / Automation</span>
+                    <span class="cap-tag">AI Agents</span>
+                    <span class="cap-tag">RAG Pipelines</span>
+                    <span class="cap-tag">Generative Content</span>
+                    <span class="cap-tag">LLM Orchestration</span>
+                </div>
+            </div>
+
+            <!-- Card 6: Performance -->
+            <div class="capability-card">
+                <div class="cap-header">
+                    <span>[SYS.06]</span>
+                    <span>PERFORMANCE ENG</span>
+                </div>
+                <h3 class="cap-title">Core<br>Optimization</h3>
+                <p class="cap-description">
+                    Ensuring applications maintain 60fps across devices. I conduct deep profiling, bundle size
+                    reduction, and WASM integration for close-to-metal speed.
+                </p>
+                <div class="cap-stack">
+                    <span class="cap-tag">Web Workers</span>
+                    <span class="cap-tag">WASM / Rust</span>
+                    <span class="cap-tag">GPU Compute</span>
+                    <span class="cap-tag">Lighthouse</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+
+    <!-- Education - Humble & Foundational -->
+
+
+    <!-- Footer - Enriched Command Center -->
+    <footer>
+        <div class="footer-content">
+
+            <!-- CTA Section -->
+            <div class="footer-cta-container">
+                <span class="section-label" style="color: var(--gray-500);">06 — Contact</span>
+                <br><br>
+                <a href="mailto:obi@craefto.com" class="footer-cta">Let's build<br>the future</a>
+            </div>
+
+            <!-- Links Grid -->
+            <div class="footer-grid">
+                <!-- Col 1: Brand -->
+                <div class="footer-brand">
+                    <h3>Obi Batbileg</h3>
+                    <p>Design Technologist & Founder crafting intelligent, immersive digital systems.</p>
+                </div>
+
+                <!-- Col 2: Sitemap -->
+                <div class="footer-col">
+                    <h4>SITEMAP</h4>
+                    <ul class="footer-links">
+                        <li><a href="#projects" class="footer-link">Work</a></li>
+                        <li><a href="#experience" class="footer-link">Journey</a></li>
+                        <li><a href="#skills" class="footer-link">Capabilities</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Socials -->
+                <div class="footer-col">
+                    <h4>CONNECT</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://linkedin.com/in/obibatbileg" target="_blank" class="footer-link">LinkedIn
+                                ↗</a></li>
+                        <li><a href="https://craefto.com" target="_blank" class="footer-link">Craefto Studio ↗</a></li>
+                        <li><a href="mailto:obi@craefto.com" class="footer-link">Email ↗</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Location -->
+                <div class="footer-col">
+                    <h4>COORDINATES</h4>
+                    <ul class="footer-links" style="pointer-events: none;">
+                        <li class="footer-link" style="color: var(--gray-400);">Sydney, AU</li>
+                        <li class="footer-link" style="color: var(--gray-400);">GMT+11</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="footer-bottom">
+                <span>© 2025 OBI BATBILEG. ALL RIGHTS RESERVED.</span>
+                <span>SYSTEM STATUS: ONLINE</span>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Case Study Overlay (Hidden by default) -->
+    <div id="case-study-overlay" class="cs-overlay">
+        <!-- Close Button -->
+        <button class="cs-close-btn" id="cs-close-btn">
+            <span class="cs-close-icon">×</span>
+            <span>CLOSE DISPATCH</span>
+        </button>
+
+        <!-- Content Container -->
+        <div class="cs-content">
+
+            <!-- Hero Header -->
+            <header class="cs-hero">
+                <div class="cs-hero-meta">
+                    <span class="cs-id" id="cs-id">000 — SYSTEM</span>
+                    <span class="cs-date" id="cs-date">2025</span>
+                </div>
+                <h1 class="cs-title" id="cs-title">Project Title</h1>
+                <p class="cs-tagline" id="cs-tagline">Architectural summary of the high-performance system.</p>
+
+                <div class="cs-links">
+                    <a href="#" target="_blank" id="cs-live-link" class="cs-link-btn primary">
+                        Live Production ↗
+                    </a>
+                    <a href="#" target="_blank" id="cs-repo-link" class="cs-link-btn secondary">
+                        Source Code ↗
+                    </a>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <section class="cs-stats-grid" id="cs-stats-grid">
+                <!-- Populated via JS -->
+            </section>
+
+            <!-- Narrative -->
+            <section class="cs-section cs-narrative">
+                <div class="cs-narrative-col">
+                    <h3>The Challenge</h3>
+                    <p id="cs-challenge">Loading...</p>
+                </div>
+                <div class="cs-narrative-col">
+                    <h3>The Solution</h3>
+                    <p id="cs-solution">Loading...</p>
+                </div>
+            </section>
+
+            <!-- Design Showcase (Mockups) -->
+            <section class="cs-section">
+                <h3>Design Systems</h3>
+                <div class="cs-gallery" id="cs-gallery">
+                    <!-- Images injected here -->
+                    <div class="cs-gallery-placeholder">
+                        <span>AWAITING DESIGN ARTIFACTS</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Deep Dive -->
+            <section class="cs-section cs-tech">
+                <h3>System Architecture</h3>
+                <div class="cs-tech-grid">
+                    <div class="cs-tech-col">
+                        <h4>Frontend Matrix</h4>
+                        <ul id="cs-stack-frontend"></ul>
+                    </div>
+                    <div class="cs-tech-col">
+                        <h4>Backend Core</h4>
+                        <ul id="cs-stack-backend"></ul>
+                    </div>
+                    <div class="cs-tech-col">
+                        <h4>Infra & Ops</h4>
+                        <ul id="cs-stack-infra"></ul>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { initHeroScene } from './assets/js/hero-scene.js';
+
+        let heroControls = null;
+        try {
+            heroControls = initHeroScene();
+            console.log("Hero Controls:", heroControls);
+        } catch (e) {
+            console.error(e);
+        }
+
+        // Register GSAP for Hero
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Pinning
+        ScrollTrigger.create({
+            trigger: ".hero",
+            start: "top top",
+            end: "+=6000", // Extended scroll for 8 immersive shape phases
+            pin: true,
+            scrub: 1, // 1s lag for heavy, premium feel
+            onUpdate: (self) => {
+                if (heroControls && heroControls.updateScroll) {
+                    heroControls.updateScroll(self.progress);
+                }
+            }
+        });
+
+        // Projects Horizontal Pinning
+        const projectsContainer = document.querySelector(".projects-wrapper");
+
+        // Calculate total width of movement
+        // We want to scroll the entire width of the wrapper minus the viewport width
+        // However, since we flex-ed it, we can just grab scrollWidth
+        let totalWidth = projectsContainer.scrollWidth;
+
+        // It renders nicely if we assume dynamic width. 
+        // We need to wait for layout? For now we can estimate or use a function value in 'end'
+
+        gsap.to(projectsContainer, {
+            x: () => -(projectsContainer.scrollWidth - window.innerWidth),
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".project-section",
+                start: "top top",
+                pin: true,
+                scrub: 1,
+                end: () => "+=" + (projectsContainer.scrollWidth) // Duration proportional to length
+            }
+        });
+
+    </script>
+    <script src="assets/js/main.js?v=1.0"></script>
+</body>
+
+</html>
