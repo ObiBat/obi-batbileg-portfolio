@@ -1,20 +1,8 @@
 {
-  "version": 2,
-  "name": "obi-batbileg-portfolio",
-  "builds": [
+  "rewrites": [
     {
-      "src": "portfolio.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/",
-      "dest": "/portfolio.html"
-    },
-    {
-      "src": "/(assets/.*)",
-      "dest": "/$1"
+      "source": "/",
+      "destination": "/portfolio.html"
     }
   ]
 }
