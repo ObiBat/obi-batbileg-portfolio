@@ -745,76 +745,85 @@ export function initHeroScene() {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // COSMOS - Galaxy Formation with Dark Matter and Cosmic Web
-    // Spiral Arms, Star Nurseries, Dark Matter Halo, Cosmic Filaments
+    // COSMOS - Enhanced Galaxy with Maximum Detail and Clarity
+    // Spiral Arms, Star Nurseries, Dark Matter, Satellites, Supernovae
     // ═══════════════════════════════════════════════════════════════════
 
     function getCosmos(count) {
         const output = new Float32Array(count * 3);
 
-        // Multi-layer galaxy structure
-        const coreCount = Math.floor(count * 0.12);           // Supermassive black hole region
-        const bulgCount = Math.floor(count * 0.15);           // Central bulge
-        const spiralCount = Math.floor(count * 0.30);         // Spiral arms
-        const haloCount = Math.floor(count * 0.18);           // Dark matter halo
-        const nurseryCount = Math.floor(count * 0.12);        // Star forming regions
-        const filamentCount = count - coreCount - bulgCount - spiralCount - haloCount - nurseryCount;
+        // Enhanced multi-layer galaxy structure (8 components)
+        const coreCount = Math.floor(count * 0.08);           // Supermassive black hole
+        const bulgeCount = Math.floor(count * 0.10);          // Central bulge
+        const spiralCount = Math.floor(count * 0.28);         // Spiral arms (main feature)
+        const dustLaneCount = Math.floor(count * 0.08);       // Dark dust lanes
+        const haloCount = Math.floor(count * 0.12);           // Dark matter halo
+        const nurseryCount = Math.floor(count * 0.10);        // Star forming regions
+        const satelliteCount = Math.floor(count * 0.08);      // Satellite dwarf galaxies
+        const supernovaCount = Math.floor(count * 0.06);      // Supernova remnants
+        const filamentCount = count - coreCount - bulgeCount - spiralCount - dustLaneCount - haloCount - nurseryCount - satelliteCount - supernovaCount;
 
         let idx = 0;
-        const arms = 4; // Spiral arm count
+        const arms = 5; // 5 spiral arms for richness
 
         // ─────────────────────────────────────────────────────────────
-        // GALACTIC CORE - Intense central region
+        // GALACTIC CORE - Blazing central region with jets
         // ─────────────────────────────────────────────────────────────
         for (let i = 0; i < coreCount; i++) {
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
-            // Core is oblate spheroid
-            const r = Math.pow(Math.random(), 0.3) * 0.6;
+            const r = Math.pow(Math.random(), 0.4) * 0.5;
+
+            // Core with mini-jets
+            const jet = (i % 10 < 2) ? (Math.random() * 0.4) * (i % 2 === 0 ? 1 : -1) : 0;
 
             output[idx * 3] = r * Math.sin(phi) * Math.cos(theta);
-            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.4; // Flatten
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.35 + jet;
             output[idx * 3 + 2] = r * Math.cos(phi);
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // GALACTIC BULGE - Old stars in spherical distribution
+        // GALACTIC BULGE - Dense old star population
         // ─────────────────────────────────────────────────────────────
-        for (let i = 0; i < bulgCount; i++) {
+        for (let i = 0; i < bulgeCount; i++) {
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
-            const r = 0.5 + Math.pow(Math.random(), 0.5) * 1.2;
+            const r = 0.4 + Math.pow(Math.random(), 0.5) * 1.0;
 
-            // Triaxial ellipsoid
-            output[idx * 3] = r * Math.sin(phi) * Math.cos(theta) * 1.2;
-            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.6;
-            output[idx * 3 + 2] = r * Math.cos(phi) * 0.9;
+            // Boxy/peanut shaped bulge
+            const boxy = 1 + Math.sin(theta * 2) * 0.15;
+
+            output[idx * 3] = r * Math.sin(phi) * Math.cos(theta) * boxy;
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.5;
+            output[idx * 3 + 2] = r * Math.cos(phi) * 0.85;
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // SPIRAL ARMS - Logarithmic spiral structure
+        // SPIRAL ARMS - Elegant logarithmic spirals with detail
         // ─────────────────────────────────────────────────────────────
         for (let i = 0; i < spiralCount; i++) {
             const t = i / spiralCount;
             const arm = i % arms;
             const armAngle = (arm / arms) * Math.PI * 2;
 
-            // Logarithmic spiral equation
-            const spiralTightness = 0.3;
-            const r = 0.8 + t * 4.5;
+            // Logarithmic spiral with variable tightness
+            const spiralTightness = 0.28 + Math.sin(t * 3) * 0.05;
+            const r = 0.7 + t * 5.0; // Extends further
             const theta = Math.log(r) / spiralTightness + armAngle;
 
-            // Arm width increases with radius
-            const armWidth = 0.15 + t * 0.4;
-            const armOffset = (Math.random() - 0.5) * armWidth;
+            // Arm width increases, with clumping
+            const armWidth = 0.12 + t * 0.35;
+            const clump = Math.pow(Math.sin(t * 40 + arm * 10), 4) * 0.2;
+            const armOffset = (Math.random() - 0.5) * armWidth + clump;
 
-            // Perturbations for realistic look
-            const perturbation = Math.sin(t * 30 + arm) * 0.2 * t;
+            // Subtle perturbations for organic feel
+            const perturbation = Math.sin(t * 25 + arm * 5) * 0.15 * t;
 
-            // Disk height with flaring at edges
-            const height = (Math.random() - 0.5) * (0.1 + t * 0.15);
+            // Thin disk with slight warp at edges
+            const warp = t > 0.7 ? Math.sin(theta * 2) * 0.2 * (t - 0.7) : 0;
+            const height = (Math.random() - 0.5) * (0.08 + t * 0.1) + warp;
 
             const finalR = r + armOffset + perturbation;
             output[idx * 3] = Math.cos(theta) * finalR;
@@ -824,71 +833,142 @@ export function initHeroScene() {
         }
 
         // ─────────────────────────────────────────────────────────────
-        // DARK MATTER HALO - Invisible mass surrounding galaxy
+        // DUST LANES - Dark ribbons between spiral arms
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < dustLaneCount; i++) {
+            const t = i / dustLaneCount;
+            const arm = i % arms;
+            const armAngle = (arm / arms) * Math.PI * 2 + Math.PI / arms; // Offset between arms
+
+            const r = 1.0 + t * 4.0;
+            const theta = Math.log(r) / 0.3 + armAngle;
+
+            // Narrow dust lanes
+            const laneWidth = 0.08 + t * 0.15;
+            const offset = (Math.random() - 0.5) * laneWidth;
+
+            output[idx * 3] = Math.cos(theta) * (r + offset);
+            output[idx * 3 + 1] = (Math.random() - 0.5) * 0.05;
+            output[idx * 3 + 2] = Math.sin(theta) * (r + offset);
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // DARK MATTER HALO - Vast invisible structure
         // ─────────────────────────────────────────────────────────────
         for (let i = 0; i < haloCount; i++) {
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
 
-            // NFW profile - density falls off with r
+            // NFW profile - extends very far
             const u = Math.random();
-            const r = 3 + Math.pow(u, 0.4) * 5; // Extends far beyond visible disk
+            const r = 4 + Math.pow(u, 0.35) * 6;
 
             output[idx * 3] = r * Math.sin(phi) * Math.cos(theta);
-            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.8;
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.75;
             output[idx * 3 + 2] = r * Math.cos(phi);
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // STAR NURSERIES - Bright nebulae along spiral arms
+        // STAR NURSERIES - Glowing HII regions along arms
         // ─────────────────────────────────────────────────────────────
         const nurseryPositions = [
-            { r: 2.2, angle: 0.8, size: 0.4 },
-            { r: 3.5, angle: 2.3, size: 0.5 },
-            { r: 1.8, angle: 4.1, size: 0.35 },
-            { r: 4.0, angle: 5.5, size: 0.45 },
-            { r: 2.8, angle: 1.5, size: 0.38 }
+            { r: 1.8, angle: 0.6, size: 0.35 },
+            { r: 2.5, angle: 1.8, size: 0.4 },
+            { r: 3.2, angle: 3.2, size: 0.45 },
+            { r: 1.5, angle: 4.5, size: 0.3 },
+            { r: 3.8, angle: 5.8, size: 0.5 },
+            { r: 2.2, angle: 2.5, size: 0.38 },
+            { r: 4.2, angle: 0.3, size: 0.42 },
+            { r: 2.8, angle: 4.0, size: 0.35 }
         ];
 
         for (let i = 0; i < nurseryCount; i++) {
             const nursery = nurseryPositions[i % nurseryPositions.length];
 
-            // Cluster around nursery position
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
-            const clusterR = Math.pow(Math.random(), 0.5) * nursery.size;
+            const clusterR = Math.pow(Math.random(), 0.6) * nursery.size;
 
             const baseX = Math.cos(nursery.angle) * nursery.r;
             const baseZ = Math.sin(nursery.angle) * nursery.r;
 
             output[idx * 3] = baseX + clusterR * Math.sin(phi) * Math.cos(theta);
-            output[idx * 3 + 1] = clusterR * Math.sin(phi) * Math.sin(theta) * 0.5;
+            output[idx * 3 + 1] = clusterR * Math.sin(phi) * Math.sin(theta) * 0.4;
             output[idx * 3 + 2] = baseZ + clusterR * Math.cos(phi);
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // COSMIC FILAMENTS - Web structure between galaxies
+        // SATELLITE GALAXIES - Dwarf companions orbiting main galaxy
+        // ─────────────────────────────────────────────────────────────
+        const satellites = [
+            { x: 5.5, y: 1.2, z: 2.0, size: 0.6 },
+            { x: -4.0, y: -0.8, z: 4.5, size: 0.45 },
+            { x: 3.5, y: 0.5, z: -5.0, size: 0.5 },
+            { x: -6.0, y: 1.5, z: -2.0, size: 0.4 }
+        ];
+
+        for (let i = 0; i < satelliteCount; i++) {
+            const sat = satellites[i % satellites.length];
+
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const r = Math.pow(Math.random(), 0.5) * sat.size;
+
+            output[idx * 3] = sat.x + r * Math.sin(phi) * Math.cos(theta);
+            output[idx * 3 + 1] = sat.y + r * Math.sin(phi) * Math.sin(theta) * 0.6;
+            output[idx * 3 + 2] = sat.z + r * Math.cos(phi);
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // SUPERNOVA REMNANTS - Expanding shells of brilliance
+        // ─────────────────────────────────────────────────────────────
+        const supernovae = [
+            { r: 2.0, angle: 1.2, size: 0.25 },
+            { r: 3.5, angle: 3.8, size: 0.3 },
+            { r: 1.5, angle: 5.2, size: 0.2 }
+        ];
+
+        for (let i = 0; i < supernovaCount; i++) {
+            const sn = supernovae[i % supernovae.length];
+
+            // Expanding shell
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const shellR = sn.size * (0.8 + Math.random() * 0.4);
+
+            const baseX = Math.cos(sn.angle) * sn.r;
+            const baseZ = Math.sin(sn.angle) * sn.r;
+
+            output[idx * 3] = baseX + shellR * Math.sin(phi) * Math.cos(theta);
+            output[idx * 3 + 1] = shellR * Math.sin(phi) * Math.sin(theta);
+            output[idx * 3 + 2] = baseZ + shellR * Math.cos(phi);
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // COSMIC FILAMENTS - Large-scale structure web
         // ─────────────────────────────────────────────────────────────
         for (let i = 0; i < filamentCount; i++) {
-            const filamentIdx = i % 8; // 8 major filaments
-            const t = (i / filamentCount) * 8;
+            const filamentIdx = i % 10; // 10 major filaments
+            const t = (i / filamentCount) * 10;
 
-            // Each filament extends outward
-            const baseAngle = (filamentIdx / 8) * Math.PI * 2;
-            const filamentR = 5 + t * 3;
+            const baseAngle = (filamentIdx / 10) * Math.PI * 2;
+            const filamentR = 6 + t * 4; // Extended reach
 
-            // Wavy filament structure
-            const wave = Math.sin(t * 2 + filamentIdx) * 0.8;
-            const verticalWave = Math.cos(t * 3 + filamentIdx * 0.5) * 0.5;
+            // Complex wave pattern
+            const wave = Math.sin(t * 1.5 + filamentIdx * 0.7) * 1.0;
+            const verticalWave = Math.cos(t * 2 + filamentIdx * 0.3) * 0.6;
 
-            // Nodes (galaxy clusters) along filament
-            const node = Math.pow(Math.sin(t * 5), 8) * 0.6;
+            // Galaxy cluster nodes
+            const node = Math.pow(Math.sin(t * 4), 10) * 0.8;
 
-            output[idx * 3] = Math.cos(baseAngle + wave * 0.1) * (filamentR + node);
-            output[idx * 3 + 1] = verticalWave + (Math.random() - 0.5) * 0.3;
-            output[idx * 3 + 2] = Math.sin(baseAngle + wave * 0.1) * (filamentR + node);
+            output[idx * 3] = Math.cos(baseAngle + wave * 0.08) * (filamentR + node);
+            output[idx * 3 + 1] = verticalWave + (Math.random() - 0.5) * 0.4;
+            output[idx * 3 + 2] = Math.sin(baseAngle + wave * 0.08) * (filamentR + node);
             idx++;
         }
 
@@ -1827,14 +1907,14 @@ export function initHeroScene() {
 
         const numPhases = geometries.length - 1; // 3 transitions for 4 phases
 
-        // Weighted scroll zones: [NEURAL→HELIX, HELIX→SINGULARITY, SINGULARITY→COSMOS]
-        // NEURAL (30%) for brain network appreciation, HELIX (25%), SINGULARITY (20%), COSMOS (25%)
-        const phaseWeights = [0.30, 0.25, 0.20, 0.25]; // Must sum to 1.0
-        const phaseBreakpoints = [0, 0.30, 0.55, 0.75, 1.0]; // Cumulative breakpoints
+        // Weighted scroll zones: COSMOS gets more time (30%) for full appreciation
+        // NEURAL (25%), HELIX (20%), SINGULARITY (15%), COSMOS (30%) + Exit (10%)
+        const phaseWeights = [0.25, 0.20, 0.15, 0.30]; // Core phases = 90%
+        const phaseBreakpoints = [0, 0.25, 0.45, 0.60, 0.90]; // Last 10% for exit
 
         // Reduced scroll "stickiness" at phase boundaries for better sync
         let adjustedProgress = prevScroll;
-        const checkpointPauses = [0.06, 0.06, 0.08]; // Reduced pause zones
+        const checkpointPauses = [0.05, 0.05, 0.06]; // Reduced pause zones
 
         for (let cp = 0; cp < numPhases; cp++) {
             const checkpoint = phaseBreakpoints[cp + 1];
@@ -1844,15 +1924,20 @@ export function initHeroScene() {
             if (distToCheckpoint < pauseZone) {
                 // Lighter stickiness for more responsive feel
                 const pauseStrength = 1 - (distToCheckpoint / pauseZone);
-                const pauseIntensity = 0.2; // Reduced from 0.3-0.5
+                const pauseIntensity = 0.15; // Even lighter for responsiveness
                 adjustedProgress += (checkpoint - adjustedProgress) * pauseStrength * pauseIntensity;
             }
         }
 
-        // Lighter end hold for smoother exit
-        if (adjustedProgress > 0.94) {
-            const endHold = (adjustedProgress - 0.94) / 0.06;
-            adjustedProgress = 0.94 + endHold * 0.06 * 0.7;
+        // ─────────────────────────────────────────────────────────────
+        // SMOOTH EXIT TRANSITION (90-100% scroll progress)
+        // Fade out and zoom for seamless transition to projects
+        // ─────────────────────────────────────────────────────────────
+        let exitProgress = 0;
+        if (adjustedProgress > 0.90) {
+            exitProgress = (adjustedProgress - 0.90) / 0.10; // 0 to 1
+            // Clamp adjusted progress to keep COSMOS stable during exit
+            adjustedProgress = 0.90;
         }
 
         // Map adjustedProgress to phaseIndex and phaseProgress using weighted zones
@@ -2320,6 +2405,38 @@ export function initHeroScene() {
         wireframeGeometry.attributes.color.needsUpdate = true;
         lineGeometry.attributes.position.needsUpdate = true;
         lineGeometry.attributes.color.needsUpdate = true;
+
+        // ─────────────────────────────────────────────────────────────
+        // SMOOTH EXIT TRANSITION EFFECTS
+        // Fade out + zoom back for seamless transition to projects
+        // ─────────────────────────────────────────────────────────────
+        if (exitProgress > 0) {
+            // Smooth easing for exit
+            const exitEase = 1 - Math.pow(1 - exitProgress, 3); // easeOutCubic
+
+            // Fade out particles
+            const exitOpacity = 1 - exitEase * 0.9;
+            particleMaterial.opacity = 0.85 * exitOpacity;
+            wireframeMaterial.opacity = 0.4 * exitOpacity;
+            lineMaterial.opacity = 0.25 * exitOpacity;
+
+            // Zoom out and drift up
+            const exitScale = 1 - exitEase * 0.3;
+            const exitY = exitEase * 2; // Drift upward
+            particleSystem.scale.setScalar(breathe * exitScale);
+            wireframeSystem.scale.setScalar(breathe * exitScale);
+            lineSystem.scale.setScalar(breathe * exitScale);
+
+            particleSystem.position.y = exitY;
+            wireframeSystem.position.y = exitY;
+            lineSystem.position.y = exitY;
+        } else {
+            // Reset to normal when not in exit zone
+            particleMaterial.opacity = 0.85;
+            particleSystem.position.y = 0;
+            wireframeSystem.position.y = 0;
+            lineSystem.position.y = 0;
+        }
 
         renderer.render(scene, camera);
     }

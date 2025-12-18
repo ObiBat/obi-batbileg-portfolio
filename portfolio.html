@@ -906,26 +906,29 @@
                     sysSpinner.style.transform = `rotate(${p * 720}deg)`;
                 }
 
-                // 3. Status Label - Shows phase + transition state
-                // Appreciation zones: ~35% hold per phase, then morph
+                // Updated thresholds for new breakpoints + exit zone
                 if (sysLabel) {
                     let txt = "SYS.INIT";
 
-                    // NEURAL phase (0-30%): 0-10% hold, 10-30% morph
+                    // NEURAL phase (0-25%): hold, then morph
                     if (p > 0.01) txt = "NEURAL";
-                    if (p > 0.10) txt = "NEURAL→";
+                    if (p > 0.08) txt = "NEURAL→";
 
-                    // HELIX phase: 15% earlier trigger (visual at 30%)
-                    if (p > 0.15) txt = "HELIX";
-                    if (p > 0.25) txt = "HELIX→";
+                    // HELIX phase (25-45%): 
+                    if (p > 0.18) txt = "HELIX";
+                    if (p > 0.32) txt = "HELIX→";
 
-                    // SINGULARITY phase: 15% earlier trigger (visual at 55%)
-                    if (p > 0.40) txt = "SINGULARITY";
+                    // SINGULARITY phase (45-60%):
+                    if (p > 0.38) txt = "SINGULARITY";
                     if (p > 0.50) txt = "SINGULAR→";
 
-                    // COSMOS phase: 10% earlier trigger (visual at 75%)
-                    if (p > 0.65) txt = "COSMOS";
-                    if (p > 0.92) txt = "SYS.READY";
+                    // COSMOS phase (60-90%): Extended appreciation
+                    if (p > 0.55) txt = "COSMOS";
+                    if (p > 0.85) txt = "COSMOS.MAX";
+
+                    // Exit zone (90-100%): Smooth transition
+                    if (p > 0.90) txt = "EXIT→";
+                    if (p > 0.97) txt = "SYS.READY";
 
                     sysLabel.innerText = txt;
                 }
