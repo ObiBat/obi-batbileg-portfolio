@@ -752,15 +752,18 @@ export function initHeroScene() {
     function getCosmos(count) {
         const output = new Float32Array(count * 3);
 
-        // Enhanced multi-layer galaxy structure (8 components)
-        const coreCount = Math.floor(count * 0.08);           // Supermassive black hole
-        const bulgeCount = Math.floor(count * 0.10);          // Central bulge
-        const spiralCount = Math.floor(count * 0.28);         // Spiral arms (main feature)
-        const dustLaneCount = Math.floor(count * 0.08);       // Dark dust lanes
-        const haloCount = Math.floor(count * 0.12);           // Dark matter halo
-        const nurseryCount = Math.floor(count * 0.10);        // Star forming regions
-        const satelliteCount = Math.floor(count * 0.08);      // Satellite dwarf galaxies
-        const supernovaCount = Math.floor(count * 0.06);      // Supernova remnants
+        // SCALE MULTIPLIER for larger, clearer galaxy
+        const SCALE = 1.3;
+
+        // Enhanced multi-layer galaxy structure - MORE PARTICLES IN VISIBLE FEATURES
+        const coreCount = Math.floor(count * 0.10);           // Bright core (increased)
+        const bulgeCount = Math.floor(count * 0.12);          // Dense central bulge (increased)
+        const spiralCount = Math.floor(count * 0.38);         // Spiral arms (MAIN - 38%!)
+        const dustLaneCount = Math.floor(count * 0.06);       // Dark dust lanes
+        const haloCount = Math.floor(count * 0.08);           // Dark matter halo (reduced)
+        const nurseryCount = Math.floor(count * 0.10);        // Star forming regions 
+        const satelliteCount = Math.floor(count * 0.06);      // Satellite dwarf galaxies
+        const supernovaCount = Math.floor(count * 0.04);      // Supernova remnants
         const filamentCount = count - coreCount - bulgeCount - spiralCount - dustLaneCount - haloCount - nurseryCount - satelliteCount - supernovaCount;
 
         let idx = 0;
@@ -772,60 +775,62 @@ export function initHeroScene() {
         for (let i = 0; i < coreCount; i++) {
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
-            const r = Math.pow(Math.random(), 0.4) * 0.5;
+            const r = Math.pow(Math.random(), 0.5) * 0.4 * SCALE; // Brighter concentration
 
             // Core with mini-jets
-            const jet = (i % 10 < 2) ? (Math.random() * 0.4) * (i % 2 === 0 ? 1 : -1) : 0;
+            const jet = (i % 10 < 2) ? (Math.random() * 0.5 * SCALE) * (i % 2 === 0 ? 1 : -1) : 0;
 
             output[idx * 3] = r * Math.sin(phi) * Math.cos(theta);
-            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.35 + jet;
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.3 + jet;
             output[idx * 3 + 2] = r * Math.cos(phi);
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // GALACTIC BULGE - Dense old star population
+        // GALACTIC BULGE - Dense old star population (SCALED)
         // ─────────────────────────────────────────────────────────────
         for (let i = 0; i < bulgeCount; i++) {
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
-            const r = 0.4 + Math.pow(Math.random(), 0.5) * 1.0;
+            const r = (0.35 + Math.pow(Math.random(), 0.5) * 0.9) * SCALE;
 
             // Boxy/peanut shaped bulge
-            const boxy = 1 + Math.sin(theta * 2) * 0.15;
+            const boxy = 1 + Math.sin(theta * 2) * 0.12;
 
             output[idx * 3] = r * Math.sin(phi) * Math.cos(theta) * boxy;
-            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.5;
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.45;
             output[idx * 3 + 2] = r * Math.cos(phi) * 0.85;
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // SPIRAL ARMS - Elegant logarithmic spirals with detail
+        // SPIRAL ARMS - Sharp, well-defined logarithmic spirals
         // ─────────────────────────────────────────────────────────────
         for (let i = 0; i < spiralCount; i++) {
             const t = i / spiralCount;
             const arm = i % arms;
             const armAngle = (arm / arms) * Math.PI * 2;
 
-            // Logarithmic spiral with variable tightness
-            const spiralTightness = 0.28 + Math.sin(t * 3) * 0.05;
-            const r = 0.7 + t * 5.0; // Extends further
-            const theta = Math.log(r) / spiralTightness + armAngle;
+            // TIGHTER spiral with consistent tightness
+            const spiralTightness = 0.25;
+            const r = (0.6 + t * 4.5) * SCALE; // Scaled radius
+            const theta = Math.log(r / SCALE) / spiralTightness + armAngle;
 
-            // Arm width increases, with clumping
-            const armWidth = 0.12 + t * 0.35;
-            const clump = Math.pow(Math.sin(t * 40 + arm * 10), 4) * 0.2;
-            const armOffset = (Math.random() - 0.5) * armWidth + clump;
+            // NARROWER arm width for sharper definition
+            const armWidth = 0.08 + t * 0.20;
 
-            // Subtle perturbations for organic feel
-            const perturbation = Math.sin(t * 25 + arm * 5) * 0.15 * t;
+            // Strong clumping along arm center (like real galaxies)
+            const armCenter = Math.pow(Math.cos((i % 50) / 50 * Math.PI), 4);
+            const armOffset = (Math.random() - 0.5) * armWidth * (1 - armCenter * 0.6);
 
-            // Thin disk with slight warp at edges
-            const warp = t > 0.7 ? Math.sin(theta * 2) * 0.2 * (t - 0.7) : 0;
-            const height = (Math.random() - 0.5) * (0.08 + t * 0.1) + warp;
+            // Perturbations for organic structure
+            const perturbation = Math.sin(t * 20 + arm * 7) * 0.12 * t;
 
-            const finalR = r + armOffset + perturbation;
+            // Very thin disk with gentle warp
+            const warp = t > 0.75 ? Math.sin(theta * 2) * 0.15 * (t - 0.75) : 0;
+            const height = ((Math.random() - 0.5) * (0.05 + t * 0.08) + warp) * SCALE;
+
+            const finalR = r + (armOffset + perturbation) * SCALE;
             output[idx * 3] = Math.cos(theta) * finalR;
             output[idx * 3 + 1] = height;
             output[idx * 3 + 2] = Math.sin(theta) * finalR;
@@ -871,17 +876,17 @@ export function initHeroScene() {
         }
 
         // ─────────────────────────────────────────────────────────────
-        // STAR NURSERIES - Glowing HII regions along arms
+        // STAR NURSERIES - Glowing HII regions along arms (SCALED)
         // ─────────────────────────────────────────────────────────────
         const nurseryPositions = [
-            { r: 1.8, angle: 0.6, size: 0.35 },
-            { r: 2.5, angle: 1.8, size: 0.4 },
-            { r: 3.2, angle: 3.2, size: 0.45 },
-            { r: 1.5, angle: 4.5, size: 0.3 },
-            { r: 3.8, angle: 5.8, size: 0.5 },
-            { r: 2.2, angle: 2.5, size: 0.38 },
-            { r: 4.2, angle: 0.3, size: 0.42 },
-            { r: 2.8, angle: 4.0, size: 0.35 }
+            { r: 1.6 * SCALE, angle: 0.6, size: 0.35 * SCALE },
+            { r: 2.3 * SCALE, angle: 1.8, size: 0.4 * SCALE },
+            { r: 3.0 * SCALE, angle: 3.2, size: 0.45 * SCALE },
+            { r: 1.4 * SCALE, angle: 4.5, size: 0.3 * SCALE },
+            { r: 3.5 * SCALE, angle: 5.8, size: 0.5 * SCALE },
+            { r: 2.0 * SCALE, angle: 2.5, size: 0.38 * SCALE },
+            { r: 3.8 * SCALE, angle: 0.3, size: 0.42 * SCALE },
+            { r: 2.6 * SCALE, angle: 4.0, size: 0.35 * SCALE }
         ];
 
         for (let i = 0; i < nurseryCount; i++) {
@@ -895,19 +900,19 @@ export function initHeroScene() {
             const baseZ = Math.sin(nursery.angle) * nursery.r;
 
             output[idx * 3] = baseX + clusterR * Math.sin(phi) * Math.cos(theta);
-            output[idx * 3 + 1] = clusterR * Math.sin(phi) * Math.sin(theta) * 0.4;
+            output[idx * 3 + 1] = clusterR * Math.sin(phi) * Math.sin(theta) * 0.35;
             output[idx * 3 + 2] = baseZ + clusterR * Math.cos(phi);
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // SATELLITE GALAXIES - Dwarf companions orbiting main galaxy
+        // SATELLITE GALAXIES - Dwarf companions orbiting (SCALED)
         // ─────────────────────────────────────────────────────────────
         const satellites = [
-            { x: 5.5, y: 1.2, z: 2.0, size: 0.6 },
-            { x: -4.0, y: -0.8, z: 4.5, size: 0.45 },
-            { x: 3.5, y: 0.5, z: -5.0, size: 0.5 },
-            { x: -6.0, y: 1.5, z: -2.0, size: 0.4 }
+            { x: 5.5 * SCALE, y: 1.2 * SCALE, z: 2.0 * SCALE, size: 0.6 * SCALE },
+            { x: -4.0 * SCALE, y: -0.8 * SCALE, z: 4.5 * SCALE, size: 0.45 * SCALE },
+            { x: 3.5 * SCALE, y: 0.5 * SCALE, z: -5.0 * SCALE, size: 0.5 * SCALE },
+            { x: -6.0 * SCALE, y: 1.5 * SCALE, z: -2.0 * SCALE, size: 0.4 * SCALE }
         ];
 
         for (let i = 0; i < satelliteCount; i++) {
@@ -1034,18 +1039,18 @@ export function initHeroScene() {
 
         // ═══════════════════════════════════════════════════════════════
         // Phase 3: COSMOS - Creation, Infinity, Wonder, Grand Finale
-        // Galaxy formation with spiral arms and cosmic web
+        // Enhanced galaxy with maximum clarity and distinction
         // ═══════════════════════════════════════════════════════════════
         {
             data: getCosmos(particlesCount),
             name: 'COSMOS',
             physics: {
-                turbulence: 0.55,       // Galactic wind and turbulence
-                attraction: 0.04,       // Subtle dark matter attraction
-                orbit: 0.65,            // Majestic spiral rotation
-                pulse: 0.12,            // Slow cosmic breathing
-                spring: 0.025,          // Ultra-soft (gas and dust)
-                dampen: 0.97            // Deep space viscosity
+                turbulence: 0.40,       // Controlled galactic wind
+                attraction: 0.06,       // Core attraction (spiral inward)
+                orbit: 0.85,            // STRONG spiral rotation for clarity
+                pulse: 0.22,            // Stellar breathing rhythm
+                spring: 0.035,          // Soft but responsive
+                dampen: 0.965           // Smooth, majestic motion
             }
         }
     ];
@@ -1880,7 +1885,11 @@ export function initHeroScene() {
         { primary: new THREE.Color(0x00ddff), secondary: new THREE.Color(0x8855ff) }, // 0 NEURAL: Electric Cyan → Neural Purple
         { primary: new THREE.Color(0x00ff66), secondary: new THREE.Color(0x44ffaa) }, // 1 HELIX: DNA Green → Bio Mint
         { primary: new THREE.Color(0xff6600), secondary: new THREE.Color(0xff0044) }, // 2 SINGULARITY: Accretion Orange → Event Horizon Red
-        { primary: new THREE.Color(0x9966ff), secondary: new THREE.Color(0x66ddff) }  // 3 COSMOS: Nebula Violet → Star Blue
+        {
+            primary: new THREE.Color(0xffcc44),   // COSMOS: Golden core/star formation
+            secondary: new THREE.Color(0xff66aa), // Pink/magenta nebula regions
+            tertiary: new THREE.Color(0x44ddff)   // Cyan young stars
+        }
     ];
 
     // ═══════════════════════════════════════════════════════════════════
@@ -1962,18 +1971,18 @@ export function initHeroScene() {
         const target = geometries[phaseIndex + 1].data;
 
         // ─────────────────────────────────────────────────────────────
-        // APPRECIATION ZONES - Hold shape stable, then smooth morph
-        // Structure: [0-35%] Hold current shape | [35-100%] Morph to next
+        // APPRECIATION ZONES - Extended hold for masterpiece clarity
+        // Structure: [0-holdZone] Stable shape | [holdZone-100%] Morph
         // ─────────────────────────────────────────────────────────────
 
-        // Per-phase appreciation zone configuration
+        // Per-phase appreciation zone configuration - EXTENDED for clarity
         const appreciationConfig = {
-            0: { holdZone: 0.35, morphEase: 'smooth' },    // NEURAL: 35% hold, smooth dissolve
-            1: { holdZone: 0.30, morphEase: 'dramatic' },  // HELIX: 30% hold, dramatic collapse
-            2: { holdZone: 0.25, morphEase: 'explosive' }  // SINGULARITY: 25% hold, explosive birth
+            0: { holdZone: 0.40, morphEase: 'smooth' },    // NEURAL: 40% hold, elegant dissolve
+            1: { holdZone: 0.35, morphEase: 'dramatic' },  // HELIX: 35% hold, gravitational pull
+            2: { holdZone: 0.40, morphEase: 'explosive' }  // SINGULARITY→COSMOS: 40% hold, big bang!
         };
 
-        const config = appreciationConfig[phaseIndex] || { holdZone: 0.30, morphEase: 'smooth' };
+        const config = appreciationConfig[phaseIndex] || { holdZone: 0.50, morphEase: 'smooth' };
         const holdZone = config.holdZone;
 
         // Calculate morph progress within the transformation zone
