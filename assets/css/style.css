@@ -1121,3 +1121,41 @@ input:disabled,
         width: 100vw !important;
     }
 }
+/* 
+   Advanced Engineered Progress Icon 
+   Positioned next to 'Design' Title
+*/
+.hero-title-row {
+    display: flex !important;
+    align-items: baseline;
+    gap: 0.25em; /* Tight coupling with text */
+    flex-wrap: wrap;
+}
+
+.sys-progress-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    height: 0.7em; /* Relative to font size */
+    transform: translateY(5px); /* Optical alignment with baseline */
+}
+
+.sys-progress-icon {
+    width: 0.6em; /* Keeps it minimal relative to the huge title */
+    height: 0.6em;
+    overflow: visible;
+}
+
+.sys-label {
+    font-family: var(--font-mono);
+    font-size: 0.15em; /* Tiny technical text */
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+    font-weight: 500;
+    transform: translateY(-2px);
+}
+
+/* Animations handled via GSAP, but base defaults */
+.sys-spinner {
+    transform-origin: center;
+}
