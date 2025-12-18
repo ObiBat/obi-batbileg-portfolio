@@ -385,61 +385,6 @@ section {
     }
 }
 
-/* =========================================
-   MOBILE PROJECTS SECTION
-   Convert vertical separators to horizontal full-width lines
-   ========================================= */
-@media (max-width: 768px) {
-    .project-section {
-        height: auto;
-        min-height: 100vh;
-        overflow: visible;
-    }
-
-    .projects-wrapper {
-        width: 100%;
-        flex-direction: column;
-        height: auto;
-    }
-
-    .project-item {
-        width: 100%;
-        height: auto;
-        min-height: auto;
-        padding: 4rem var(--container-padding);
-        border-right: none;
-        /* Remove vertical line on mobile */
-        border-bottom: 1px solid var(--gray-200);
-        /* Add horizontal full-width line */
-    }
-
-    /* Last project item doesn't need bottom border */
-    .project-item:last-child {
-        border-bottom: none;
-    }
-
-    /* Intro slide specific adjustments */
-    .project-item:first-child {
-        min-height: 60vh;
-        justify-content: flex-end;
-        padding-bottom: 3rem;
-    }
-
-    .project-visual {
-        aspect-ratio: 4/3;
-        margin-top: 2rem;
-    }
-
-    .project-heading {
-        font-size: clamp(2rem, 8vw, 3rem);
-    }
-
-    .project-meta {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-}
-
 .project-visual {
     aspect-ratio: 16/9;
     background: var(--gray-50);
@@ -1168,4 +1113,10 @@ button:disabled,
 input:disabled,
 .disabled {
     cursor: not-allowed !important;
+}
+/* Mobile Adjustment for Recent Dispatch Section Width */
+@media (max-width: 768px) {
+    .intro-project-item {
+        width: 100vw !important;
+    }
 }
