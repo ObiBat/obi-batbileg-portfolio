@@ -98,6 +98,10 @@ const projectData = {
                 { layer: "Governance", tech: "Lighthouse CI, Playwright", details: "CI assertions for minimum scores and interaction stability." }
             ]
         },
+        artifacts: [
+            "assets/img/projects/globfam/design-system.webp",
+            "assets/img/projects/globfam/mobile-mockup.webp"
+        ],
         key_features: [
             { title: "Event-Driven Ingestion", desc: "Server-side pipeline validating input, enforcing idempotency, and emitting transactional emails asynchronously." },
             { title: "Performance Governance", desc: "LCI and Playwright tests treating performance and layout stability as build-breaking constraints." },
@@ -313,6 +317,24 @@ function openCaseStudy(projectId) {
         `).join('');
     }
 
+    // Design Showcase (Gallery)
+    const galleryContainer = document.getElementById('cs-gallery');
+    if (galleryContainer) {
+        if (data.artifacts && data.artifacts.length > 0) {
+            galleryContainer.innerHTML = data.artifacts.map(src => `
+                <div class="cs-gallery-item">
+                    <img src="${src}" alt="${data.title} Artifact" loading="lazy" style="width: 100%; height: auto; border: 1px solid var(--gray-200);">
+                </div>
+            `).join('');
+        } else {
+            galleryContainer.innerHTML = `
+                <div class="cs-gallery-placeholder">
+                    <span>AWAITING DESIGN ARTIFACTS</span>
+                </div>
+            `;
+        }
+    }
+
     // Key Features Deep Dive (Injecting a new section for this if it doesn't exist, or appending/modifying Narrative)
     // Let's create a 'Deep Dive' section below narrative if it's not already there.
     // For now, we will assume standard layout.
@@ -320,6 +342,13 @@ function openCaseStudy(projectId) {
     // Show Overlay
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+
+    // Reset scroll position to top
+    overlay.scrollTop = 0;
+    const csContent = overlay.querySelector('.cs-content');
+    if (csContent) {
+        csContent.scrollTop = 0;
+    }
 
     console.log('Case Study Opened Successfully');
 }
