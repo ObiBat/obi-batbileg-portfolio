@@ -1291,20 +1291,20 @@ input:disabled,
 
 @media (max-width: 768px) {
     .sys-progress-container {
-        gap: 10px;
+        gap: 12px;
     }
 
     .sys-progress-icon {
-        width: 0.7em;
-        height: 0.7em;
+        width: 1em;
+        height: 1em;
     }
 
     .sys-label {
-        font-size: 0.12em;
+        font-size: 0.16em;
     }
 
     .sys-percentage {
-        font-size: 0.1em;
+        font-size: 0.13em;
     }
 }
 
