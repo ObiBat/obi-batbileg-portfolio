@@ -1277,12 +1277,12 @@ input:disabled,
 
 /* Tick marks subtle fade on scroll */
 .sys-ticks {
-    transition: opacity 0.5s ease;
+    transition: opacity 0.1s linear;
 }
 
-/* Progress ring glow intensification via JS */
+/* Progress ring - instant updates for responsiveness */
 .sys-progress-ring {
-    transition: stroke-dashoffset 0.15s ease-out;
+    transition: none;
 }
 
 /* ═══════════════════════════════════════════════════════════════
