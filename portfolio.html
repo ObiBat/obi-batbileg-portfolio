@@ -880,9 +880,9 @@
         ScrollTrigger.create({
             trigger: ".hero",
             start: "top top",
-            end: "+=6000", // Extended scroll for immersive phases
+            end: "+=8000", // Extended scroll for immersive masterpiece appreciation
             pin: true,
-            scrub: 1, // 1s lag for heavy, premium feel
+            scrub: 1.5, // Smoother, premium feel
             onUpdate: (self) => {
                 const p = self.progress;
 
@@ -906,14 +906,27 @@
                     sysSpinner.style.transform = `rotate(${p * 720}deg)`;
                 }
 
-                // 3. Status Label (Phase-aware) - Triggers slightly early to match visual lag
+                // 3. Status Label - Shows phase + transition state
+                // Appreciation zones: ~35% hold per phase, then morph
                 if (sysLabel) {
                     let txt = "SYS.INIT";
+
+                    // NEURAL phase (0-30%): 0-10% hold, 10-30% morph
                     if (p > 0.01) txt = "NEURAL";
-                    if (p > 0.22) txt = "HELIX";      // Visual at 30%, label at 22% (8% early)
-                    if (p > 0.45) txt = "SINGULARITY"; // Visual at 55%, label at 45% (10% early)
-                    if (p > 0.65) txt = "COSMOS";     // Visual at 75%, label at 65% (10% early)
+                    if (p > 0.10) txt = "NEURAL→";
+
+                    // HELIX phase (30-55%): 30-40% hold, 40-55% morph  
+                    if (p > 0.28) txt = "HELIX";
+                    if (p > 0.38) txt = "HELIX→";
+
+                    // SINGULARITY phase (55-75%): 55-62% hold, 62-75% morph
+                    if (p > 0.52) txt = "SINGULARITY";
+                    if (p > 0.60) txt = "SINGULAR→";
+
+                    // COSMOS phase (75-100%): 75-85% hold, then complete
+                    if (p > 0.72) txt = "COSMOS";
                     if (p > 0.92) txt = "SYS.READY";
+
                     sysLabel.innerText = txt;
                 }
 

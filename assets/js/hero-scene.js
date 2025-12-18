@@ -1877,22 +1877,58 @@ export function initHeroScene() {
         const target = geometries[phaseIndex + 1].data;
 
         // ─────────────────────────────────────────────────────────────
-        // PHASE-SPECIFIC EASING - Dramatic Variety
+        // APPRECIATION ZONES - Hold shape stable, then smooth morph
+        // Structure: [0-35%] Hold current shape | [35-100%] Morph to next
         // ─────────────────────────────────────────────────────────────
 
+        // Per-phase appreciation zone configuration
+        const appreciationConfig = {
+            0: { holdZone: 0.35, morphEase: 'smooth' },    // NEURAL: 35% hold, smooth dissolve
+            1: { holdZone: 0.30, morphEase: 'dramatic' },  // HELIX: 30% hold, dramatic collapse
+            2: { holdZone: 0.25, morphEase: 'explosive' }  // SINGULARITY: 25% hold, explosive birth
+        };
+
+        const config = appreciationConfig[phaseIndex] || { holdZone: 0.30, morphEase: 'smooth' };
+        const holdZone = config.holdZone;
+
+        // Calculate morph progress within the transformation zone
+        let morphProgress;
+        if (phaseProgress <= holdZone) {
+            // APPRECIATION ZONE: Shape is fully stable, no morphing
+            morphProgress = 0;
+        } else {
+            // TRANSFORMATION ZONE: Smooth morph to next shape
+            morphProgress = (phaseProgress - holdZone) / (1 - holdZone);
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // PHASE-SPECIFIC EASING - Premium Transformation Curves
+        // ─────────────────────────────────────────────────────────────
+
+        // Ultra-smooth easing for premium feel
+        const easeInOutSine = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
+        const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        const easeOutExpo = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+
         let mix;
-        switch (phaseIndex) {
-            case 0: // NEURAL → HELIX: Synapses dissolve into molecular structure
-                mix = easeInOutQuint(phaseProgress); // Smooth, deliberate
+        switch (config.morphEase) {
+            case 'smooth':
+                // NEURAL → HELIX: Elegant dissolution
+                // Slow start, graceful middle, soft landing
+                mix = easeInOutSine(morphProgress);
                 break;
-            case 1: // HELIX → SINGULARITY: Life collapses into gravitational chaos
-                mix = Math.pow(phaseProgress, 0.35); // Dramatic fast pull
+            case 'dramatic':
+                // HELIX → SINGULARITY: Gravitational collapse
+                // Slow build-up then accelerating pull
+                mix = easeInOutCubic(morphProgress);
                 break;
-            case 2: // SINGULARITY → COSMOS: Black hole births a galaxy
-                mix = easeOutElastic(Math.min(1, phaseProgress * 1.1)); // Explosive expansion
+            case 'explosive':
+                // SINGULARITY → COSMOS: Big bang expansion
+                // Fast burst then graceful settling
+                mix = easeOutExpo(morphProgress);
                 break;
             default:
-                mix = easeInOutQuint(phaseProgress);
+                mix = easeInOutQuint(morphProgress);
         }
 
         // ─────────────────────────────────────────────────────────────
