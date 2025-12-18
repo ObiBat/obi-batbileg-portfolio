@@ -113,189 +113,202 @@ export function initHeroScene() {
     const particlesCount = 25000; // Dense cloud
 
     // ═══════════════════════════════════════════════════════════════════
-    // JELLYFISH - Recognizable Ethereal Creatures with Maximum Detail
+    // NEURAL NETWORK - Living Brain Synapse Visualization
+    // Neurons fire, dendrites branch, synapses pulse with electrical energy
     // ═══════════════════════════════════════════════════════════════════
 
-    function getJellyfish(count) {
+    function getNeuralNetwork(count) {
         const output = new Float32Array(count * 3);
 
-        // Fewer, smaller, well-spaced jellyfish for clear recognition
-        const jellyfishCount = 12;
-        const scale = 1.3;  // Larger scene for spacing
+        // ─────────────────────────────────────────────────────────────
+        // NEURON CELL BODIES (Soma) - Central processing nodes
+        // ─────────────────────────────────────────────────────────────
+        const neuronCount = 35;
+        const neurons = [];
 
-        // Generate well-spaced positions using golden angle
-        const jellyfish = [];
-        for (let j = 0; j < jellyfishCount; j++) {
-            const goldenAngle = Math.PI * (3 - Math.sqrt(5));
-            const angle = j * goldenAngle;
-            const t = j / jellyfishCount;
-            const radiusBase = 3 + t * 3.5;  // 3 to 6.5 units - wider spread
-            const heightVar = (j % 3 - 1) * 2.8 + Math.sin(j * 1.3) * 1.2;
-            const depthVar = Math.cos(j * 2.1) * 2.5;
+        // Distribute neurons in 3D space using Fibonacci sphere
+        for (let n = 0; n < neuronCount; n++) {
+            const phi = Math.acos(1 - 2 * (n + 0.5) / neuronCount);
+            const theta = Math.PI * (1 + Math.sqrt(5)) * n;
+            const radius = 2.5 + Math.sin(n * 0.7) * 1.5;
 
-            jellyfish.push({
-                x: Math.cos(angle) * radiusBase,
-                y: heightVar,
-                z: depthVar + Math.sin(angle) * 1.8,
-                size: 0.12 + Math.random() * 0.18,  // Smaller: 0.12 to 0.30
-                phase: j * 0.5,  // Staggered animation
-                pulseSpeed: 0.5 + Math.random() * 0.3
+            neurons.push({
+                x: radius * Math.sin(phi) * Math.cos(theta),
+                y: radius * Math.sin(phi) * Math.sin(theta) * 0.7, // Flatten slightly
+                z: radius * Math.cos(phi),
+                size: 0.15 + Math.random() * 0.1,
+                connections: [],
+                firePhase: Math.random() * Math.PI * 2
             });
         }
 
-        // More particles on tentacles for recognizable jellyfish shape
-        // 25% bell, 8% inner glow, 15% rim, 40% tentacles, 12% oral arms
-        const bellOuterCount = Math.floor(count * 0.25);
-        const bellInnerCount = Math.floor(count * 0.08);
-        const rimCount = Math.floor(count * 0.15);
-        const tentacleCount = Math.floor(count * 0.40);
-        const oralArmCount = count - bellOuterCount - bellInnerCount - rimCount - tentacleCount;
+        // ─────────────────────────────────────────────────────────────
+        // SYNAPSE CONNECTIONS - Find nearby neurons to connect
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < neuronCount; i++) {
+            for (let j = i + 1; j < neuronCount; j++) {
+                const dist = Math.sqrt(
+                    (neurons[i].x - neurons[j].x) ** 2 +
+                    (neurons[i].y - neurons[j].y) ** 2 +
+                    (neurons[i].z - neurons[j].z) ** 2
+                );
+                if (dist < 3.5 && neurons[i].connections.length < 5) {
+                    neurons[i].connections.push(j);
+                }
+            }
+        }
+
+        // Particle distribution
+        const somaCount = Math.floor(count * 0.12);        // Cell bodies
+        const dendriteCount = Math.floor(count * 0.25);    // Branching input
+        const axonCount = Math.floor(count * 0.35);        // Connection pathways
+        const synapseCount = Math.floor(count * 0.18);     // Firing junctions
+        const signalCount = count - somaCount - dendriteCount - axonCount - synapseCount; // Electrical pulses
 
         let idx = 0;
 
         // ─────────────────────────────────────────────────────────────
-        // BELL OUTER MEMBRANE - Translucent dome surface
+        // SOMA - Glowing cell bodies with membrane detail
         // ─────────────────────────────────────────────────────────────
-        for (let i = 0; i < bellOuterCount; i++) {
-            const jelly = jellyfish[i % jellyfishCount];
+        for (let i = 0; i < somaCount; i++) {
+            const neuron = neurons[i % neuronCount];
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const r = neuron.size * (0.3 + Math.random() * 0.7);
 
-            const u = Math.random();
-            const v = Math.random() * 0.65;  // Dome coverage
+            // Membrane surface with organic irregularity
+            const wobble = 1 + Math.sin(theta * 5 + phi * 3) * 0.1;
 
-            const theta = u * Math.PI * 2;
-            const phi = v * Math.PI;
-
-            // Organic bell shape with wobble
-            const wobble = 1 + Math.sin(theta * 6 + jelly.phase) * 0.03;
-            const bellRadius = jelly.size * (0.9 + Math.sin(phi) * 0.25) * wobble;
-            const bellHeight = jelly.size * 0.55;
-
-            let x = Math.sin(phi) * Math.cos(theta) * bellRadius;
-            let y = Math.cos(phi) * bellHeight + jelly.size * 0.2;
-            let z = Math.sin(phi) * Math.sin(theta) * bellRadius;
-
-            // Organic membrane ripples
-            const ripple = Math.sin(theta * 12 + phi * 4) * 0.015 * jelly.size;
-            x += ripple * Math.cos(theta);
-            z += ripple * Math.sin(theta);
-
-            output[idx * 3] = (jelly.x + x) * scale;
-            output[idx * 3 + 1] = (jelly.y + y) * scale;
-            output[idx * 3 + 2] = (jelly.z + z) * scale;
+            output[idx * 3] = neuron.x + r * Math.sin(phi) * Math.cos(theta) * wobble;
+            output[idx * 3 + 1] = neuron.y + r * Math.sin(phi) * Math.sin(theta) * wobble;
+            output[idx * 3 + 2] = neuron.z + r * Math.cos(phi) * wobble;
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // BELL INNER GLOW - Bioluminescent core
+        // DENDRITES - Branching tree structures receiving input
         // ─────────────────────────────────────────────────────────────
-        for (let i = 0; i < bellInnerCount; i++) {
-            const jelly = jellyfish[i % jellyfishCount];
+        for (let i = 0; i < dendriteCount; i++) {
+            const neuron = neurons[i % neuronCount];
+            const branchIdx = Math.floor(i / (dendriteCount / neuronCount / 6));
+            const branchAngle = (branchIdx * 0.618) * Math.PI * 2; // Golden angle
 
-            const u = Math.random();
-            const v = Math.random() * 0.5;
+            // Fractal branching depth
+            const depth = Math.pow(Math.random(), 0.6); // More particles near soma
+            const branchLength = neuron.size * (2 + Math.random() * 1.5);
 
-            const theta = u * Math.PI * 2;
-            const phi = v * Math.PI;
+            // Primary branch direction with organic curve
+            const curve = Math.sin(depth * 4 + branchAngle) * 0.4;
+            const spread = depth * 0.8;
 
-            // Smaller inner structure
-            const innerRadius = jelly.size * 0.5 * (0.7 + Math.sin(phi) * 0.2);
+            const dx = Math.cos(branchAngle + curve) * branchLength * depth;
+            const dy = (Math.random() - 0.5) * branchLength * depth * 0.6 + depth * 0.3;
+            const dz = Math.sin(branchAngle + curve) * branchLength * depth;
 
-            let x = Math.sin(phi) * Math.cos(theta) * innerRadius;
-            let y = Math.cos(phi) * jelly.size * 0.35 + jelly.size * 0.15;
-            let z = Math.sin(phi) * Math.sin(theta) * innerRadius;
+            // Sub-branching
+            const subBranch = Math.sin(depth * 12 + branchIdx) * 0.15 * branchLength;
 
-            output[idx * 3] = (jelly.x + x) * scale;
-            output[idx * 3 + 1] = (jelly.y + y) * scale;
-            output[idx * 3 + 2] = (jelly.z + z) * scale;
+            output[idx * 3] = neuron.x + dx + subBranch * Math.cos(branchAngle * 2);
+            output[idx * 3 + 1] = neuron.y + dy;
+            output[idx * 3 + 2] = neuron.z + dz + subBranch * Math.sin(branchAngle * 2);
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // BELL RIM - Detailed scalloped edge
+        // AXONS - Long connection pathways between neurons
         // ─────────────────────────────────────────────────────────────
-        for (let i = 0; i < rimCount; i++) {
-            const jelly = jellyfish[i % jellyfishCount];
+        for (let i = 0; i < axonCount; i++) {
+            const neuronIdx = i % neuronCount;
+            const neuron = neurons[neuronIdx];
 
-            const theta = (i / rimCount) * Math.PI * 2 * jellyfishCount;
-            const rimRadius = jelly.size * 0.85;
+            if (neuron.connections.length > 0) {
+                const targetIdx = neuron.connections[i % neuron.connections.length];
+                const target = neurons[targetIdx];
 
-            // Scalloped edge pattern (8 lobes)
-            const scallop = 1 + Math.sin(theta * 8) * 0.12;
+                // Position along axon with slight bezier curve
+                const t = Math.random();
+                const midPoint = {
+                    x: (neuron.x + target.x) / 2 + (Math.random() - 0.5) * 0.5,
+                    y: (neuron.y + target.y) / 2 + (Math.random() - 0.5) * 0.3,
+                    z: (neuron.z + target.z) / 2 + (Math.random() - 0.5) * 0.5
+                };
 
-            const x = Math.cos(theta) * rimRadius * scallop;
-            const y = -jelly.size * 0.05 + Math.sin(theta * 8) * jelly.size * 0.03;
-            const z = Math.sin(theta) * rimRadius * scallop;
+                // Quadratic bezier interpolation
+                const x = (1 - t) * (1 - t) * neuron.x + 2 * (1 - t) * t * midPoint.x + t * t * target.x;
+                const y = (1 - t) * (1 - t) * neuron.y + 2 * (1 - t) * t * midPoint.y + t * t * target.y;
+                const z = (1 - t) * (1 - t) * neuron.z + 2 * (1 - t) * t * midPoint.z + t * t * target.z;
 
-            output[idx * 3] = (jelly.x + x) * scale;
-            output[idx * 3 + 1] = (jelly.y + y) * scale;
-            output[idx * 3 + 2] = (jelly.z + z) * scale;
+                // Myelin sheath thickness variation
+                const thickness = 0.02 + Math.sin(t * 20) * 0.01;
+                const angle = t * Math.PI * 8; // Spiral around axon
+
+                output[idx * 3] = x + Math.cos(angle) * thickness;
+                output[idx * 3 + 1] = y + thickness * 0.5;
+                output[idx * 3 + 2] = z + Math.sin(angle) * thickness;
+            } else {
+                // Isolated neuron - create local axon hillock
+                const angle = Math.random() * Math.PI * 2;
+                const length = neuron.size * (1 + Math.random());
+                output[idx * 3] = neuron.x + Math.cos(angle) * length;
+                output[idx * 3 + 1] = neuron.y - length * 0.3;
+                output[idx * 3 + 2] = neuron.z + Math.sin(angle) * length;
+            }
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // TENTACLES - Long, flowing, unmistakably jellyfish
+        // SYNAPSES - Glowing junction points where signals transfer
         // ─────────────────────────────────────────────────────────────
-        const tentaclesPerJelly = 16;  // Many visible tentacles
+        for (let i = 0; i < synapseCount; i++) {
+            const neuronIdx = i % neuronCount;
+            const neuron = neurons[neuronIdx];
 
-        for (let i = 0; i < tentacleCount; i++) {
-            const jelly = jellyfish[i % jellyfishCount];
+            if (neuron.connections.length > 0) {
+                const targetIdx = neuron.connections[i % neuron.connections.length];
+                const target = neurons[targetIdx];
 
-            const tentacleIdx = Math.floor((i / tentacleCount) * tentaclesPerJelly * jellyfishCount) % tentaclesPerJelly;
-            const tentacleAngle = (tentacleIdx / tentaclesPerJelly) * Math.PI * 2;
+                // Synapse at end of axon (near target)
+                const t = 0.85 + Math.random() * 0.15;
+                const x = neuron.x + (target.x - neuron.x) * t;
+                const y = neuron.y + (target.y - neuron.y) * t;
+                const z = neuron.z + (target.z - neuron.z) * t;
 
-            // Long flowing tentacles - key to jellyfish recognition
-            const t = Math.pow(Math.random(), 0.5);  // Even distribution along length
-            const tentacleLength = jelly.size * (3.5 + Math.random() * 2);  // Much longer: 3.5-5.5x size
-
-            // Start at rim edge
-            const startRadius = jelly.size * 0.85;
-            const baseX = Math.cos(tentacleAngle) * startRadius;
-            const baseZ = Math.sin(tentacleAngle) * startRadius;
-
-            // Elegant S-curve wave motion
-            const wave1 = Math.sin(t * Math.PI * 2.5 + tentacleAngle + jelly.phase) * 0.25 * jelly.size * (0.3 + t);
-            const wave2 = Math.cos(t * Math.PI * 4 + tentacleAngle * 0.7) * 0.15 * jelly.size * t;
-            const twist = Math.sin(t * 6 + jelly.phase * 2) * 0.12 * jelly.size * t;
-
-            // Tentacle spreads gracefully as it descends
-            const spread = 1 + t * 0.5;
-            const thickness = 1 - t * 0.2;
-
-            const x = (baseX * spread + wave1) * thickness;
-            const y = -t * tentacleLength - jelly.size * 0.12;
-            const z = (baseZ * spread + wave2 + twist) * thickness;
-
-            output[idx * 3] = (jelly.x + x) * scale;
-            output[idx * 3 + 1] = (jelly.y + y) * scale;
-            output[idx * 3 + 2] = (jelly.z + z) * scale;
+                // Vesicle cluster
+                const vesicleSpread = 0.08;
+                output[idx * 3] = x + (Math.random() - 0.5) * vesicleSpread;
+                output[idx * 3 + 1] = y + (Math.random() - 0.5) * vesicleSpread;
+                output[idx * 3 + 2] = z + (Math.random() - 0.5) * vesicleSpread;
+            } else {
+                output[idx * 3] = neuron.x;
+                output[idx * 3 + 1] = neuron.y;
+                output[idx * 3 + 2] = neuron.z;
+            }
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // ORAL ARMS - Frilly central appendages
+        // ELECTRICAL SIGNALS - Propagating action potentials
         // ─────────────────────────────────────────────────────────────
-        const oralArmsPerJelly = 4;
+        for (let i = 0; i < signalCount; i++) {
+            const neuronIdx = i % neuronCount;
+            const neuron = neurons[neuronIdx];
 
-        for (let i = 0; i < oralArmCount; i++) {
-            const jelly = jellyfish[i % jellyfishCount];
+            // Signal position pulses along connections
+            const signalPhase = (i / signalCount) * Math.PI * 2;
+            const signalT = (Math.sin(signalPhase) + 1) / 2;
 
-            const armIdx = i % oralArmsPerJelly;
-            const armAngle = (armIdx / oralArmsPerJelly) * Math.PI * 2 + Math.PI / 4;
+            if (neuron.connections.length > 0) {
+                const targetIdx = neuron.connections[Math.floor(Math.random() * neuron.connections.length)];
+                const target = neurons[targetIdx];
 
-            const t = Math.random();
-            const armLength = jelly.size * 0.8;
-
-            // Central position with frilly motion
-            const baseRadius = jelly.size * 0.15;
-            const frill = Math.sin(t * 10 + armAngle + jelly.phase) * 0.1 * jelly.size;
-
-            const x = Math.cos(armAngle) * (baseRadius + frill * (1 + t));
-            const y = -t * armLength - jelly.size * 0.05;
-            const z = Math.sin(armAngle) * (baseRadius + frill * (1 + t));
-
-            output[idx * 3] = (jelly.x + x) * scale;
-            output[idx * 3 + 1] = (jelly.y + y) * scale;
-            output[idx * 3 + 2] = (jelly.z + z) * scale;
+                output[idx * 3] = neuron.x + (target.x - neuron.x) * signalT;
+                output[idx * 3 + 1] = neuron.y + (target.y - neuron.y) * signalT;
+                output[idx * 3 + 2] = neuron.z + (target.z - neuron.z) * signalT;
+            } else {
+                output[idx * 3] = neuron.x + Math.cos(signalPhase) * neuron.size;
+                output[idx * 3 + 1] = neuron.y;
+                output[idx * 3 + 2] = neuron.z + Math.sin(signalPhase) * neuron.size;
+            }
             idx++;
         }
 
@@ -483,110 +496,378 @@ export function initHeroScene() {
         return output;
     }
 
-    // Blood Cells - Biconcave discs scattered across the viewport (immersive full-screen)
-    function getBloodCells(count, spread = 5) {
+    // ═══════════════════════════════════════════════════════════════════
+    // SINGULARITY - Black Hole / Wormhole with Gravitational Lensing
+    // Event Horizon, Accretion Disk, Relativistic Jets, Warped Spacetime
+    // ═══════════════════════════════════════════════════════════════════
+
+    function getSingularity(count) {
         const output = new Float32Array(count * 3);
-        const cellCount = 40; // Number of blood cells
 
-        for (let i = 0; i < count; i++) {
-            // Assign particle to a cell
-            const cellIndex = i % cellCount;
-            const particleInCell = Math.floor(i / cellCount);
+        // Particle distribution
+        const eventHorizonCount = Math.floor(count * 0.08);   // Dark core sphere
+        const accretionDiskCount = Math.floor(count * 0.35);  // Spinning matter disk
+        const jetCount = Math.floor(count * 0.12);            // Relativistic polar jets
+        const lensingRingCount = Math.floor(count * 0.18);    // Gravitational lensing arcs
+        const wormholeCount = Math.floor(count * 0.15);       // Tunnel to elsewhere
+        const debrisCount = count - eventHorizonCount - accretionDiskCount - jetCount - lensingRingCount - wormholeCount;
 
-            // Random cell position - spread across entire view
-            const seed = cellIndex * 12345.6789;
-            const cellX = (Math.sin(seed) * 0.5 + 0.5) * spread * 2 - spread;
-            const cellY = (Math.cos(seed * 2) * 0.5 + 0.5) * spread * 1.5 - spread * 0.75;
-            const cellZ = (Math.sin(seed * 3) * 0.5 + 0.5) * spread * 2 - spread;
+        let idx = 0;
 
-            // Cell size varies
-            const cellSize = 0.4 + Math.sin(seed * 4) * 0.2;
+        // ─────────────────────────────────────────────────────────────
+        // EVENT HORIZON - The point of no return
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < eventHorizonCount; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const r = 0.4 + Math.random() * 0.15; // Schwarzschild radius
 
-            // Create biconcave disc shape (blood cell shape)
-            const theta = (particleInCell / (count / cellCount)) * Math.PI * 2;
-            const r = cellSize * (0.3 + Math.random() * 0.7);
+            // Slight warping at the boundary
+            const warp = 1 + Math.sin(theta * 8 + phi * 4) * 0.05;
 
-            // Biconcave profile - thinner in center, thicker at edges
-            const radialDist = r / cellSize;
-            const biconcaveHeight = cellSize * 0.15 * (1 - Math.pow(radialDist, 2)) *
-                (radialDist > 0.3 ? 1 : -0.5); // Indented center
-
-            // Slight random rotation per cell
-            const tilt = Math.sin(seed * 5) * 0.5;
-
-            const localX = Math.cos(theta) * r;
-            const localY = biconcaveHeight + (Math.random() - 0.5) * 0.05;
-            const localZ = Math.sin(theta) * r;
-
-            // Apply cell tilt
-            const rotatedY = localY * Math.cos(tilt) - localZ * Math.sin(tilt);
-            const rotatedZ = localY * Math.sin(tilt) + localZ * Math.cos(tilt);
-
-            output[i * 3] = cellX + localX;
-            output[i * 3 + 1] = cellY + rotatedY;
-            output[i * 3 + 2] = cellZ + rotatedZ;
+            output[idx * 3] = r * Math.sin(phi) * Math.cos(theta) * warp;
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * warp;
+            output[idx * 3 + 2] = r * Math.cos(phi) * warp;
+            idx++;
         }
+
+        // ─────────────────────────────────────────────────────────────
+        // ACCRETION DISK - Superheated spiraling matter
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < accretionDiskCount; i++) {
+            const t = i / accretionDiskCount;
+            const spiralAngle = t * Math.PI * 12 + Math.random() * 0.5; // Multiple wraps
+
+            // Disk radius with density falloff
+            const r = 0.8 + Math.pow(t, 0.7) * 3.5;
+
+            // Disk height (thin but with some turbulence)
+            const turbulence = Math.sin(spiralAngle * 3 + t * 20) * 0.1;
+            const diskHeight = 0.08 * (1 - t * 0.5) + (Math.random() - 0.5) * 0.15 + turbulence;
+
+            // Spiral density waves
+            const densityWave = 1 + Math.sin(spiralAngle * 2 - t * 15) * 0.3;
+
+            output[idx * 3] = Math.cos(spiralAngle) * r * densityWave;
+            output[idx * 3 + 1] = diskHeight;
+            output[idx * 3 + 2] = Math.sin(spiralAngle) * r * densityWave;
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // RELATIVISTIC JETS - Polar matter ejection
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < jetCount; i++) {
+            const t = Math.pow(Math.random(), 0.5); // More particles near base
+            const pole = i % 2 === 0 ? 1 : -1; // Top and bottom jets
+
+            // Jet height with conical spread
+            const height = t * 5 * pole;
+            const spread = t * 0.8; // Cone opens up
+
+            // Helical structure in jets
+            const helixAngle = t * Math.PI * 8 + (i / jetCount) * Math.PI * 2;
+            const helixRadius = spread * (0.3 + Math.sin(t * 10) * 0.1);
+
+            // Turbulent knots
+            const knot = Math.sin(t * 30 + i) * 0.15 * t;
+
+            output[idx * 3] = Math.cos(helixAngle) * helixRadius + knot;
+            output[idx * 3 + 1] = height;
+            output[idx * 3 + 2] = Math.sin(helixAngle) * helixRadius + knot;
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // GRAVITATIONAL LENSING - Light bent around singularity
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < lensingRingCount; i++) {
+            const ringIdx = Math.floor(i / (lensingRingCount / 3)); // 3 photon rings
+            const t = (i % (lensingRingCount / 3)) / (lensingRingCount / 3);
+
+            const ringRadius = 0.55 + ringIdx * 0.15; // Photon sphere layers
+            const angle = t * Math.PI * 2;
+
+            // Rings appear to wrap behind and around
+            const tilt = Math.PI * 0.15 + ringIdx * 0.1;
+            const wobble = Math.sin(angle * 6 + ringIdx) * 0.03;
+
+            const x = Math.cos(angle) * ringRadius;
+            const y = Math.sin(angle) * Math.sin(tilt) * ringRadius + wobble;
+            const z = Math.sin(angle) * Math.cos(tilt) * ringRadius;
+
+            output[idx * 3] = x;
+            output[idx * 3 + 1] = y;
+            output[idx * 3 + 2] = z;
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // WORMHOLE TUNNEL - Gateway to another dimension
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < wormholeCount; i++) {
+            const t = i / wormholeCount;
+            const tunnelAngle = t * Math.PI * 16; // Many spirals down the tunnel
+
+            // Tunnel extends behind the event horizon
+            const depth = -t * 4 - 0.3; // Goes into negative Z
+
+            // Tunnel radius narrows then expands (throat)
+            const throatProfile = 0.3 + Math.pow(Math.abs(t - 0.3), 1.5) * 2;
+
+            // Spacetime ripples
+            const ripple = Math.sin(t * 20 + tunnelAngle) * 0.1;
+
+            output[idx * 3] = Math.cos(tunnelAngle) * throatProfile * (1 + ripple);
+            output[idx * 3 + 1] = Math.sin(tunnelAngle) * throatProfile * (1 + ripple);
+            output[idx * 3 + 2] = depth;
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // DEBRIS FIELD - Captured matter falling inward
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < debrisCount; i++) {
+            const orbitAngle = Math.random() * Math.PI * 2;
+            const orbitRadius = 1.5 + Math.random() * 3;
+            const orbitTilt = (Math.random() - 0.5) * 0.4;
+
+            // Elliptical deformed orbits
+            const eccentricity = 0.3 + Math.random() * 0.4;
+            const r = orbitRadius * (1 - eccentricity * eccentricity) /
+                (1 + eccentricity * Math.cos(orbitAngle));
+
+            output[idx * 3] = Math.cos(orbitAngle) * r;
+            output[idx * 3 + 1] = Math.sin(orbitAngle) * orbitTilt * r;
+            output[idx * 3 + 2] = Math.sin(orbitAngle) * r * 0.5;
+            idx++;
+        }
+
         return output;
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // CURATED PHASE GEOMETRIES - 4 Distinguished Shapes
+    // COSMOS - Galaxy Formation with Dark Matter and Cosmic Web
+    // Spiral Arms, Star Nurseries, Dark Matter Halo, Cosmic Filaments
+    // ═══════════════════════════════════════════════════════════════════
+
+    function getCosmos(count) {
+        const output = new Float32Array(count * 3);
+
+        // Multi-layer galaxy structure
+        const coreCount = Math.floor(count * 0.12);           // Supermassive black hole region
+        const bulgCount = Math.floor(count * 0.15);           // Central bulge
+        const spiralCount = Math.floor(count * 0.30);         // Spiral arms
+        const haloCount = Math.floor(count * 0.18);           // Dark matter halo
+        const nurseryCount = Math.floor(count * 0.12);        // Star forming regions
+        const filamentCount = count - coreCount - bulgCount - spiralCount - haloCount - nurseryCount;
+
+        let idx = 0;
+        const arms = 4; // Spiral arm count
+
+        // ─────────────────────────────────────────────────────────────
+        // GALACTIC CORE - Intense central region
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < coreCount; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            // Core is oblate spheroid
+            const r = Math.pow(Math.random(), 0.3) * 0.6;
+
+            output[idx * 3] = r * Math.sin(phi) * Math.cos(theta);
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.4; // Flatten
+            output[idx * 3 + 2] = r * Math.cos(phi);
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // GALACTIC BULGE - Old stars in spherical distribution
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < bulgCount; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const r = 0.5 + Math.pow(Math.random(), 0.5) * 1.2;
+
+            // Triaxial ellipsoid
+            output[idx * 3] = r * Math.sin(phi) * Math.cos(theta) * 1.2;
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.6;
+            output[idx * 3 + 2] = r * Math.cos(phi) * 0.9;
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // SPIRAL ARMS - Logarithmic spiral structure
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < spiralCount; i++) {
+            const t = i / spiralCount;
+            const arm = i % arms;
+            const armAngle = (arm / arms) * Math.PI * 2;
+
+            // Logarithmic spiral equation
+            const spiralTightness = 0.3;
+            const r = 0.8 + t * 4.5;
+            const theta = Math.log(r) / spiralTightness + armAngle;
+
+            // Arm width increases with radius
+            const armWidth = 0.15 + t * 0.4;
+            const armOffset = (Math.random() - 0.5) * armWidth;
+
+            // Perturbations for realistic look
+            const perturbation = Math.sin(t * 30 + arm) * 0.2 * t;
+
+            // Disk height with flaring at edges
+            const height = (Math.random() - 0.5) * (0.1 + t * 0.15);
+
+            const finalR = r + armOffset + perturbation;
+            output[idx * 3] = Math.cos(theta) * finalR;
+            output[idx * 3 + 1] = height;
+            output[idx * 3 + 2] = Math.sin(theta) * finalR;
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // DARK MATTER HALO - Invisible mass surrounding galaxy
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < haloCount; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+
+            // NFW profile - density falls off with r
+            const u = Math.random();
+            const r = 3 + Math.pow(u, 0.4) * 5; // Extends far beyond visible disk
+
+            output[idx * 3] = r * Math.sin(phi) * Math.cos(theta);
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.8;
+            output[idx * 3 + 2] = r * Math.cos(phi);
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // STAR NURSERIES - Bright nebulae along spiral arms
+        // ─────────────────────────────────────────────────────────────
+        const nurseryPositions = [
+            { r: 2.2, angle: 0.8, size: 0.4 },
+            { r: 3.5, angle: 2.3, size: 0.5 },
+            { r: 1.8, angle: 4.1, size: 0.35 },
+            { r: 4.0, angle: 5.5, size: 0.45 },
+            { r: 2.8, angle: 1.5, size: 0.38 }
+        ];
+
+        for (let i = 0; i < nurseryCount; i++) {
+            const nursery = nurseryPositions[i % nurseryPositions.length];
+
+            // Cluster around nursery position
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const clusterR = Math.pow(Math.random(), 0.5) * nursery.size;
+
+            const baseX = Math.cos(nursery.angle) * nursery.r;
+            const baseZ = Math.sin(nursery.angle) * nursery.r;
+
+            output[idx * 3] = baseX + clusterR * Math.sin(phi) * Math.cos(theta);
+            output[idx * 3 + 1] = clusterR * Math.sin(phi) * Math.sin(theta) * 0.5;
+            output[idx * 3 + 2] = baseZ + clusterR * Math.cos(phi);
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // COSMIC FILAMENTS - Web structure between galaxies
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < filamentCount; i++) {
+            const filamentIdx = i % 8; // 8 major filaments
+            const t = (i / filamentCount) * 8;
+
+            // Each filament extends outward
+            const baseAngle = (filamentIdx / 8) * Math.PI * 2;
+            const filamentR = 5 + t * 3;
+
+            // Wavy filament structure
+            const wave = Math.sin(t * 2 + filamentIdx) * 0.8;
+            const verticalWave = Math.cos(t * 3 + filamentIdx * 0.5) * 0.5;
+
+            // Nodes (galaxy clusters) along filament
+            const node = Math.pow(Math.sin(t * 5), 8) * 0.6;
+
+            output[idx * 3] = Math.cos(baseAngle + wave * 0.1) * (filamentR + node);
+            output[idx * 3 + 1] = verticalWave + (Math.random() - 0.5) * 0.3;
+            output[idx * 3 + 2] = Math.sin(baseAngle + wave * 0.1) * (filamentR + node);
+            idx++;
+        }
+
+        return output;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CURATED PHASE GEOMETRIES - 4 MASTERPIECE SHAPES
+    // Complete reimagination with intensified immersive motion
     // ═══════════════════════════════════════════════════════════════════
 
     const geometries = [
-        // Phase 0: Jellyfish - Ethereal creatures with brilliant motion
+        // ═══════════════════════════════════════════════════════════════
+        // Phase 0: NEURAL NETWORK - Intelligence, Connection, Cognition
+        // Living brain visualization with firing synapses
+        // ═══════════════════════════════════════════════════════════════
         {
-            data: getJellyfish(particlesCount),
-            name: 'JELLYFISH',
+            data: getNeuralNetwork(particlesCount),
+            name: 'NEURAL',
             physics: {
-                turbulence: 0.4,        // Ocean current flow
-                attraction: 0.06,       // Very gentle cursor following
-                orbit: 0.55,            // Strong flowing tentacle motion
-                pulse: 0.25,            // Pronounced swimming pulse rhythm
-                spring: 0.04,           // Ultra-soft, gelatinous
-                dampen: 0.975           // Smooth underwater viscosity
+                turbulence: 0.5,        // Electrical impulse chaos
+                attraction: 0.08,       // Synaptic attraction
+                orbit: 0.35,            // Gentle neural oscillation
+                pulse: 0.30,            // Strong firing rhythm (EEG-like)
+                spring: 0.06,           // Soft dendrite flexibility
+                dampen: 0.96            // Smooth signal propagation
             }
         },
 
-        // Phase 1: Triple Helix DNA - Innovation, growth, structure (EXTENDED EXPERIENCE)
+        // ═══════════════════════════════════════════════════════════════
+        // Phase 1: DOUBLE HELIX - Life, Growth, Innovation, Blueprint
+        // Enhanced DNA with base pairs and energy flow
+        // ═══════════════════════════════════════════════════════════════
         {
-            data: getTripleHelix(particlesCount, 2.5, 7),  // Larger helix, more turns
-            name: 'DNA',
+            data: getTripleHelix(particlesCount, 2.2, 6),
+            name: 'HELIX',
             physics: {
-                turbulence: 0.35,       // Organic molecular vibration
-                attraction: 0.12,       // Gentle cursor following
-                orbit: 0.5,             // Strong helical rotation for visual impact
-                pulse: 0.22,            // Pronounced breathing (life pulse)
-                spring: 0.14,           // Springy molecular bonds
-                dampen: 0.94            // Smooth, mesmerizing motion
+                turbulence: 0.28,       // Precise molecular vibration
+                attraction: 0.10,       // Base pair bonding
+                orbit: 0.45,            // Helical rotation (mesmerizing)
+                pulse: 0.18,            // Life pulse rhythm
+                spring: 0.12,           // Springy molecular tension
+                dampen: 0.94            // Fluid viscosity
             }
         },
 
-        // Phase 2: Nova Explosion - Creative energy, breakthrough moment
+        // ═══════════════════════════════════════════════════════════════
+        // Phase 2: SINGULARITY - Power, Transformation, Event Horizon
+        // Black hole with accretion disk, jets, and wormhole
+        // ═══════════════════════════════════════════════════════════════
         {
-            data: getNovaExplosion(particlesCount, 4),  // Larger radius
-            name: 'NOVA',
+            data: getSingularity(particlesCount),
+            name: 'SINGULARITY',
             physics: {
-                turbulence: 2.5,       // Maximum explosive chaos
-                attraction: 0.03,      // Particles fly outward
-                orbit: 0.8,            // Spinning shockwave
-                pulse: 0.25,           // Intense pulsation
-                spring: 0.03,          // Very loose, explosive
-                dampen: 0.78           // High energy, less dampening
+                turbulence: 1.8,        // Extreme gravitational chaos
+                attraction: 0.25,       // Strong gravitational pull toward center
+                orbit: 1.2,             // Intense orbital velocity
+                pulse: 0.35,            // Violent pulsation
+                spring: 0.02,           // Near-zero resistance (falling in)
+                dampen: 0.82            // Low damping (high energy system)
             }
         },
 
-        // Phase 3: Blood Cells - Immersive microscopic finale (EXTENDED EXPERIENCE)
+        // ═══════════════════════════════════════════════════════════════
+        // Phase 3: COSMOS - Creation, Infinity, Wonder, Grand Finale
+        // Galaxy formation with spiral arms and cosmic web
+        // ═══════════════════════════════════════════════════════════════
         {
-            data: getBloodCells(particlesCount, 8),  // Even wider spread for immersion
-            name: 'BLOODCELLS',
+            data: getCosmos(particlesCount),
+            name: 'COSMOS',
             physics: {
-                turbulence: 0.45,       // Rich fluid dynamics
-                attraction: 0.05,       // Very gentle flow
-                orbit: 0.25,            // Organic tumbling
-                pulse: 0.15,            // Strong heartbeat rhythm
-                spring: 0.035,          // Ultra-soft, blood viscosity
-                dampen: 0.975           // Deep immersion viscosity
+                turbulence: 0.55,       // Galactic wind and turbulence
+                attraction: 0.04,       // Subtle dark matter attraction
+                orbit: 0.65,            // Majestic spiral rotation
+                pulse: 0.12,            // Slow cosmic breathing
+                spring: 0.025,          // Ultra-soft (gas and dust)
+                dampen: 0.97            // Deep space viscosity
             }
         }
     ];
