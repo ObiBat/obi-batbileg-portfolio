@@ -1818,11 +1818,11 @@ export function initHeroScene() {
 
         // Calculate scroll velocity for momentum
         scrollVelocity = Math.abs(currentScroll - prevScroll);
-        prevScroll += (currentScroll - prevScroll) * 0.08; // Smooth follow
+        prevScroll += (currentScroll - prevScroll) * 0.15; // Faster response (was 0.08)
 
         // ─────────────────────────────────────────────────────────────
         // PHASE CALCULATION - Weighted Scroll Zones
-        // Extended time for Jellyfish appreciation and transformation
+        // More responsive transitions with reduced stickiness
         // ─────────────────────────────────────────────────────────────
 
         const numPhases = geometries.length - 1; // 3 transitions for 4 phases
@@ -1832,10 +1832,9 @@ export function initHeroScene() {
         const phaseWeights = [0.30, 0.25, 0.20, 0.25]; // Must sum to 1.0
         const phaseBreakpoints = [0, 0.30, 0.55, 0.75, 1.0]; // Cumulative breakpoints
 
-        // Add scroll "stickiness" at phase boundaries
-        // Jellyfish gets extended pause for complex transformation appreciation
+        // Reduced scroll "stickiness" at phase boundaries for better sync
         let adjustedProgress = prevScroll;
-        const checkpointPauses = [0.10, 0.10, 0.12]; // Jellyfish pause extended
+        const checkpointPauses = [0.06, 0.06, 0.08]; // Reduced pause zones
 
         for (let cp = 0; cp < numPhases; cp++) {
             const checkpoint = phaseBreakpoints[cp + 1];
@@ -1843,18 +1842,17 @@ export function initHeroScene() {
             const pauseZone = checkpointPauses[cp];
 
             if (distToCheckpoint < pauseZone) {
-                // Slow down transition near checkpoints
+                // Lighter stickiness for more responsive feel
                 const pauseStrength = 1 - (distToCheckpoint / pauseZone);
-                // DNA and Blood Cells get stronger pause
-                const pauseIntensity = cp >= 1 ? 0.5 : 0.3;
+                const pauseIntensity = 0.2; // Reduced from 0.3-0.5
                 adjustedProgress += (checkpoint - adjustedProgress) * pauseStrength * pauseIntensity;
             }
         }
 
-        // Extra "hold" at the end so Blood Cells fully resolves before project section
-        if (adjustedProgress > 0.92) {
-            const endHold = (adjustedProgress - 0.92) / 0.08;
-            adjustedProgress = 0.92 + endHold * 0.08 * 0.6; // Slow down final 8%
+        // Lighter end hold for smoother exit
+        if (adjustedProgress > 0.94) {
+            const endHold = (adjustedProgress - 0.94) / 0.06;
+            adjustedProgress = 0.94 + endHold * 0.06 * 0.7;
         }
 
         // Map adjustedProgress to phaseIndex and phaseProgress using weighted zones

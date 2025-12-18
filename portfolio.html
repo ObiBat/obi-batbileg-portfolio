@@ -906,14 +906,14 @@
                     sysSpinner.style.transform = `rotate(${p * 720}deg)`;
                 }
 
-                // 3. Status Label (Phase-aware) - Matches hero-scene.js phaseBreakpoints
+                // 3. Status Label (Phase-aware) - Triggers slightly early to match visual lag
                 if (sysLabel) {
                     let txt = "SYS.INIT";
-                    if (p > 0.02) txt = "NEURAL";
-                    if (p > 0.30) txt = "HELIX";
-                    if (p > 0.55) txt = "SINGULARITY";
-                    if (p > 0.75) txt = "COSMOS";
-                    if (p > 0.95) txt = "SYS.READY";
+                    if (p > 0.01) txt = "NEURAL";
+                    if (p > 0.22) txt = "HELIX";      // Visual at 30%, label at 22% (8% early)
+                    if (p > 0.45) txt = "SINGULARITY"; // Visual at 55%, label at 45% (10% early)
+                    if (p > 0.65) txt = "COSMOS";     // Visual at 75%, label at 65% (10% early)
+                    if (p > 0.92) txt = "SYS.READY";
                     sysLabel.innerText = txt;
                 }
 
