@@ -1971,18 +1971,18 @@ export function initHeroScene() {
         const target = geometries[phaseIndex + 1].data;
 
         // ─────────────────────────────────────────────────────────────
-        // APPRECIATION ZONES - Extended hold for masterpiece clarity
-        // Structure: [0-holdZone] Stable shape | [holdZone-100%] Morph
+        // INTENSIFIED APPRECIATION ZONES - Maximum peak clarity time
+        // Each shape holds at 100% stability for 55-60% of phase
         // ─────────────────────────────────────────────────────────────
 
-        // Per-phase appreciation zone configuration - EXTENDED for clarity
+        // Per-phase appreciation - INTENSIFIED for masterpiece viewing
         const appreciationConfig = {
-            0: { holdZone: 0.40, morphEase: 'smooth' },    // NEURAL: 40% hold, elegant dissolve
-            1: { holdZone: 0.35, morphEase: 'dramatic' },  // HELIX: 35% hold, gravitational pull
-            2: { holdZone: 0.40, morphEase: 'explosive' }  // SINGULARITY→COSMOS: 40% hold, big bang!
+            0: { holdZone: 0.55, morphEase: 'smooth' },    // NEURAL: 55% hold - brain network clarity
+            1: { holdZone: 0.55, morphEase: 'dramatic' },  // HELIX: 55% hold - DNA structure clarity
+            2: { holdZone: 0.60, morphEase: 'explosive' }  // SINGULARITY: 60% hold - black hole clarity
         };
 
-        const config = appreciationConfig[phaseIndex] || { holdZone: 0.50, morphEase: 'smooth' };
+        const config = appreciationConfig[phaseIndex] || { holdZone: 0.60, morphEase: 'smooth' };
         const holdZone = config.holdZone;
 
         // Calculate morph progress within the transformation zone
