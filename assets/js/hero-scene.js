@@ -113,8 +113,8 @@ export function initHeroScene() {
     const particlesCount = 25000; // Dense cloud
 
     // ═══════════════════════════════════════════════════════════════════
-    // NEURAL NETWORK - Living Brain Synapse Visualization
-    // Neurons fire, dendrites branch, synapses pulse with electrical energy
+    // NEURAL NETWORK - Living Brain Synapse Visualization (ENHANCED)
+    // Complex multi-layer brain structure with cortex, neurons, glial cells
     // ═══════════════════════════════════════════════════════════════════
 
     function getNeuralNetwork(count) {
@@ -123,22 +123,57 @@ export function initHeroScene() {
         // ─────────────────────────────────────────────────────────────
         // NEURON CELL BODIES (Soma) - Central processing nodes
         // ─────────────────────────────────────────────────────────────
-        const neuronCount = 35;
+        const neuronCount = 55; // Increased for denser network
         const neurons = [];
 
-        // Distribute neurons in 3D space using Fibonacci sphere
-        for (let n = 0; n < neuronCount; n++) {
-            const phi = Math.acos(1 - 2 * (n + 0.5) / neuronCount);
+        // Layer 1: Core neurons (deep brain) - tight cluster
+        for (let n = 0; n < 20; n++) {
+            const phi = Math.acos(1 - 2 * (n + 0.5) / 20);
             const theta = Math.PI * (1 + Math.sqrt(5)) * n;
-            const radius = 2.5 + Math.sin(n * 0.7) * 1.5;
+            const radius = 1.2 + Math.sin(n * 0.9) * 0.5;
 
             neurons.push({
                 x: radius * Math.sin(phi) * Math.cos(theta),
-                y: radius * Math.sin(phi) * Math.sin(theta) * 0.7, // Flatten slightly
+                y: radius * Math.sin(phi) * Math.sin(theta) * 0.6,
                 z: radius * Math.cos(phi),
-                size: 0.15 + Math.random() * 0.1,
+                size: 0.18 + Math.random() * 0.08,
                 connections: [],
-                firePhase: Math.random() * Math.PI * 2
+                firePhase: Math.random() * Math.PI * 2,
+                layer: 'core'
+            });
+        }
+
+        // Layer 2: Mid-brain neurons - medium spread
+        for (let n = 0; n < 20; n++) {
+            const phi = Math.acos(1 - 2 * (n + 0.5) / 20);
+            const theta = Math.PI * (1 + Math.sqrt(5)) * n + 0.5;
+            const radius = 2.2 + Math.sin(n * 0.7) * 0.8;
+
+            neurons.push({
+                x: radius * Math.sin(phi) * Math.cos(theta),
+                y: radius * Math.sin(phi) * Math.sin(theta) * 0.7,
+                z: radius * Math.cos(phi),
+                size: 0.14 + Math.random() * 0.06,
+                connections: [],
+                firePhase: Math.random() * Math.PI * 2,
+                layer: 'mid'
+            });
+        }
+
+        // Layer 3: Cortex neurons - outer shell
+        for (let n = 0; n < 15; n++) {
+            const phi = Math.acos(1 - 2 * (n + 0.5) / 15);
+            const theta = Math.PI * (1 + Math.sqrt(5)) * n + 1.0;
+            const radius = 3.2 + Math.sin(n * 0.5) * 0.6;
+
+            neurons.push({
+                x: radius * Math.sin(phi) * Math.cos(theta),
+                y: radius * Math.sin(phi) * Math.sin(theta) * 0.65,
+                z: radius * Math.cos(phi),
+                size: 0.12 + Math.random() * 0.05,
+                connections: [],
+                firePhase: Math.random() * Math.PI * 2,
+                layer: 'cortex'
             });
         }
 
@@ -152,20 +187,48 @@ export function initHeroScene() {
                     (neurons[i].y - neurons[j].y) ** 2 +
                     (neurons[i].z - neurons[j].z) ** 2
                 );
-                if (dist < 3.5 && neurons[i].connections.length < 5) {
+                // Core neurons connect more, cortex less
+                const maxConnections = neurons[i].layer === 'core' ? 6 :
+                    neurons[i].layer === 'mid' ? 4 : 3;
+                const connectDist = neurons[i].layer === 'core' ? 2.5 : 3.0;
+
+                if (dist < connectDist && neurons[i].connections.length < maxConnections) {
                     neurons[i].connections.push(j);
                 }
             }
         }
 
         // Particle distribution
-        const somaCount = Math.floor(count * 0.12);        // Cell bodies
-        const dendriteCount = Math.floor(count * 0.25);    // Branching input
-        const axonCount = Math.floor(count * 0.35);        // Connection pathways
-        const synapseCount = Math.floor(count * 0.18);     // Firing junctions
-        const signalCount = count - somaCount - dendriteCount - axonCount - synapseCount; // Electrical pulses
+        const cortexCount = Math.floor(count * 0.10);       // Outer brain surface
+        const somaCount = Math.floor(count * 0.10);         // Cell bodies
+        const glialCount = Math.floor(count * 0.08);        // Support cells
+        const dendriteCount = Math.floor(count * 0.22);     // Branching input
+        const axonCount = Math.floor(count * 0.30);         // Connection pathways
+        const synapseCount = Math.floor(count * 0.12);      // Firing junctions
+        const signalCount = count - cortexCount - somaCount - glialCount - dendriteCount - axonCount - synapseCount;
 
         let idx = 0;
+
+        // ─────────────────────────────────────────────────────────────
+        // CORTEX SURFACE - Outer brain membrane with folds (sulci/gyri)
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < cortexCount; i++) {
+            const u = Math.random();
+            const v = Math.random();
+            const theta = u * Math.PI * 2;
+            const phi = v * Math.PI;
+
+            // Brain-like radius with wrinkles
+            const baseRadius = 3.8;
+            const wrinkle = Math.sin(theta * 8 + phi * 6) * 0.15 +
+                Math.sin(theta * 12 - phi * 4) * 0.08;
+            const r = baseRadius + wrinkle;
+
+            output[idx * 3] = r * Math.sin(phi) * Math.cos(theta);
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.65;
+            output[idx * 3 + 2] = r * Math.cos(phi);
+            idx++;
+        }
 
         // ─────────────────────────────────────────────────────────────
         // SOMA - Glowing cell bodies with membrane detail
@@ -174,48 +237,73 @@ export function initHeroScene() {
             const neuron = neurons[i % neuronCount];
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
-            const r = neuron.size * (0.3 + Math.random() * 0.7);
+            const r = neuron.size * (0.4 + Math.random() * 0.6);
 
-            // Membrane surface with organic irregularity
-            const wobble = 1 + Math.sin(theta * 5 + phi * 3) * 0.1;
+            // Organic membrane with nucleus bulge
+            const wobble = 1 + Math.sin(theta * 5 + phi * 3) * 0.12;
+            const nucleusBulge = Math.exp(-phi * 2) * 0.15;
 
-            output[idx * 3] = neuron.x + r * Math.sin(phi) * Math.cos(theta) * wobble;
+            output[idx * 3] = neuron.x + r * Math.sin(phi) * Math.cos(theta) * (wobble + nucleusBulge);
             output[idx * 3 + 1] = neuron.y + r * Math.sin(phi) * Math.sin(theta) * wobble;
             output[idx * 3 + 2] = neuron.z + r * Math.cos(phi) * wobble;
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // DENDRITES - Branching tree structures receiving input
+        // GLIAL CELLS - Star-shaped support cells between neurons
         // ─────────────────────────────────────────────────────────────
-        for (let i = 0; i < dendriteCount; i++) {
-            const neuron = neurons[i % neuronCount];
-            const branchIdx = Math.floor(i / (dendriteCount / neuronCount / 6));
-            const branchAngle = (branchIdx * 0.618) * Math.PI * 2; // Golden angle
+        for (let i = 0; i < glialCount; i++) {
+            const neuronA = neurons[i % neuronCount];
+            const neuronB = neurons[(i + 7) % neuronCount];
 
-            // Fractal branching depth
-            const depth = Math.pow(Math.random(), 0.6); // More particles near soma
-            const branchLength = neuron.size * (2 + Math.random() * 1.5);
+            // Position between neurons
+            const t = 0.3 + Math.random() * 0.4;
+            const baseX = neuronA.x + (neuronB.x - neuronA.x) * t;
+            const baseY = neuronA.y + (neuronB.y - neuronA.y) * t;
+            const baseZ = neuronA.z + (neuronB.z - neuronA.z) * t;
 
-            // Primary branch direction with organic curve
-            const curve = Math.sin(depth * 4 + branchAngle) * 0.4;
-            const spread = depth * 0.8;
+            // Star-like extensions
+            const armAngle = (i / glialCount) * Math.PI * 6;
+            const armLength = 0.2 + Math.random() * 0.15;
 
-            const dx = Math.cos(branchAngle + curve) * branchLength * depth;
-            const dy = (Math.random() - 0.5) * branchLength * depth * 0.6 + depth * 0.3;
-            const dz = Math.sin(branchAngle + curve) * branchLength * depth;
-
-            // Sub-branching
-            const subBranch = Math.sin(depth * 12 + branchIdx) * 0.15 * branchLength;
-
-            output[idx * 3] = neuron.x + dx + subBranch * Math.cos(branchAngle * 2);
-            output[idx * 3 + 1] = neuron.y + dy;
-            output[idx * 3 + 2] = neuron.z + dz + subBranch * Math.sin(branchAngle * 2);
+            output[idx * 3] = baseX + Math.cos(armAngle) * armLength;
+            output[idx * 3 + 1] = baseY + Math.sin(armAngle * 0.5) * armLength * 0.5;
+            output[idx * 3 + 2] = baseZ + Math.sin(armAngle) * armLength;
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // AXONS - Long connection pathways between neurons
+        // DENDRITES - Fractal branching tree structures
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < dendriteCount; i++) {
+            const neuron = neurons[i % neuronCount];
+            const branchIdx = Math.floor((i / dendriteCount) * 8);
+            const branchAngle = (branchIdx * 0.618) * Math.PI * 2;
+
+            // Multi-level fractal depth
+            const depth = Math.pow(Math.random(), 0.5);
+            const branchLength = neuron.size * (2.5 + Math.random() * 2);
+
+            // Primary direction with S-curve
+            const curve1 = Math.sin(depth * 3 + branchAngle) * 0.5;
+            const curve2 = Math.cos(depth * 5 + branchAngle * 0.7) * 0.3;
+
+            const dx = Math.cos(branchAngle + curve1) * branchLength * depth;
+            const dy = (Math.random() - 0.5) * branchLength * depth * 0.5 + depth * 0.4;
+            const dz = Math.sin(branchAngle + curve2) * branchLength * depth;
+
+            // Secondary branching
+            const subBranch = Math.sin(depth * 15 + branchIdx * 2) * 0.2 * branchLength * depth;
+            const tertiaryBranch = Math.cos(depth * 25) * 0.08 * branchLength * depth;
+
+            output[idx * 3] = neuron.x + dx + subBranch * Math.cos(branchAngle * 3);
+            output[idx * 3 + 1] = neuron.y + dy + tertiaryBranch;
+            output[idx * 3 + 2] = neuron.z + dz + subBranch * Math.sin(branchAngle * 3);
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // AXONS - Long myelinated connection pathways
         // ─────────────────────────────────────────────────────────────
         for (let i = 0; i < axonCount; i++) {
             const neuronIdx = i % neuronCount;
@@ -225,39 +313,47 @@ export function initHeroScene() {
                 const targetIdx = neuron.connections[i % neuron.connections.length];
                 const target = neurons[targetIdx];
 
-                // Position along axon with slight bezier curve
+                // Bezier curve with more pronounced arc
                 const t = Math.random();
+                const arcHeight = 0.3 + Math.random() * 0.3;
                 const midPoint = {
-                    x: (neuron.x + target.x) / 2 + (Math.random() - 0.5) * 0.5,
-                    y: (neuron.y + target.y) / 2 + (Math.random() - 0.5) * 0.3,
-                    z: (neuron.z + target.z) / 2 + (Math.random() - 0.5) * 0.5
+                    x: (neuron.x + target.x) / 2 + (Math.random() - 0.5) * 0.6,
+                    y: (neuron.y + target.y) / 2 + arcHeight,
+                    z: (neuron.z + target.z) / 2 + (Math.random() - 0.5) * 0.6
                 };
 
-                // Quadratic bezier interpolation
-                const x = (1 - t) * (1 - t) * neuron.x + 2 * (1 - t) * t * midPoint.x + t * t * target.x;
-                const y = (1 - t) * (1 - t) * neuron.y + 2 * (1 - t) * t * midPoint.y + t * t * target.y;
-                const z = (1 - t) * (1 - t) * neuron.z + 2 * (1 - t) * t * midPoint.z + t * t * target.z;
+                // Cubic bezier for smoother curves
+                const tt = t * t;
+                const ttt = tt * t;
+                const u = 1 - t;
+                const uu = u * u;
+                const uuu = uu * u;
 
-                // Myelin sheath thickness variation
-                const thickness = 0.02 + Math.sin(t * 20) * 0.01;
-                const angle = t * Math.PI * 8; // Spiral around axon
+                const x = uuu * neuron.x + 3 * uu * t * midPoint.x + 3 * u * tt * midPoint.x + ttt * target.x;
+                const y = uuu * neuron.y + 3 * uu * t * midPoint.y + 3 * u * tt * midPoint.y + ttt * target.y;
+                const z = uuu * neuron.z + 3 * uu * t * midPoint.z + 3 * u * tt * midPoint.z + ttt * target.z;
 
-                output[idx * 3] = x + Math.cos(angle) * thickness;
-                output[idx * 3 + 1] = y + thickness * 0.5;
-                output[idx * 3 + 2] = z + Math.sin(angle) * thickness;
+                // Myelin sheath nodes (Nodes of Ranvier spacing)
+                const myelinPattern = Math.sin(t * 25) * 0.5 + 0.5;
+                const thickness = (0.025 + myelinPattern * 0.015);
+                const spiralAngle = t * Math.PI * 12;
+
+                output[idx * 3] = x + Math.cos(spiralAngle) * thickness;
+                output[idx * 3 + 1] = y + Math.sin(spiralAngle) * thickness * 0.5;
+                output[idx * 3 + 2] = z + Math.sin(spiralAngle) * thickness;
             } else {
-                // Isolated neuron - create local axon hillock
+                // Isolated neuron - axon hillock
                 const angle = Math.random() * Math.PI * 2;
-                const length = neuron.size * (1 + Math.random());
+                const length = neuron.size * (1.2 + Math.random() * 0.8);
                 output[idx * 3] = neuron.x + Math.cos(angle) * length;
-                output[idx * 3 + 1] = neuron.y - length * 0.3;
+                output[idx * 3 + 1] = neuron.y - length * 0.4;
                 output[idx * 3 + 2] = neuron.z + Math.sin(angle) * length;
             }
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // SYNAPSES - Glowing junction points where signals transfer
+        // SYNAPSES - Glowing vesicle clusters at junctions
         // ─────────────────────────────────────────────────────────────
         for (let i = 0; i < synapseCount; i++) {
             const neuronIdx = i % neuronCount;
@@ -267,17 +363,18 @@ export function initHeroScene() {
                 const targetIdx = neuron.connections[i % neuron.connections.length];
                 const target = neurons[targetIdx];
 
-                // Synapse at end of axon (near target)
-                const t = 0.85 + Math.random() * 0.15;
+                // Synapse terminal
+                const t = 0.88 + Math.random() * 0.12;
                 const x = neuron.x + (target.x - neuron.x) * t;
                 const y = neuron.y + (target.y - neuron.y) * t;
                 const z = neuron.z + (target.z - neuron.z) * t;
 
-                // Vesicle cluster
-                const vesicleSpread = 0.08;
-                output[idx * 3] = x + (Math.random() - 0.5) * vesicleSpread;
-                output[idx * 3 + 1] = y + (Math.random() - 0.5) * vesicleSpread;
-                output[idx * 3 + 2] = z + (Math.random() - 0.5) * vesicleSpread;
+                // Dense vesicle cluster
+                const vesicleSpread = 0.1;
+                const clusterDensity = Math.pow(Math.random(), 0.5);
+                output[idx * 3] = x + (Math.random() - 0.5) * vesicleSpread * clusterDensity;
+                output[idx * 3 + 1] = y + (Math.random() - 0.5) * vesicleSpread * clusterDensity;
+                output[idx * 3 + 2] = z + (Math.random() - 0.5) * vesicleSpread * clusterDensity;
             } else {
                 output[idx * 3] = neuron.x;
                 output[idx * 3 + 1] = neuron.y;
@@ -287,13 +384,12 @@ export function initHeroScene() {
         }
 
         // ─────────────────────────────────────────────────────────────
-        // ELECTRICAL SIGNALS - Propagating action potentials
+        // ELECTRICAL SIGNALS - Action potentials with spark trails
         // ─────────────────────────────────────────────────────────────
         for (let i = 0; i < signalCount; i++) {
             const neuronIdx = i % neuronCount;
             const neuron = neurons[neuronIdx];
 
-            // Signal position pulses along connections
             const signalPhase = (i / signalCount) * Math.PI * 2;
             const signalT = (Math.sin(signalPhase) + 1) / 2;
 
@@ -301,13 +397,15 @@ export function initHeroScene() {
                 const targetIdx = neuron.connections[Math.floor(Math.random() * neuron.connections.length)];
                 const target = neurons[targetIdx];
 
-                output[idx * 3] = neuron.x + (target.x - neuron.x) * signalT;
-                output[idx * 3 + 1] = neuron.y + (target.y - neuron.y) * signalT;
-                output[idx * 3 + 2] = neuron.z + (target.z - neuron.z) * signalT;
+                // Signal position with spark scatter
+                const sparkScatter = 0.05 * (1 - Math.abs(signalT - 0.5) * 2);
+                output[idx * 3] = neuron.x + (target.x - neuron.x) * signalT + (Math.random() - 0.5) * sparkScatter;
+                output[idx * 3 + 1] = neuron.y + (target.y - neuron.y) * signalT + (Math.random() - 0.5) * sparkScatter;
+                output[idx * 3 + 2] = neuron.z + (target.z - neuron.z) * signalT + (Math.random() - 0.5) * sparkScatter;
             } else {
-                output[idx * 3] = neuron.x + Math.cos(signalPhase) * neuron.size;
+                output[idx * 3] = neuron.x + Math.cos(signalPhase) * neuron.size * 1.2;
                 output[idx * 3 + 1] = neuron.y;
-                output[idx * 3 + 2] = neuron.z + Math.sin(signalPhase) * neuron.size;
+                output[idx * 3 + 2] = neuron.z + Math.sin(signalPhase) * neuron.size * 1.2;
             }
             idx++;
         }
@@ -1699,10 +1797,10 @@ export function initHeroScene() {
     // ═══════════════════════════════════════════════════════════════════
 
     const palettes = [
-        { primary: new THREE.Color(0x66ffee), secondary: new THREE.Color(0xaa88ff) }, // 0 JELLYFISH: Bioluminescent Teal → Purple
-        { primary: new THREE.Color(0x00ff88), secondary: new THREE.Color(0x66ffcc) }, // 1 DNA: Emerald Green → Mint
-        { primary: new THREE.Color(0xffaa00), secondary: new THREE.Color(0xff4400) }, // 2 Nova: Golden → Orange Fire
-        { primary: new THREE.Color(0xcc2233), secondary: new THREE.Color(0xff4455) }  // 3 Blood Cells: Crimson Red → Arterial Red
+        { primary: new THREE.Color(0x00ddff), secondary: new THREE.Color(0x8855ff) }, // 0 NEURAL: Electric Cyan → Neural Purple
+        { primary: new THREE.Color(0x00ff66), secondary: new THREE.Color(0x44ffaa) }, // 1 HELIX: DNA Green → Bio Mint
+        { primary: new THREE.Color(0xff6600), secondary: new THREE.Color(0xff0044) }, // 2 SINGULARITY: Accretion Orange → Event Horizon Red
+        { primary: new THREE.Color(0x9966ff), secondary: new THREE.Color(0x66ddff) }  // 3 COSMOS: Nebula Violet → Star Blue
     ];
 
     // ═══════════════════════════════════════════════════════════════════
@@ -1729,10 +1827,10 @@ export function initHeroScene() {
 
         const numPhases = geometries.length - 1; // 3 transitions for 4 phases
 
-        // Weighted scroll zones: [Jellyfish→DNA, DNA→Nova, Nova→BloodCells]
-        // Jellyfish (28%) for appreciation, DNA (35%), Blood Cells (37%)
-        const phaseWeights = [0.28, 0.35, 0.37]; // Must sum to 1.0
-        const phaseBreakpoints = [0, 0.28, 0.63, 1.0]; // Cumulative breakpoints
+        // Weighted scroll zones: [NEURAL→HELIX, HELIX→SINGULARITY, SINGULARITY→COSMOS]
+        // NEURAL (30%) for brain network appreciation, HELIX (25%), SINGULARITY (20%), COSMOS (25%)
+        const phaseWeights = [0.30, 0.25, 0.20, 0.25]; // Must sum to 1.0
+        const phaseBreakpoints = [0, 0.30, 0.55, 0.75, 1.0]; // Cumulative breakpoints
 
         // Add scroll "stickiness" at phase boundaries
         // Jellyfish gets extended pause for complex transformation appreciation
@@ -1786,14 +1884,14 @@ export function initHeroScene() {
 
         let mix;
         switch (phaseIndex) {
-            case 0: // JELLYFISH → DNA: Ethereal creatures morph into organic helix
-                mix = easeOutElastic(Math.min(1, phaseProgress * 1.15));
+            case 0: // NEURAL → HELIX: Synapses dissolve into molecular structure
+                mix = easeInOutQuint(phaseProgress); // Smooth, deliberate
                 break;
-            case 1: // DNA → Nova: Explosive fast release (structure to chaos)
-                mix = Math.pow(phaseProgress, 0.4); // Very fast start, dramatic
+            case 1: // HELIX → SINGULARITY: Life collapses into gravitational chaos
+                mix = Math.pow(phaseProgress, 0.35); // Dramatic fast pull
                 break;
-            case 2: // Nova → Blood Cells: Organic settling (chaos to life)
-                mix = easeInOutQuint(phaseProgress);
+            case 2: // SINGULARITY → COSMOS: Black hole births a galaxy
+                mix = easeOutElastic(Math.min(1, phaseProgress * 1.1)); // Explosive expansion
                 break;
             default:
                 mix = easeInOutQuint(phaseProgress);
