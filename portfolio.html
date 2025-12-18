@@ -701,27 +701,38 @@
             }
         });
 
-        // Projects Horizontal Pinning
+        // Projects Horizontal Pinning with Professional Pause
         const projectsContainer = document.querySelector(".projects-wrapper");
 
-        // Calculate total width of movement
-        // We want to scroll the entire width of the wrapper minus the viewport width
-        // However, since we flex-ed it, we can just grab scrollWidth
-        let totalWidth = projectsContainer.scrollWidth;
+        // Configuration for the pause
+        // We add a 'dead zone' of scrolling equal to 60% of the viewport height
+        // This allows the user to settle on the "Recent Dispatch" title before lateral movement.
+        const pauseScrollAmount = window.innerHeight * 0.6;
 
-        // It renders nicely if we assume dynamic width. 
-        // We need to wait for layout? For now we can estimate or use a function value in 'end'
-
-        gsap.to(projectsContainer, {
-            x: () => -(projectsContainer.scrollWidth - window.innerWidth),
-            ease: "none",
+        const projectTl = gsap.timeline({
             scrollTrigger: {
                 trigger: ".project-section",
                 start: "top top",
                 pin: true,
                 scrub: 1,
-                end: () => "+=" + (projectsContainer.scrollWidth) // Duration proportional to length
+                invalidateOnRefresh: true,
+                // Total scroll length = Horizontal Length + Pause Length
+                end: () => "+=" + (projectsContainer.scrollWidth + pauseScrollAmount)
             }
+        });
+
+        // Phase 1: The Pause (Hold Position)
+        // We use a dummy tween with a duration proportional to the pause scroll amount
+        projectTl.to({}, {
+            duration: pauseScrollAmount
+        });
+
+        // Phase 2: The Horizontal Scroll
+        // We use the container width for duration to maintain a 1:1 natural scroll feel
+        projectTl.to(projectsContainer, {
+            x: () => -(projectsContainer.scrollWidth - window.innerWidth),
+            ease: "none",
+            duration: projectsContainer.scrollWidth
         });
 
     </script>
