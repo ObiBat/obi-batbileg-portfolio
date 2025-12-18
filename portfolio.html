@@ -915,16 +915,16 @@
                     if (p > 0.01) txt = "NEURAL";
                     if (p > 0.10) txt = "NEURAL→";
 
-                    // HELIX phase (30-55%): 30-40% hold, 40-55% morph  
-                    if (p > 0.28) txt = "HELIX";
-                    if (p > 0.38) txt = "HELIX→";
+                    // HELIX phase: 15% earlier trigger (visual at 30%)
+                    if (p > 0.15) txt = "HELIX";
+                    if (p > 0.25) txt = "HELIX→";
 
-                    // SINGULARITY phase (55-75%): 55-62% hold, 62-75% morph
-                    if (p > 0.52) txt = "SINGULARITY";
-                    if (p > 0.60) txt = "SINGULAR→";
+                    // SINGULARITY phase: 15% earlier trigger (visual at 55%)
+                    if (p > 0.40) txt = "SINGULARITY";
+                    if (p > 0.50) txt = "SINGULAR→";
 
-                    // COSMOS phase (75-100%): 75-85% hold, then complete
-                    if (p > 0.72) txt = "COSMOS";
+                    // COSMOS phase: 10% earlier trigger (visual at 75%)
+                    if (p > 0.65) txt = "COSMOS";
                     if (p > 0.92) txt = "SYS.READY";
 
                     sysLabel.innerText = txt;
