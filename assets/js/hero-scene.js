@@ -2054,6 +2054,25 @@ export function initHeroScene() {
         const phySpring = currentPhysics.spring + (nextPhysics.spring - currentPhysics.spring) * mix;
         const phyDampen = currentPhysics.dampen + (nextPhysics.dampen - currentPhysics.dampen) * mix;
 
+        // ─────────────────────────────────────────────────────────────
+        // MORPH TRANSFORMATION ENHANCEMENT SYSTEM
+        // Amplified motion, color bloom, and phase-specific patterns
+        // ─────────────────────────────────────────────────────────────
+
+        // Morph intensity curve: peaks at 50% of morph, creates "explosion" effect
+        const morphIntensity = Math.sin(morphProgress * Math.PI); // 0→1→0 curve
+        const morphBoost = 1 + morphIntensity * 1.5; // Up to 2.5x motion during peak
+
+        // Color bloom: colors get more vibrant during transformation
+        const colorBloom = 1 + morphIntensity * 0.4; // Up to 1.4x color intensity
+
+        // Phase-specific morph motion patterns
+        const morphPattern = {
+            scatter: morphIntensity * 0.3,    // Particles scatter outward
+            spiral: morphIntensity * 0.5,     // Spiral rotation boost
+            pulse: morphIntensity * 0.4       // Radial pulsing
+        };
+
         // Trigger wave on phase change
         if (phaseIndex !== lastPhaseIndex) {
             triggerMorphWave(phaseProgress);
@@ -2067,10 +2086,10 @@ export function initHeroScene() {
         updateRipples(0.016);
         updateClickExplosion();
 
-        // Turbulence intensity with phase modifier
+        // Turbulence with morph amplification
         const turbulenceBase = 0.15 * phyTurbulence;
-        const turbulenceTransition = Math.sin(phaseProgress * Math.PI) * 0.4 * phyTurbulence;
-        const turbulenceIntensity = turbulenceBase + turbulenceTransition + scrollVelocity * 2;
+        const turbulenceTransition = morphIntensity * 0.6 * phyTurbulence; // Amplified during morph
+        const turbulenceIntensity = (turbulenceBase + turbulenceTransition + scrollVelocity * 2) * morphBoost;
 
         // Harmonic resonance frequency based on phase
         const harmonicFreq = 1 + phaseIndex * 0.3;
@@ -2084,19 +2103,48 @@ export function initHeroScene() {
             let ty = source[i3 + 1] + (target[i3 + 1] - source[i3 + 1]) * mix;
             let tz = source[i3 + 2] + (target[i3 + 2] - source[i3 + 2]) * mix;
 
-            // Wave displacement during transitions
-            const wave = getWaveDisplacement(tx, ty, tz, time);
-            tx += wave.x;
-            ty += wave.y;
-            tz += wave.z;
+            // ─── MORPH MOTION PATTERNS ───
+            // Apply dynamic motion effects during transformation
 
-            // Curl noise for organic flow
+            // Scatter: particles push outward during morph peak
+            const scatterDir = {
+                x: tx / (Math.sqrt(tx * tx + ty * ty + tz * tz) + 0.001),
+                y: ty / (Math.sqrt(tx * tx + ty * ty + tz * tz) + 0.001),
+                z: tz / (Math.sqrt(tx * tx + ty * ty + tz * tz) + 0.001)
+            };
+            tx += scatterDir.x * morphPattern.scatter * (1 + phase);
+            ty += scatterDir.y * morphPattern.scatter * (1 + phase);
+            tz += scatterDir.z * morphPattern.scatter * (1 + phase);
+
+            // Spiral: particles rotate around Y axis during morph
+            const spiralAngle = morphPattern.spiral * (phase * 2 - 1) * Math.PI;
+            const spiralCos = Math.cos(spiralAngle);
+            const spiralSin = Math.sin(spiralAngle);
+            const spiralX = tx * spiralCos - tz * spiralSin;
+            const spiralZ = tx * spiralSin + tz * spiralCos;
+            tx = spiralX;
+            tz = spiralZ;
+
+            // Pulse: radial breathing during morph
+            const pulseRadius = 1 + morphPattern.pulse * Math.sin(phase * Math.PI * 4);
+            tx *= pulseRadius;
+            ty *= pulseRadius;
+            tz *= pulseRadius;
+
+            // Wave displacement (amplified during morph)
+            const wave = getWaveDisplacement(tx, ty, tz, time);
+            const waveBoost = 1 + morphIntensity * 0.8;
+            tx += wave.x * waveBoost;
+            ty += wave.y * waveBoost;
+            tz += wave.z * waveBoost;
+
+            // Curl noise for organic flow (amplified during morph)
             const curl = curlNoise(tx * 0.5, ty * 0.5, tz * 0.5, time * 0.5);
 
             // FBM for multi-scale detail
             const turbulence = fbm(tx + time * 0.2, ty + time * 0.15, tz + time * 0.1, 3);
 
-            // Distance-based effects (particles further from center behave differently)
+            // Distance-based effects
             const dist = Math.sqrt(tx * tx + ty * ty + tz * tz);
             const distFactor = 1 - Math.min(1, dist / 4);
 
@@ -2170,25 +2218,29 @@ export function initHeroScene() {
             posArray[i3 + 2] += velocities[i3 + 2];
 
             // ─────────────────────────────────────────────────────────
-            // DYNAMIC COLORING
+            // ENHANCED DYNAMIC COLORING WITH MORPH BLOOM
             // ─────────────────────────────────────────────────────────
 
             // Height-based gradient
             const heightFactor = (posArray[i3 + 1] + 3) / 6;
 
-            // Distance bloom
-            const distColor = Math.sin(dist * 2 - time * 3) * 0.2;
+            // Distance bloom (amplified during morph)
+            const distColor = Math.sin(dist * 2 - time * 3) * 0.2 * colorBloom;
 
-            // Velocity-based brightness
+            // Velocity-based brightness (extra glow during morph)
             const vel = Math.sqrt(velocities[i3] ** 2 + velocities[i3 + 1] ** 2 + velocities[i3 + 2] ** 2);
-            const velocityBrightness = Math.min(1, vel * 5);
+            const velocityBrightness = Math.min(1, vel * 5) * (1 + morphIntensity * 0.5);
 
-            // Final color
+            // Morph-specific color boost: particles glow brighter during transformation peak
+            const morphBrightness = morphIntensity * 0.3;
+
+            // Final color with bloom effect
             const finalColor = new THREE.Color().copy(activeColor).lerp(secondaryColor, heightFactor);
 
-            colArray[i3] = Math.max(0, Math.min(1, finalColor.r + distColor + velocityBrightness * 0.3));
-            colArray[i3 + 1] = Math.max(0, Math.min(1, finalColor.g + distColor * 0.5 + velocityBrightness * 0.2));
-            colArray[i3 + 2] = Math.max(0, Math.min(1, finalColor.b + distColor + velocityBrightness * 0.3));
+            // Apply colorBloom multiplier for more vibrant colors during morph
+            colArray[i3] = Math.max(0, Math.min(1, (finalColor.r * colorBloom) + distColor + velocityBrightness * 0.3 + morphBrightness));
+            colArray[i3 + 1] = Math.max(0, Math.min(1, (finalColor.g * colorBloom) + distColor * 0.5 + velocityBrightness * 0.2 + morphBrightness));
+            colArray[i3 + 2] = Math.max(0, Math.min(1, (finalColor.b * colorBloom) + distColor + velocityBrightness * 0.3 + morphBrightness));
         }
 
         particleGeometry.attributes.position.needsUpdate = true;
