@@ -910,9 +910,8 @@
                 if (sysLabel) {
                     let txt = "00.INIT";
                     if (p > 0.02) txt = "01.NEURAL";
-                    if (p > 0.25) txt = "02.HELIX";
-                    if (p > 0.45) txt = "03.SINGULARITY";
-                    if (p > 0.70) txt = "04.CRYSTAL"; // Matches new breakpoint
+                    if (p > 0.20) txt = "02.HELIX";
+                    if (p > 0.40) txt = "03.RINGS"; // Ring formation phase!
                     if (p > 0.85) txt = "OK.READY";
                     sysLabel.innerText = txt;
                 }

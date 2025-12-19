@@ -975,35 +975,35 @@ export function initHeroScene() {
 
         // ═══════════════════════════════════════════════════════════════
         // Phase 2: SINGULARITY - Power, Transformation, Event Horizon
-        // Controlled gravitational flow (less chaotic)
+        // Morphs into CRYSTALLINE rings (the grand finale transformation)
         // ═══════════════════════════════════════════════════════════════
         {
             data: getSingularity(particlesCount),
             name: 'SINGULARITY',
             physics: {
-                turbulence: 1.2,        // Controlled chaos (was 1.8)
-                attraction: 0.18,       // Moderate gravity (was 0.25)
-                orbit: 0.9,             // Smooth orbital motion (was 1.2)
-                pulse: 0.25,            // Controlled pulsation (was 0.35)
-                spring: 0.025,          // Gentle resistance (was 0.02)
-                dampen: 0.92            // Smoother motion (was 0.82)
+                turbulence: 1.2,
+                attraction: 0.18,
+                orbit: 0.9,
+                pulse: 0.25,
+                spring: 0.025,
+                dampen: 0.92
             }
         },
 
         // ═══════════════════════════════════════════════════════════════
-        // Phase 3: CRYSTALLINE - Geometric Perfection, Sacred Geometry
-        // Stunning crystal structure with spikes and rings
+        // MORPH TARGET: CRYSTALLINE - The Ring Formation Finale
+        // This is what SINGULARITY morphs into - full appreciation to the morph!
         // ═══════════════════════════════════════════════════════════════
         {
             data: getCrystalline(particlesCount),
             name: 'CRYSTALLINE',
             physics: {
-                turbulence: 0.25,       // Minimal chaos - precise geometry
-                attraction: 0.04,       // Subtle center pull
-                orbit: 0.50,            // Elegant rotation
-                pulse: 0.12,            // Crystalline breathing
-                spring: 0.02,           // Very soft, smooth
-                dampen: 0.985           // Ultra smooth crystal motion
+                turbulence: 0.25,
+                attraction: 0.04,
+                orbit: 0.50,
+                pulse: 0.12,
+                spring: 0.02,
+                dampen: 0.985
             }
         }
     ];
@@ -1887,12 +1887,12 @@ export function initHeroScene() {
         // More responsive transitions with reduced stickiness
         // ─────────────────────────────────────────────────────────────
 
-        const numPhases = geometries.length - 1; // 3 transitions for 4 phases
+        const numPhases = geometries.length - 1; // 3 transitions (NEURAL→HELIX→SINGULARITY→CRYSTALLINE)
 
-        // Weighted scroll zones: SINGULARITY gets more time for ring formation
-        // NEURAL (25%), HELIX (20%), SINGULARITY (25%), CRYSTALLINE (15%) + Exit (15%)
-        const phaseWeights = [0.25, 0.20, 0.25, 0.15]; // Core phases = 85%
-        const phaseBreakpoints = [0, 0.25, 0.45, 0.70, 0.85]; // SINGULARITY: 0.45-0.70 (25%)
+        // SINGULARITY gets maximum time for ring formation appreciation
+        // NEURAL (20%), HELIX (20%), SINGULARITY→CRYSTALLINE (45%) + Exit (15%)
+        const phaseWeights = [0.20, 0.20, 0.45]; // Core phases = 85%
+        const phaseBreakpoints = [0, 0.20, 0.40, 0.85]; // SINGULARITY: 0.40-0.85 = 45% for rings!
 
         // Reduced scroll "stickiness" at phase boundaries for better sync
         let adjustedProgress = prevScroll;
@@ -1950,10 +1950,9 @@ export function initHeroScene() {
 
         // Per-phase config: hold zone + rotation speed during appreciation
         const appreciationConfig = {
-            0: { holdZone: 0.40, morphEase: 'smooth', rotationSpeed: 0.0015 },     // NEURAL: 40% hold
-            1: { holdZone: 0.35, morphEase: 'dramatic', rotationSpeed: 0.0012 },   // HELIX: 35% hold
-            2: { holdZone: 0.25, morphEase: 'explosive', rotationSpeed: 0.0020 },  // SINGULARITY: 25% hold (more transform time = more rings appreciation!)
-            3: { holdZone: 0.15, morphEase: 'smooth', rotationSpeed: 0.0018 }      // CRYSTALLINE: 15% hold (final shape, minimal)
+            0: { holdZone: 0.35, morphEase: 'smooth', rotationSpeed: 0.0015 },     // NEURAL: 35% hold
+            1: { holdZone: 0.30, morphEase: 'dramatic', rotationSpeed: 0.0012 },   // HELIX: 30% hold
+            2: { holdZone: 0.10, morphEase: 'explosive', rotationSpeed: 0.0022 }   // SINGULARITY: 10% hold = 90% for ring formation!
         };
 
         const config = appreciationConfig[phaseIndex] || { holdZone: 0.20, morphEase: 'smooth', rotationSpeed: 0.0015 };
