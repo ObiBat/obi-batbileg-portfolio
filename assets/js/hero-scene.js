@@ -988,69 +988,69 @@ export function initHeroScene() {
     const geometries = [
         // ═══════════════════════════════════════════════════════════════
         // Phase 0: NEURAL NETWORK - Intelligence, Connection, Cognition
-        // Living brain visualization with firing synapses
+        // Smooth, flowing brain visualization
         // ═══════════════════════════════════════════════════════════════
         {
             data: getNeuralNetwork(particlesCount),
             name: 'NEURAL',
             physics: {
-                turbulence: 0.5,        // Electrical impulse chaos
-                attraction: 0.08,       // Synaptic attraction
-                orbit: 0.35,            // Gentle neural oscillation
-                pulse: 0.30,            // Strong firing rhythm (EEG-like)
-                spring: 0.06,           // Soft dendrite flexibility
-                dampen: 0.96            // Smooth signal propagation
+                turbulence: 0.35,       // Gentle electrical flow (was 0.5)
+                attraction: 0.06,       // Subtle synaptic pull (was 0.08)
+                orbit: 0.25,            // Soft neural oscillation (was 0.35)
+                pulse: 0.20,            // Gentle firing rhythm (was 0.30)
+                spring: 0.04,           // Softer flexibility (was 0.06)
+                dampen: 0.975           // Very smooth (was 0.96)
             }
         },
 
         // ═══════════════════════════════════════════════════════════════
         // Phase 1: DOUBLE HELIX - Life, Growth, Innovation, Blueprint
-        // Enhanced DNA with base pairs and energy flow
+        // Flowing DNA with smooth molecular motion
         // ═══════════════════════════════════════════════════════════════
         {
             data: getTripleHelix(particlesCount, 2.2, 6),
             name: 'HELIX',
             physics: {
-                turbulence: 0.28,       // Precise molecular vibration
-                attraction: 0.10,       // Base pair bonding
-                orbit: 0.45,            // Helical rotation (mesmerizing)
-                pulse: 0.18,            // Life pulse rhythm
-                spring: 0.12,           // Springy molecular tension
-                dampen: 0.94            // Fluid viscosity
+                turbulence: 0.20,       // Subtle vibration (was 0.28)
+                attraction: 0.08,       // Gentle bonding (was 0.10)
+                orbit: 0.35,            // Smooth rotation (was 0.45)
+                pulse: 0.12,            // Gentle pulse (was 0.18)
+                spring: 0.08,           // Softer tension (was 0.12)
+                dampen: 0.97            // Smoother viscosity (was 0.94)
             }
         },
 
         // ═══════════════════════════════════════════════════════════════
         // Phase 2: SINGULARITY - Power, Transformation, Event Horizon
-        // Black hole with accretion disk, jets, and wormhole
+        // Controlled gravitational flow (less chaotic)
         // ═══════════════════════════════════════════════════════════════
         {
             data: getSingularity(particlesCount),
             name: 'SINGULARITY',
             physics: {
-                turbulence: 1.8,        // Extreme gravitational chaos
-                attraction: 0.25,       // Strong gravitational pull toward center
-                orbit: 1.2,             // Intense orbital velocity
-                pulse: 0.35,            // Violent pulsation
-                spring: 0.02,           // Near-zero resistance (falling in)
-                dampen: 0.82            // Low damping (high energy system)
+                turbulence: 1.2,        // Controlled chaos (was 1.8)
+                attraction: 0.18,       // Moderate gravity (was 0.25)
+                orbit: 0.9,             // Smooth orbital motion (was 1.2)
+                pulse: 0.25,            // Controlled pulsation (was 0.35)
+                spring: 0.025,          // Gentle resistance (was 0.02)
+                dampen: 0.92            // Smoother motion (was 0.82)
             }
         },
 
         // ═══════════════════════════════════════════════════════════════
         // Phase 3: COSMOS - Creation, Infinity, Wonder, Grand Finale
-        // Enhanced galaxy with maximum clarity and distinction
+        // Majestic, smooth galaxy rotation
         // ═══════════════════════════════════════════════════════════════
         {
             data: getCosmos(particlesCount),
             name: 'COSMOS',
             physics: {
-                turbulence: 0.40,       // Controlled galactic wind
-                attraction: 0.06,       // Core attraction (spiral inward)
-                orbit: 0.85,            // STRONG spiral rotation for clarity
-                pulse: 0.22,            // Stellar breathing rhythm
-                spring: 0.035,          // Soft but responsive
-                dampen: 0.965           // Smooth, majestic motion
+                turbulence: 0.30,       // Gentle galactic wind (was 0.40)
+                attraction: 0.05,       // Subtle core pull (was 0.06)
+                orbit: 0.70,            // Smooth spiral (was 0.85)
+                pulse: 0.15,            // Soft breathing (was 0.22)
+                spring: 0.025,          // Very soft (was 0.035)
+                dampen: 0.98            // Ultra smooth (was 0.965)
             }
         }
     ];
@@ -2055,22 +2055,26 @@ export function initHeroScene() {
         const phyDampen = currentPhysics.dampen + (nextPhysics.dampen - currentPhysics.dampen) * mix;
 
         // ─────────────────────────────────────────────────────────────
-        // MORPH TRANSFORMATION ENHANCEMENT SYSTEM
-        // Amplified motion, color bloom, and phase-specific patterns
+        // SMOOTH MORPH TRANSFORMATION SYSTEM
+        // Gentle, professional motion for peak zone clarity
         // ─────────────────────────────────────────────────────────────
 
-        // Morph intensity curve: peaks at 50% of morph, creates "explosion" effect
-        const morphIntensity = Math.sin(morphProgress * Math.PI); // 0→1→0 curve
-        const morphBoost = 1 + morphIntensity * 1.5; // Up to 2.5x motion during peak
+        // Smooth morph curve using easeInOutQuad for gentler transitions
+        const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        const smoothMorphProgress = easeInOutQuad(morphProgress);
 
-        // Color bloom: colors get more vibrant during transformation
-        const colorBloom = 1 + morphIntensity * 0.4; // Up to 1.4x color intensity
+        // Gentle morph intensity (reduced from aggressive sine wave)
+        const morphIntensity = smoothMorphProgress * (1 - smoothMorphProgress) * 4; // Smooth bell curve, max 1
+        const morphBoost = 1 + morphIntensity * 0.5; // Subtle 1.5x max (was 2.5x)
 
-        // Phase-specific morph motion patterns
+        // Color bloom: gentle vibrancy during transformation
+        const colorBloom = 1 + morphIntensity * 0.25; // Subtle 1.25x max (was 1.4x)
+
+        // Gentle morph motion patterns (significantly reduced)
         const morphPattern = {
-            scatter: morphIntensity * 0.3,    // Particles scatter outward
-            spiral: morphIntensity * 0.5,     // Spiral rotation boost
-            pulse: morphIntensity * 0.4       // Radial pulsing
+            scatter: morphIntensity * 0.12,   // Gentle scatter (was 0.3)
+            spiral: morphIntensity * 0.20,    // Subtle spiral (was 0.5)
+            pulse: morphIntensity * 0.15      // Soft pulse (was 0.4)
         };
 
         // Trigger wave on phase change
@@ -2086,10 +2090,10 @@ export function initHeroScene() {
         updateRipples(0.016);
         updateClickExplosion();
 
-        // Turbulence with morph amplification
-        const turbulenceBase = 0.15 * phyTurbulence;
-        const turbulenceTransition = morphIntensity * 0.6 * phyTurbulence; // Amplified during morph
-        const turbulenceIntensity = (turbulenceBase + turbulenceTransition + scrollVelocity * 2) * morphBoost;
+        // Gentle turbulence (reduced intensity)
+        const turbulenceBase = 0.10 * phyTurbulence; // Reduced from 0.15
+        const turbulenceTransition = morphIntensity * 0.3 * phyTurbulence; // Reduced from 0.6
+        const turbulenceIntensity = turbulenceBase + turbulenceTransition + scrollVelocity * 1.5;
 
         // Harmonic resonance frequency based on phase
         const harmonicFreq = 1 + phaseIndex * 0.3;
@@ -2131,9 +2135,9 @@ export function initHeroScene() {
             ty *= pulseRadius;
             tz *= pulseRadius;
 
-            // Wave displacement (amplified during morph)
+            // Wave displacement (gentle boost during morph)
             const wave = getWaveDisplacement(tx, ty, tz, time);
-            const waveBoost = 1 + morphIntensity * 0.8;
+            const waveBoost = 1 + morphIntensity * 0.3; // Reduced from 0.8
             tx += wave.x * waveBoost;
             ty += wave.y * waveBoost;
             tz += wave.z * waveBoost;
