@@ -155,7 +155,9 @@ a {
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: 2rem var(--container-padding);
+    padding: clamp(2rem, 5vw, 4rem) var(--container-padding);
+    padding-top: calc(2rem + env(safe-area-inset-top));
+    /* Dynamic Island Safe Area */
     display: flex;
     justify-content: space-between;
     align-items: center;
