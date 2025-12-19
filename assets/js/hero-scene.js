@@ -2393,6 +2393,7 @@ export function initHeroScene() {
         // ═══════════════════════════════════════════════════════════
 
         // Dynamic connections with subtle time variation
+        let lineIdx = 0;
         const connectionThreshold = 0.55 + Math.sin(time * 1.2) * 0.25;
         const maxLines = 500;
 

@@ -228,13 +228,19 @@ a {
 
 /* Hero Section with 3D Canvas */
 .hero {
+    height: 100vh;
+    height: 100svh;
+    /* Mobile Safari fix */
     min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 8rem var(--container-padding) 4rem;
     position: relative;
     overflow: hidden;
+    /* Prevent any content from causing scroll before 3D finishes */
+    box-sizing: border-box;
 }
 
 #hero-canvas-container {
