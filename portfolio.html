@@ -1028,6 +1028,20 @@
             });
         });
 
+        // --------------------------------------------------------
+        // PERFORMANCE: Disable hover effects while scrolling
+        // --------------------------------------------------------
+        let isScrollingTimer;
+        window.addEventListener('scroll', () => {
+            if (!document.body.classList.contains('is-scrolling')) {
+                document.body.classList.add('is-scrolling');
+            }
+            clearTimeout(isScrollingTimer);
+            isScrollingTimer = setTimeout(() => {
+                document.body.classList.remove('is-scrolling');
+            }, 100);
+        }, { passive: true });
+
     </script>
     <script src="assets/js/main.js?v=1.0"></script>
 </body>

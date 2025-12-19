@@ -98,7 +98,21 @@ body {
     color: var(--black);
     line-height: 1.6;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
+    /* Prevents rubber-banding on mobile */
+    -webkit-font-smoothing: antialiased;
     transition: color 0.5s var(--ease), background 0.5s var(--ease);
+}
+
+/* PERFORMANCE: Promote 3D container to GPU layer */
+#hero-canvas-container {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* PERFORMANCE: Disable pointer events while scrolling for 60fps */
+body.is-scrolling {
+    pointer-events: none;
 }
 
 a {
