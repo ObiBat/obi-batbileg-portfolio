@@ -909,9 +909,9 @@
 
                 // Simplified innovative label: [INDEX].[NAME]
                 if (sysLabel) {
-                    let txt = "01.NEURAL"; // Start directly with NEURAL
-                    if (p > 0.20) txt = "02.HELIX";
-                    if (p > 0.40) txt = "03.SINGULARITY";
+                    let txt = "01.RGB:BLUE"; // Neural (Cyan/Blue)
+                    if (p > 0.20) txt = "02.RGB:GREEN"; // Helix (Green)
+                    if (p > 0.40) txt = "03.RGB:RED";   // Singularity (Red/Orange)
                     if (p > 0.85) txt = "OK.READY";
                     sysLabel.innerText = txt;
                 }
