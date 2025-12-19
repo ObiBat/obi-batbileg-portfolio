@@ -1900,14 +1900,19 @@ export function initHeroScene() {
     let currentScroll = 0;
     let prevScroll = 0;
     let scrollVelocity = 0;
+    let smoothScrollVelocity = 0;
 
     function animate() {
         requestAnimationFrame(animate);
         time += 0.006;
 
-        // Calculate scroll velocity for momentum
-        scrollVelocity = Math.abs(currentScroll - prevScroll);
-        prevScroll += (currentScroll - prevScroll) * 0.15; // Faster response (was 0.08)
+        // Calculate and CLAMP scroll velocity to prevent bouncing on fast scroll
+        const rawVelocity = Math.abs(currentScroll - prevScroll);
+        const clampedVelocity = Math.min(rawVelocity, 0.015); // Max velocity cap
+        smoothScrollVelocity += (clampedVelocity - smoothScrollVelocity) * 0.1; // Smooth it
+        scrollVelocity = smoothScrollVelocity;
+
+        prevScroll += (currentScroll - prevScroll) * 0.08; // Smoother tracking (was 0.15)
 
         // ─────────────────────────────────────────────────────────────
         // PHASE CALCULATION - Weighted Scroll Zones
@@ -2093,7 +2098,7 @@ export function initHeroScene() {
         // Gentle turbulence (reduced intensity)
         const turbulenceBase = 0.10 * phyTurbulence; // Reduced from 0.15
         const turbulenceTransition = morphIntensity * 0.3 * phyTurbulence; // Reduced from 0.6
-        const turbulenceIntensity = turbulenceBase + turbulenceTransition + scrollVelocity * 1.5;
+        const turbulenceIntensity = turbulenceBase + turbulenceTransition + scrollVelocity * 0.5;
 
         // Harmonic resonance frequency based on phase
         const harmonicFreq = 1 + phaseIndex * 0.3;
@@ -2259,7 +2264,7 @@ export function initHeroScene() {
         targetRotY += (mouseX * 0.8 - targetRotY) * 0.02;
 
         // UNIFIED ROTATION - exact same rotation for perfect sync
-        const baseRotation = 0.0008 + scrollVelocity * 0.5;
+        const baseRotation = 0.0008 + scrollVelocity * 0.15;
         particleSystem.rotation.y += baseRotation;
         particleSystem.rotation.x = targetRotX;
 
@@ -2282,7 +2287,7 @@ export function initHeroScene() {
         const lineColArray = lineGeometry.attributes.color.array;
 
         // Unified breathing scale - same as particles would experience
-        const breathe = 1 + Math.sin(time * 2.5) * 0.03 + scrollVelocity * 0.2;
+        const breathe = 1 + Math.sin(time * 2.5) * 0.03 + scrollVelocity * 0.08;
         wireframeSystem.scale.setScalar(breathe);
         lineSystem.scale.setScalar(breathe);
         particleSystem.scale.setScalar(breathe);
@@ -2390,7 +2395,7 @@ export function initHeroScene() {
         // ═══════════════════════════════════════════════════════════
 
         let lineIdx = 0;
-        const connectionThreshold = 0.6 + Math.sin(time * 1.5) * 0.3 + scrollVelocity * 2;
+        const connectionThreshold = 0.6 + Math.sin(time * 1.5) * 0.3 + scrollVelocity * 0.5;
         const maxLines = 500;
 
         // Connect wireframe points to each other
