@@ -745,235 +745,188 @@ export function initHeroScene() {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // COSMOS - Enhanced Galaxy with Maximum Detail and Clarity
-    // Spiral Arms, Star Nurseries, Dark Matter, Satellites, Supernovae
+    // CRYSTALLINE - Geometric Bloom Masterpiece
+    // A stunning 3D crystal structure - completely distinct from Neural
     // ═══════════════════════════════════════════════════════════════════
 
-    function getCosmos(count) {
+    function getCrystalline(count) {
         const output = new Float32Array(count * 3);
 
-        // SCALE MULTIPLIER for larger, clearer galaxy
-        const SCALE = 1.3;
+        const SCALE = 2.0; // Large, prominent structure
 
-        // Enhanced multi-layer galaxy structure - MORE PARTICLES IN VISIBLE FEATURES
-        const coreCount = Math.floor(count * 0.10);           // Bright core (increased)
-        const bulgeCount = Math.floor(count * 0.12);          // Dense central bulge (increased)
-        const spiralCount = Math.floor(count * 0.38);         // Spiral arms (MAIN - 38%!)
-        const dustLaneCount = Math.floor(count * 0.06);       // Dark dust lanes
-        const haloCount = Math.floor(count * 0.08);           // Dark matter halo (reduced)
-        const nurseryCount = Math.floor(count * 0.10);        // Star forming regions 
-        const satelliteCount = Math.floor(count * 0.06);      // Satellite dwarf galaxies
-        const supernovaCount = Math.floor(count * 0.04);      // Supernova remnants
-        const filamentCount = count - coreCount - bulgeCount - spiralCount - dustLaneCount - haloCount - nurseryCount - satelliteCount - supernovaCount;
+        // Crystal structure components
+        const coreCount = Math.floor(count * 0.08);        // Central icosahedron
+        const innerShellCount = Math.floor(count * 0.12);  // Dodecahedron shell
+        const facetCount = Math.floor(count * 0.25);       // Geometric facets
+        const ringCount = Math.floor(count * 0.18);        // Orbital rings
+        const spikeCount = Math.floor(count * 0.20);       // Crystal spikes
+        const auraCount = Math.floor(count * 0.10);        // Outer aura
+        const connectCount = count - coreCount - innerShellCount - facetCount - ringCount - spikeCount - auraCount;
 
         let idx = 0;
-        const arms = 5; // 5 spiral arms for richness
 
         // ─────────────────────────────────────────────────────────────
-        // GALACTIC CORE - Blazing central region with jets
+        // ICOSAHEDRON CORE - Sacred geometry center
         // ─────────────────────────────────────────────────────────────
+        const phi = (1 + Math.sqrt(5)) / 2; // Golden ratio
+        const icoVertices = [
+            [-1, phi, 0], [1, phi, 0], [-1, -phi, 0], [1, -phi, 0],
+            [0, -1, phi], [0, 1, phi], [0, -1, -phi], [0, 1, -phi],
+            [phi, 0, -1], [phi, 0, 1], [-phi, 0, -1], [-phi, 0, 1]
+        ];
+
         for (let i = 0; i < coreCount; i++) {
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
-            const r = Math.pow(Math.random(), 0.5) * 0.4 * SCALE; // Brighter concentration
+            const v = icoVertices[i % 12];
+            const jitter = 0.15;
+            const r = 0.5 * SCALE;
 
-            // Core with mini-jets
-            const jet = (i % 10 < 2) ? (Math.random() * 0.5 * SCALE) * (i % 2 === 0 ? 1 : -1) : 0;
-
-            output[idx * 3] = r * Math.sin(phi) * Math.cos(theta);
-            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.3 + jet;
-            output[idx * 3 + 2] = r * Math.cos(phi);
+            output[idx * 3] = v[0] * r / 2 + (Math.random() - 0.5) * jitter;
+            output[idx * 3 + 1] = v[1] * r / 2 + (Math.random() - 0.5) * jitter;
+            output[idx * 3 + 2] = v[2] * r / 2 + (Math.random() - 0.5) * jitter;
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // GALACTIC BULGE - Dense old star population (SCALED)
+        // DODECAHEDRON SHELL - Outer geometric cage
         // ─────────────────────────────────────────────────────────────
-        for (let i = 0; i < bulgeCount; i++) {
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
-            const r = (0.35 + Math.pow(Math.random(), 0.5) * 0.9) * SCALE;
+        const dodecaVertices = [];
+        const phiInv = 1 / phi;
+        // Cube vertices
+        for (let i = -1; i <= 1; i += 2) {
+            for (let j = -1; j <= 1; j += 2) {
+                for (let k = -1; k <= 1; k += 2) {
+                    dodecaVertices.push([i, j, k]);
+                }
+            }
+        }
+        // Rectangle vertices
+        dodecaVertices.push([0, phi, phiInv], [0, phi, -phiInv], [0, -phi, phiInv], [0, -phi, -phiInv]);
+        dodecaVertices.push([phiInv, 0, phi], [-phiInv, 0, phi], [phiInv, 0, -phi], [-phiInv, 0, -phi]);
+        dodecaVertices.push([phi, phiInv, 0], [phi, -phiInv, 0], [-phi, phiInv, 0], [-phi, -phiInv, 0]);
 
-            // Boxy/peanut shaped bulge
-            const boxy = 1 + Math.sin(theta * 2) * 0.12;
+        for (let i = 0; i < innerShellCount; i++) {
+            const v = dodecaVertices[i % 20];
+            const r = 1.2 * SCALE;
+            const edgeNoise = Math.random() * 0.1;
 
-            output[idx * 3] = r * Math.sin(phi) * Math.cos(theta) * boxy;
-            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.45;
-            output[idx * 3 + 2] = r * Math.cos(phi) * 0.85;
+            output[idx * 3] = v[0] * r + (Math.random() - 0.5) * 0.08;
+            output[idx * 3 + 1] = v[1] * r + (Math.random() - 0.5) * 0.08;
+            output[idx * 3 + 2] = v[2] * r + (Math.random() - 0.5) * 0.08;
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // SPIRAL ARMS - Sharp, well-defined logarithmic spirals
+        // GEOMETRIC FACETS - Triangular crystal faces
         // ─────────────────────────────────────────────────────────────
-        for (let i = 0; i < spiralCount; i++) {
-            const t = i / spiralCount;
-            const arm = i % arms;
-            const armAngle = (arm / arms) * Math.PI * 2;
+        for (let i = 0; i < facetCount; i++) {
+            const t = i / facetCount;
+            const faceIdx = i % 20;
 
-            // TIGHTER spiral with consistent tightness
-            const spiralTightness = 0.25;
-            const r = (0.6 + t * 4.5) * SCALE; // Scaled radius
-            const theta = Math.log(r / SCALE) / spiralTightness + armAngle;
-
-            // NARROWER arm width for sharper definition
-            const armWidth = 0.08 + t * 0.20;
-
-            // Strong clumping along arm center (like real galaxies)
-            const armCenter = Math.pow(Math.cos((i % 50) / 50 * Math.PI), 4);
-            const armOffset = (Math.random() - 0.5) * armWidth * (1 - armCenter * 0.6);
-
-            // Perturbations for organic structure
-            const perturbation = Math.sin(t * 20 + arm * 7) * 0.12 * t;
-
-            // Very thin disk with gentle warp
-            const warp = t > 0.75 ? Math.sin(theta * 2) * 0.15 * (t - 0.75) : 0;
-            const height = ((Math.random() - 0.5) * (0.05 + t * 0.08) + warp) * SCALE;
-
-            const finalR = r + (armOffset + perturbation) * SCALE;
-            output[idx * 3] = Math.cos(theta) * finalR;
-            output[idx * 3 + 1] = height;
-            output[idx * 3 + 2] = Math.sin(theta) * finalR;
-            idx++;
-        }
-
-        // ─────────────────────────────────────────────────────────────
-        // DUST LANES - Dark ribbons between spiral arms
-        // ─────────────────────────────────────────────────────────────
-        for (let i = 0; i < dustLaneCount; i++) {
-            const t = i / dustLaneCount;
-            const arm = i % arms;
-            const armAngle = (arm / arms) * Math.PI * 2 + Math.PI / arms; // Offset between arms
-
-            const r = 1.0 + t * 4.0;
-            const theta = Math.log(r) / 0.3 + armAngle;
-
-            // Narrow dust lanes
-            const laneWidth = 0.08 + t * 0.15;
-            const offset = (Math.random() - 0.5) * laneWidth;
-
-            output[idx * 3] = Math.cos(theta) * (r + offset);
-            output[idx * 3 + 1] = (Math.random() - 0.5) * 0.05;
-            output[idx * 3 + 2] = Math.sin(theta) * (r + offset);
-            idx++;
-        }
-
-        // ─────────────────────────────────────────────────────────────
-        // DARK MATTER HALO - Vast invisible structure
-        // ─────────────────────────────────────────────────────────────
-        for (let i = 0; i < haloCount; i++) {
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
-
-            // NFW profile - extends very far
+            // Create triangular facet distributions
             const u = Math.random();
-            const r = 4 + Math.pow(u, 0.35) * 6;
+            const v = Math.random();
+            const sqrtU = Math.sqrt(u);
+            const bary = [1 - sqrtU, sqrtU * (1 - v), sqrtU * v];
+
+            // Rotate to different facet positions
+            const theta = (faceIdx / 20) * Math.PI * 2;
+            const phiAngle = ((faceIdx % 4) / 4) * Math.PI;
+
+            const r = 0.8 + t * 0.6;
+            const facetR = r * SCALE;
+
+            output[idx * 3] = Math.sin(phiAngle) * Math.cos(theta) * facetR * bary[0] +
+                Math.cos(phiAngle) * facetR * bary[1];
+            output[idx * 3 + 1] = Math.sin(phiAngle) * Math.sin(theta) * facetR * bary[0] +
+                Math.sin(theta) * facetR * bary[2];
+            output[idx * 3 + 2] = Math.cos(phiAngle) * facetR * bary[0] +
+                Math.sin(phiAngle) * facetR * bary[2];
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // ORBITAL RINGS - Perfectly circular particle rings
+        // ─────────────────────────────────────────────────────────────
+        const rings = [
+            { radius: 1.8, tilt: 0.3, thickness: 0.03 },
+            { radius: 2.2, tilt: -0.5, thickness: 0.04 },
+            { radius: 2.6, tilt: 0.8, thickness: 0.03 },
+            { radius: 3.0, tilt: -0.2, thickness: 0.05 },
+            { radius: 3.4, tilt: 0.6, thickness: 0.03 }
+        ];
+
+        for (let i = 0; i < ringCount; i++) {
+            const ring = rings[i % rings.length];
+            const angle = (i / ringCount) * Math.PI * 2 * rings.length;
+
+            const r = ring.radius * SCALE;
+            const x = Math.cos(angle) * r;
+            const z = Math.sin(angle) * r;
+            const y = Math.sin(angle * 2) * ring.tilt * SCALE;
+
+            // Add thickness variation
+            const thickness = ring.thickness * SCALE;
+            output[idx * 3] = x + (Math.random() - 0.5) * thickness;
+            output[idx * 3 + 1] = y + (Math.random() - 0.5) * thickness;
+            output[idx * 3 + 2] = z + (Math.random() - 0.5) * thickness;
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // CRYSTAL SPIKES - Sharp geometric protrusions
+        // ─────────────────────────────────────────────────────────────
+        const spikeDirections = [
+            [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1],
+            [1, 1, 1], [-1, 1, 1], [1, -1, 1], [1, 1, -1],
+            [-1, -1, 1], [-1, 1, -1], [1, -1, -1], [-1, -1, -1]
+        ];
+
+        for (let i = 0; i < spikeCount; i++) {
+            const spike = spikeDirections[i % 14];
+            const len = Math.sqrt(spike[0] ** 2 + spike[1] ** 2 + spike[2] ** 2);
+            const norm = [spike[0] / len, spike[1] / len, spike[2] / len];
+
+            // Position along spike
+            const t = Math.pow(Math.random(), 0.7);
+            const spikeLen = (2.0 + t * 2.5) * SCALE;
+
+            // Taper toward tip
+            const taper = 0.15 * (1 - t);
+
+            output[idx * 3] = norm[0] * spikeLen + (Math.random() - 0.5) * taper;
+            output[idx * 3 + 1] = norm[1] * spikeLen + (Math.random() - 0.5) * taper;
+            output[idx * 3 + 2] = norm[2] * spikeLen + (Math.random() - 0.5) * taper;
+            idx++;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // OUTER AURA - Ethereal glow particles
+        // ─────────────────────────────────────────────────────────────
+        for (let i = 0; i < auraCount; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            const r = (4.5 + Math.random() * 1.5) * SCALE;
 
             output[idx * 3] = r * Math.sin(phi) * Math.cos(theta);
-            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.75;
+            output[idx * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
             output[idx * 3 + 2] = r * Math.cos(phi);
             idx++;
         }
 
         // ─────────────────────────────────────────────────────────────
-        // STAR NURSERIES - Glowing HII regions along arms (SCALED)
+        // ENERGY CONNECTIONS - Lines between vertices
         // ─────────────────────────────────────────────────────────────
-        const nurseryPositions = [
-            { r: 1.6 * SCALE, angle: 0.6, size: 0.35 * SCALE },
-            { r: 2.3 * SCALE, angle: 1.8, size: 0.4 * SCALE },
-            { r: 3.0 * SCALE, angle: 3.2, size: 0.45 * SCALE },
-            { r: 1.4 * SCALE, angle: 4.5, size: 0.3 * SCALE },
-            { r: 3.5 * SCALE, angle: 5.8, size: 0.5 * SCALE },
-            { r: 2.0 * SCALE, angle: 2.5, size: 0.38 * SCALE },
-            { r: 3.8 * SCALE, angle: 0.3, size: 0.42 * SCALE },
-            { r: 2.6 * SCALE, angle: 4.0, size: 0.35 * SCALE }
-        ];
+        for (let i = 0; i < connectCount; i++) {
+            const t = Math.random();
+            const v1 = icoVertices[Math.floor(Math.random() * 12)];
+            const v2 = dodecaVertices[Math.floor(Math.random() * 20)];
 
-        for (let i = 0; i < nurseryCount; i++) {
-            const nursery = nurseryPositions[i % nurseryPositions.length];
+            const r1 = 0.5 * SCALE;
+            const r2 = 1.2 * SCALE;
 
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
-            const clusterR = Math.pow(Math.random(), 0.6) * nursery.size;
-
-            const baseX = Math.cos(nursery.angle) * nursery.r;
-            const baseZ = Math.sin(nursery.angle) * nursery.r;
-
-            output[idx * 3] = baseX + clusterR * Math.sin(phi) * Math.cos(theta);
-            output[idx * 3 + 1] = clusterR * Math.sin(phi) * Math.sin(theta) * 0.35;
-            output[idx * 3 + 2] = baseZ + clusterR * Math.cos(phi);
-            idx++;
-        }
-
-        // ─────────────────────────────────────────────────────────────
-        // SATELLITE GALAXIES - Dwarf companions orbiting (SCALED)
-        // ─────────────────────────────────────────────────────────────
-        const satellites = [
-            { x: 5.5 * SCALE, y: 1.2 * SCALE, z: 2.0 * SCALE, size: 0.6 * SCALE },
-            { x: -4.0 * SCALE, y: -0.8 * SCALE, z: 4.5 * SCALE, size: 0.45 * SCALE },
-            { x: 3.5 * SCALE, y: 0.5 * SCALE, z: -5.0 * SCALE, size: 0.5 * SCALE },
-            { x: -6.0 * SCALE, y: 1.5 * SCALE, z: -2.0 * SCALE, size: 0.4 * SCALE }
-        ];
-
-        for (let i = 0; i < satelliteCount; i++) {
-            const sat = satellites[i % satellites.length];
-
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
-            const r = Math.pow(Math.random(), 0.5) * sat.size;
-
-            output[idx * 3] = sat.x + r * Math.sin(phi) * Math.cos(theta);
-            output[idx * 3 + 1] = sat.y + r * Math.sin(phi) * Math.sin(theta) * 0.6;
-            output[idx * 3 + 2] = sat.z + r * Math.cos(phi);
-            idx++;
-        }
-
-        // ─────────────────────────────────────────────────────────────
-        // SUPERNOVA REMNANTS - Expanding shells of brilliance
-        // ─────────────────────────────────────────────────────────────
-        const supernovae = [
-            { r: 2.0, angle: 1.2, size: 0.25 },
-            { r: 3.5, angle: 3.8, size: 0.3 },
-            { r: 1.5, angle: 5.2, size: 0.2 }
-        ];
-
-        for (let i = 0; i < supernovaCount; i++) {
-            const sn = supernovae[i % supernovae.length];
-
-            // Expanding shell
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
-            const shellR = sn.size * (0.8 + Math.random() * 0.4);
-
-            const baseX = Math.cos(sn.angle) * sn.r;
-            const baseZ = Math.sin(sn.angle) * sn.r;
-
-            output[idx * 3] = baseX + shellR * Math.sin(phi) * Math.cos(theta);
-            output[idx * 3 + 1] = shellR * Math.sin(phi) * Math.sin(theta);
-            output[idx * 3 + 2] = baseZ + shellR * Math.cos(phi);
-            idx++;
-        }
-
-        // ─────────────────────────────────────────────────────────────
-        // COSMIC FILAMENTS - Large-scale structure web
-        // ─────────────────────────────────────────────────────────────
-        for (let i = 0; i < filamentCount; i++) {
-            const filamentIdx = i % 10; // 10 major filaments
-            const t = (i / filamentCount) * 10;
-
-            const baseAngle = (filamentIdx / 10) * Math.PI * 2;
-            const filamentR = 6 + t * 4; // Extended reach
-
-            // Complex wave pattern
-            const wave = Math.sin(t * 1.5 + filamentIdx * 0.7) * 1.0;
-            const verticalWave = Math.cos(t * 2 + filamentIdx * 0.3) * 0.6;
-
-            // Galaxy cluster nodes
-            const node = Math.pow(Math.sin(t * 4), 10) * 0.8;
-
-            output[idx * 3] = Math.cos(baseAngle + wave * 0.08) * (filamentR + node);
-            output[idx * 3 + 1] = verticalWave + (Math.random() - 0.5) * 0.4;
-            output[idx * 3 + 2] = Math.sin(baseAngle + wave * 0.08) * (filamentR + node);
+            output[idx * 3] = v1[0] * r1 * (1 - t) + v2[0] * r2 * t;
+            output[idx * 3 + 1] = v1[1] * r1 * (1 - t) + v2[1] * r2 * t;
+            output[idx * 3 + 2] = v1[2] * r1 * (1 - t) + v2[2] * r2 * t;
             idx++;
         }
 
@@ -1038,19 +991,19 @@ export function initHeroScene() {
         },
 
         // ═══════════════════════════════════════════════════════════════
-        // Phase 3: COSMOS - Creation, Infinity, Wonder, Grand Finale
-        // Majestic, smooth galaxy rotation
+        // Phase 3: CRYSTALLINE - Geometric Perfection, Sacred Geometry
+        // Stunning crystal structure with spikes and rings
         // ═══════════════════════════════════════════════════════════════
         {
-            data: getCosmos(particlesCount),
-            name: 'COSMOS',
+            data: getCrystalline(particlesCount),
+            name: 'CRYSTALLINE',
             physics: {
-                turbulence: 0.30,       // Gentle galactic wind (was 0.40)
-                attraction: 0.05,       // Subtle core pull (was 0.06)
-                orbit: 0.70,            // Smooth spiral (was 0.85)
-                pulse: 0.15,            // Soft breathing (was 0.22)
-                spring: 0.025,          // Very soft (was 0.035)
-                dampen: 0.98            // Ultra smooth (was 0.965)
+                turbulence: 0.25,       // Minimal chaos - precise geometry
+                attraction: 0.04,       // Subtle center pull
+                orbit: 0.50,            // Elegant rotation
+                pulse: 0.12,            // Crystalline breathing
+                spring: 0.02,           // Very soft, smooth
+                dampen: 0.985           // Ultra smooth crystal motion
             }
         }
     ];
@@ -1886,9 +1839,9 @@ export function initHeroScene() {
         { primary: new THREE.Color(0x00ff66), secondary: new THREE.Color(0x44ffaa) }, // 1 HELIX: DNA Green → Bio Mint
         { primary: new THREE.Color(0xff6600), secondary: new THREE.Color(0xff0044) }, // 2 SINGULARITY: Accretion Orange → Event Horizon Red
         {
-            primary: new THREE.Color(0xffcc44),   // COSMOS: Golden core/star formation
-            secondary: new THREE.Color(0xff66aa), // Pink/magenta nebula regions
-            tertiary: new THREE.Color(0x44ddff)   // Cyan young stars
+            primary: new THREE.Color(0xeeffff),   // CRYSTALLINE: Diamond white
+            secondary: new THREE.Color(0x88ddff), // Ice blue facets
+            tertiary: new THREE.Color(0xaaeeff)   // Prismatic highlights
         }
     ];
 
