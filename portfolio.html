@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FFFFFF"> <!-- Matches Light Mode default -->
     <meta name="description" content="Obi Batbileg — Design Technologist crafting intelligent digital experiences">
     <title>Obi Batbileg — Design Technologist</title>
 
@@ -108,7 +110,185 @@
                 Available for Projects
             </span>
             <h1 class="hero-title">
-                <span class="u-block">Design</span>
+                <span class="u-block hero-title-row">
+                    Design
+                    <div class="sys-progress-container" aria-hidden="true">
+                        <svg class="sys-progress-icon" viewBox="0 0 120 120">
+                            <defs>
+                                <!-- Gradient for glow effect -->
+                                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:currentColor;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:currentColor;stop-opacity:0.4" />
+                                </linearGradient>
+
+                                <!-- Glow filter -->
+                                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+
+                                <!-- Pulse animation for core -->
+                                <radialGradient id="coreGradient" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" style="stop-color:currentColor;stop-opacity:1" />
+                                    <stop offset="70%" style="stop-color:currentColor;stop-opacity:0.6" />
+                                    <stop offset="100%" style="stop-color:currentColor;stop-opacity:0" />
+                                </radialGradient>
+                            </defs>
+
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <!-- LAYER 1: Outer Technical Track (Data Visualization) -->
+                            <!-- ═══════════════════════════════════════════════════ -->
+
+                            <!-- Outermost faint ring -->
+                            <circle cx="60" cy="60" r="56" stroke="currentColor" stroke-width="0.5" fill="none"
+                                opacity="0.08" />
+
+                            <!-- Technical tick marks (60 divisions like a clock) -->
+                            <g class="sys-ticks" opacity="0.25">
+                                <g transform="rotate(0 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="10" stroke="currentColor" stroke-width="1.5" />
+                                </g>
+                                <g transform="rotate(30 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="9" stroke="currentColor" stroke-width="0.8" />
+                                </g>
+                                <g transform="rotate(60 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="9" stroke="currentColor" stroke-width="0.8" />
+                                </g>
+                                <g transform="rotate(90 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="10" stroke="currentColor" stroke-width="1.5" />
+                                </g>
+                                <g transform="rotate(120 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="9" stroke="currentColor" stroke-width="0.8" />
+                                </g>
+                                <g transform="rotate(150 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="9" stroke="currentColor" stroke-width="0.8" />
+                                </g>
+                                <g transform="rotate(180 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="10" stroke="currentColor" stroke-width="1.5" />
+                                </g>
+                                <g transform="rotate(210 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="9" stroke="currentColor" stroke-width="0.8" />
+                                </g>
+                                <g transform="rotate(240 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="9" stroke="currentColor" stroke-width="0.8" />
+                                </g>
+                                <g transform="rotate(270 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="10" stroke="currentColor" stroke-width="1.5" />
+                                </g>
+                                <g transform="rotate(300 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="9" stroke="currentColor" stroke-width="0.8" />
+                                </g>
+                                <g transform="rotate(330 60 60)">
+                                    <line x1="60" y1="6" x2="60" y2="9" stroke="currentColor" stroke-width="0.8" />
+                                </g>
+                            </g>
+
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <!-- LAYER 2: Primary Progress Arc System               -->
+                            <!-- ═══════════════════════════════════════════════════ -->
+
+                            <!-- Background track -->
+                            <circle cx="60" cy="60" r="48" stroke="currentColor" stroke-width="3" fill="none"
+                                opacity="0.1" />
+
+                            <!-- Dashed technical overlay -->
+                            <circle cx="60" cy="60" r="48" stroke="currentColor" stroke-width="1" fill="none"
+                                stroke-dasharray="2 6" opacity="0.2" />
+
+                            <!-- MAIN PROGRESS ARC with gradient and glow -->
+                            <circle class="sys-progress-ring" cx="60" cy="60" r="48" stroke="url(#progressGradient)"
+                                stroke-width="4" fill="none" stroke-dasharray="301.6" stroke-dashoffset="301.6"
+                                stroke-linecap="round" transform="rotate(-90 60 60)" filter="url(#glow)" />
+
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <!-- LAYER 3: Secondary Arc (Counter-rotating)          -->
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <circle class="sys-arc-secondary" cx="60" cy="60" r="40" stroke="currentColor"
+                                stroke-width="1.5" fill="none" stroke-dasharray="60 191" stroke-dashoffset="0"
+                                stroke-linecap="round" transform="rotate(45 60 60)" opacity="0.4" />
+
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <!-- LAYER 4: Inner Tech Ring (Segmented)               -->
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <circle cx="60" cy="60" r="32" stroke="currentColor" stroke-width="0.5" fill="none"
+                                opacity="0.15" />
+
+                            <!-- Segmented inner arcs -->
+                            <g class="sys-inner-segments" opacity="0.3">
+                                <path d="M 60 28 A 32 32 0 0 1 92 60" stroke="currentColor" stroke-width="2" fill="none"
+                                    stroke-linecap="round" />
+                                <path d="M 92 60 A 32 32 0 0 1 60 92" stroke="currentColor" stroke-width="2" fill="none"
+                                    stroke-linecap="round" opacity="0.5" />
+                            </g>
+
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <!-- LAYER 5: Orbital Elements (Satellites)             -->
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <g class="sys-orbital" transform-origin="60 60">
+                                <!-- Orbital ring -->
+                                <circle cx="60" cy="60" r="25" stroke="currentColor" stroke-width="0.5" fill="none"
+                                    opacity="0.1" stroke-dasharray="3 5" />
+
+                                <!-- Satellite 1 -->
+                                <circle class="sys-satellite" cx="60" cy="35" r="2.5" fill="currentColor"
+                                    opacity="0.8" />
+
+                                <!-- Satellite 2 (opposite) -->
+                                <circle class="sys-satellite-2" cx="60" cy="85" r="1.5" fill="currentColor"
+                                    opacity="0.5" />
+                            </g>
+
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <!-- LAYER 6: Crosshair Targeting System                -->
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <g class="sys-spinner" transform-origin="60 60" opacity="0.6">
+                                <!-- Precision crosshair lines -->
+                                <line x1="60" y1="42" x2="60" y2="50" stroke="currentColor" stroke-width="1.5" />
+                                <line x1="60" y1="70" x2="60" y2="78" stroke="currentColor" stroke-width="1.5" />
+                                <line x1="42" y1="60" x2="50" y2="60" stroke="currentColor" stroke-width="1.5" />
+                                <line x1="70" y1="60" x2="78" y2="60" stroke="currentColor" stroke-width="1.5" />
+
+                                <!-- Diagonal accents -->
+                                <line x1="47" y1="47" x2="52" y2="52" stroke="currentColor" stroke-width="1"
+                                    opacity="0.5" />
+                                <line x1="68" y1="68" x2="73" y2="73" stroke="currentColor" stroke-width="1"
+                                    opacity="0.5" />
+                                <line x1="47" y1="73" x2="52" y2="68" stroke="currentColor" stroke-width="1"
+                                    opacity="0.5" />
+                                <line x1="68" y1="52" x2="73" y2="47" stroke="currentColor" stroke-width="1"
+                                    opacity="0.5" />
+                            </g>
+
+                            <!-- ═══════════════════════════════════════════════════ -->
+                            <!-- LAYER 7: Pulsating Core                            -->
+                            <!-- ═══════════════════════════════════════════════════ -->
+
+                            <!-- Outer core glow -->
+                            <circle class="sys-core-glow" cx="60" cy="60" r="12" fill="url(#coreGradient)"
+                                opacity="0.4" />
+
+                            <!-- Inner core ring -->
+                            <circle cx="60" cy="60" r="8" stroke="currentColor" stroke-width="1" fill="none"
+                                opacity="0.3" />
+
+                            <!-- Solid core -->
+                            <circle class="sys-core" cx="60" cy="60" r="5" fill="currentColor" />
+
+                            <!-- Core highlight -->
+                            <circle cx="58" cy="58" r="1.5" fill="currentColor" opacity="0.3" />
+
+                        </svg>
+
+                        <!-- Status Label -->
+                        <div class="sys-label-container">
+                            <span class="sys-label">SYS.LOAD</span>
+                            <span class="sys-percentage">0%</span>
+                        </div>
+                    </div>
+                </span>
                 <span class="u-block italic">Technologist</span>
             </h1>
             <p class="hero-description" style="max-width: 500px; font-size: 1.125rem; margin-bottom: 2rem;">
@@ -127,7 +307,8 @@
         <div class="projects-wrapper">
 
             <!-- Intro Slide / Title -->
-            <div class="project-item" style="justify-content: flex-end; align-items: flex-start; width: 60vw;">
+            <div class="project-item intro-project-item"
+                style="justify-content: flex-end; align-items: flex-start; width: 60vw;">
                 <span class="section-label">Selected Works</span>
                 <h2 class="section-title" style="font-size: clamp(4rem, 10vw, 8rem);">
                     Recent<br><span class="italic">Dispatch</span>
@@ -557,6 +738,7 @@
                     <ul class="footer-links">
                         <li><a href="#projects" class="footer-link">Work</a></li>
                         <li><a href="#experience" class="footer-link">Journey</a></li>
+                        <li><a href="#" class="footer-link">Foundation</a></li>
                         <li><a href="#skills" class="footer-link">Capabilities</a></li>
                     </ul>
                 </div>
@@ -687,41 +869,180 @@
         gsap.registerPlugin(ScrollTrigger);
 
         // Hero Pinning
+        const sysRing = document.querySelector(".sys-progress-ring");
+        const sysSpinner = document.querySelector(".sys-spinner");
+        const sysLabel = document.querySelector(".sys-label");
+        const sysPercentage = document.querySelector(".sys-percentage");
+        const sysArcSecondary = document.querySelector(".sys-arc-secondary");
+        const sysTicks = document.querySelector(".sys-ticks");
+        const sysCoreGlow = document.querySelector(".sys-core-glow");
+
+        // r=48, Circumference = 2 * PI * 48 ≈ 301.6
+        const totalDash = 301.6;
+
         ScrollTrigger.create({
             trigger: ".hero",
             start: "top top",
-            end: "+=6000", // Extended scroll for 8 immersive shape phases
+            end: "+=8000", // Extended scroll for immersive masterpiece appreciation
             pin: true,
-            scrub: 1, // 1s lag for heavy, premium feel
+            scrub: 0.5, // Responsive feel (3D scene has its own smoothing)
             onUpdate: (self) => {
+                const p = self.progress;
+
+                // Update 3D Scene
                 if (heroControls && heroControls.updateScroll) {
-                    heroControls.updateScroll(self.progress);
+                    heroControls.updateScroll(p);
+                }
+
+                // ═══════════════════════════════════════════════════════════
+                // PREMIUM ICON ANIMATION SYSTEM
+                // ═══════════════════════════════════════════════════════════
+
+                // 1. Primary Progress Ring
+                if (sysRing) {
+                    const offset = totalDash - (p * totalDash);
+                    sysRing.style.strokeDashoffset = offset;
+                }
+
+                // 2. Crosshair Spinner (double rotation for intensity)
+                if (sysSpinner) {
+                    sysSpinner.style.transform = `rotate(${p * 720}deg)`;
+                }
+
+                // Simplified innovative label: [INDEX].[NAME]
+                if (sysLabel) {
+                    let txt = "01.RGB:BLUE"; // Neural (Cyan/Blue)
+                    if (p > 0.15) txt = "02.RGB:GREEN"; // Helix (Green) - triggers earlier
+                    if (p > 0.35) txt = "03.RGB:RED";   // Singularity (Red/Orange) - triggers earlier
+                    if (p > 0.85) txt = "OK.READY";
+                    sysLabel.innerText = txt;
+                }
+
+                // 4. Percentage Display
+                if (sysPercentage) {
+                    sysPercentage.innerText = Math.round(p * 100) + "%";
+                }
+
+                // 5. Secondary Arc (counter-sync with scroll for dynamic effect)
+                if (sysArcSecondary) {
+                    // Shift the dashoffset to create movement illusion
+                    sysArcSecondary.style.strokeDashoffset = p * 100;
+                }
+
+                // 6. Tick Marks (fade out as progress increases for focus)
+                if (sysTicks) {
+                    sysTicks.style.opacity = Math.max(0.1, 0.25 - (p * 0.2));
+                }
+
+                // 7. Core Glow (intensify on higher progress)
+                if (sysCoreGlow) {
+                    sysCoreGlow.style.opacity = 0.4 + (p * 0.5);
                 }
             }
         });
 
-        // Projects Horizontal Pinning
+        // Projects Horizontal Pinning with Professional Pause & Snapping
         const projectsContainer = document.querySelector(".projects-wrapper");
 
-        // Calculate total width of movement
-        // We want to scroll the entire width of the wrapper minus the viewport width
-        // However, since we flex-ed it, we can just grab scrollWidth
-        let totalWidth = projectsContainer.scrollWidth;
+        // Configuration for the pause
+        const pauseScrollAmount = window.innerHeight * 0.6;
 
-        // It renders nicely if we assume dynamic width. 
-        // We need to wait for layout? For now we can estimate or use a function value in 'end'
+        // Helper to recalculate snap points dynamically
+        const getProjectSnap = (value) => {
+            const containerWidth = projectsContainer.scrollWidth;
+            const screenW = window.innerWidth;
+            const maxScroll = containerWidth - screenW;
 
-        gsap.to(projectsContainer, {
-            x: () => -(projectsContainer.scrollWidth - window.innerWidth),
-            ease: "none",
+            if (maxScroll <= 0) return value;
+
+            const totalDurationUnits = pauseScrollAmount + containerWidth;
+            const pauseRatio = pauseScrollAmount / totalDurationUnits;
+
+            // 1. If in Pause Zone
+            if (value < pauseRatio) {
+                return (value < pauseRatio / 2) ? 0 : pauseRatio;
+            }
+
+            // 2. If in Horizontal Scroll Zone
+            const progressInScroll = (value - pauseRatio) / (1 - pauseRatio);
+            const currentScrollX = progressInScroll * maxScroll;
+
+            // Find closest project item
+            const items = document.querySelectorAll(".project-item");
+            let closestDist = Infinity;
+            let closestOffset = 0;
+
+            items.forEach(item => {
+                const diff = Math.abs(item.offsetLeft - currentScrollX);
+                if (diff < closestDist) {
+                    closestDist = diff;
+                    closestOffset = item.offsetLeft;
+                }
+            });
+
+            const finalOffset = Math.min(closestOffset, maxScroll);
+            const targetProgressInScroll = finalOffset / maxScroll;
+
+            return pauseRatio + (targetProgressInScroll * (1 - pauseRatio));
+        };
+
+        const projectTl = gsap.timeline({
             scrollTrigger: {
                 trigger: ".project-section",
                 start: "top top",
                 pin: true,
-                scrub: 1,
-                end: () => "+=" + (projectsContainer.scrollWidth) // Duration proportional to length
+                scrub: 0.8, // Slightly more responsive scrub
+                invalidateOnRefresh: true,
+                snap: {
+                    snapTo: getProjectSnap,
+                    duration: { min: 0.1, max: 0.4 }, // Faster snap
+                    delay: 0.0, // Instant snap start (zero delay)
+                    ease: "power3.out" // Premium fast-start/soft-land
+                },
+                end: () => "+=" + (projectsContainer.scrollWidth + pauseScrollAmount)
             }
         });
+
+        // Phase 1: The Pause (Hold Position)
+        projectTl.to({}, {
+            duration: pauseScrollAmount
+        });
+
+        // Phase 2: The Horizontal Scroll
+        projectTl.to(projectsContainer, {
+            x: () => -(projectsContainer.scrollWidth - window.innerWidth),
+            ease: "none",
+            duration: projectsContainer.scrollWidth
+        });
+
+        // --------------------------------------------------------
+        // Vertical Sections: Subtle Stops (Premium Pinning)
+        // --------------------------------------------------------
+        const pinSections = gsap.utils.toArray("footer");
+        pinSections.forEach(section => {
+            ScrollTrigger.create({
+                trigger: section,
+                start: "top top",
+                end: "+=" + (window.innerHeight * 0.4),
+                pin: true,
+                pinSpacing: true,
+                scrub: true
+            });
+        });
+
+        // --------------------------------------------------------
+        // PERFORMANCE: Disable hover effects while scrolling
+        // --------------------------------------------------------
+        let isScrollingTimer;
+        window.addEventListener('scroll', () => {
+            if (!document.body.classList.contains('is-scrolling')) {
+                document.body.classList.add('is-scrolling');
+            }
+            clearTimeout(isScrollingTimer);
+            isScrollingTimer = setTimeout(() => {
+                document.body.classList.remove('is-scrolling');
+            }, 100);
+        }, { passive: true });
 
     </script>
     <script src="assets/js/main.js?v=1.0"></script>

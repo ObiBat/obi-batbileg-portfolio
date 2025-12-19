@@ -98,7 +98,21 @@ body {
     color: var(--black);
     line-height: 1.6;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
+    /* Prevents rubber-banding on mobile */
+    -webkit-font-smoothing: antialiased;
     transition: color 0.5s var(--ease), background 0.5s var(--ease);
+}
+
+/* PERFORMANCE: Promote 3D container to GPU layer */
+#hero-canvas-container {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* PERFORMANCE: Disable pointer events while scrolling for 60fps */
+body.is-scrolling {
+    pointer-events: none;
 }
 
 a {
@@ -141,7 +155,9 @@ a {
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: 2rem var(--container-padding);
+    padding: clamp(2rem, 5vw, 4rem) var(--container-padding);
+    padding-top: calc(2rem + env(safe-area-inset-top));
+    /* Dynamic Island Safe Area */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -228,13 +244,19 @@ a {
 
 /* Hero Section with 3D Canvas */
 .hero {
+    height: 100vh;
+    height: 100svh;
+    /* Mobile Safari fix */
     min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 8rem var(--container-padding) 4rem;
     position: relative;
     overflow: hidden;
+    /* Prevent any content from causing scroll before 3D finishes */
+    box-sizing: border-box;
 }
 
 #hero-canvas-container {
@@ -591,6 +613,13 @@ footer {
         grid-template-columns: 1fr;
         gap: 4rem;
     }
+
+    .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        text-align: left;
+    }
 }
 
 /* Utilities */
@@ -850,9 +879,9 @@ footer {
     /* Using absolute units for reliability */
     z-index: 2147483648;
     /* Z-Index 2B+1 */
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--black);
     backdrop-filter: blur(10px);
-    border: 1px solid var(--gray-200);
+    border: 1px solid var(--black);
     padding: 0.75rem 1.25rem;
     border-radius: 99px;
     cursor: pointer;
@@ -863,12 +892,12 @@ footer {
     align-items: center;
     gap: 0.5rem;
     transition: all 0.2s;
-    color: var(--black);
+    color: var(--white);
 }
 
 .cs-close-btn:hover {
-    background: var(--black);
-    color: var(--white);
+    background: var(--white);
+    color: var(--black);
     border-color: var(--black);
 }
 
@@ -1113,4 +1142,223 @@ button:disabled,
 input:disabled,
 .disabled {
     cursor: not-allowed !important;
+}
+
+/* Mobile Adjustment for Recent Dispatch Section Width */
+@media (max-width: 768px) {
+    .intro-project-item {
+        width: 100vw !important;
+    }
+}
+
+/* 
+   ═══════════════════════════════════════════════════════════════
+   ADVANCED ENGINEERED PROGRESS ICON - Premium Design System
+   ═══════════════════════════════════════════════════════════════
+*/
+
+.hero-title-row {
+    display: flex !important;
+    align-items: center;
+    gap: 0.15em;
+    flex-wrap: wrap;
+}
+
+.sys-progress-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    height: 0.65em;
+    transform: translateY(-0.05em);
+    position: relative;
+}
+
+.sys-progress-icon {
+    width: 0.55em;
+    height: 0.55em;
+    overflow: visible;
+    filter: drop-shadow(0 0 1px currentColor);
+}
+
+/* Label Container */
+.sys-label-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    transform: translateY(2px);
+}
+
+.sys-label {
+    font-family: var(--font-mono);
+    font-size: 0.11em;
+    letter-spacing: 0.15em;
+    opacity: 0.7;
+    font-weight: 600;
+    text-transform: uppercase;
+    line-height: 1;
+    transition: opacity 0.3s ease;
+}
+
+.sys-percentage {
+    font-family: var(--font-mono);
+    font-size: 0.09em;
+    letter-spacing: 0.05em;
+    opacity: 0.4;
+    font-weight: 400;
+    line-height: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYER ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Spinner rotation handled by JS, but base origin */
+.sys-spinner {
+    transform-origin: 60px 60px;
+    transition: transform 0.1s linear;
+}
+
+/* Orbital layer - continuous slow rotation */
+.sys-orbital {
+    transform-origin: 60px 60px;
+    animation: orbital-drift 20s linear infinite;
+}
+
+@keyframes orbital-drift {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Secondary arc - counter-rotating for visual complexity */
+.sys-arc-secondary {
+    transform-origin: 60px 60px;
+    animation: arc-counter 15s linear infinite reverse;
+}
+
+@keyframes arc-counter {
+    from {
+        transform: rotate(45deg);
+    }
+
+    to {
+        transform: rotate(405deg);
+    }
+}
+
+/* Inner segments - subtle breathing */
+.sys-inner-segments {
+    animation: segment-pulse 4s ease-in-out infinite;
+}
+
+@keyframes segment-pulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Core glow pulsation */
+.sys-core-glow {
+    animation: core-pulse 2s ease-in-out infinite;
+}
+
+@keyframes core-pulse {
+
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.15);
+    }
+}
+
+/* Solid core subtle beat */
+.sys-core {
+    animation: core-beat 1.5s ease-in-out infinite;
+}
+
+@keyframes core-beat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Tick marks subtle fade on scroll */
+.sys-ticks {
+    transition: opacity 0.1s linear;
+}
+
+/* Progress ring - instant updates for responsiveness */
+.sys-progress-ring {
+    transition: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE ADJUSTMENTS
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .sys-progress-container {
+        gap: 12px;
+    }
+
+    .sys-progress-icon {
+        width: 1em;
+        height: 1em;
+    }
+
+    .sys-label {
+        font-size: 0.16em;
+    }
+
+    .sys-percentage {
+        font-size: 0.13em;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DARK MODE ENHANCEMENTS
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-theme="dark"] .sys-progress-icon {
+    filter: drop-shadow(0 0 3px currentColor);
+}
+
+[data-theme="dark"] .sys-core-glow {
+    animation: core-pulse-dark 2s ease-in-out infinite;
+}
+
+@keyframes core-pulse-dark {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: scale(1.2);
+    }
 }
