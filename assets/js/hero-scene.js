@@ -1921,10 +1921,10 @@ export function initHeroScene() {
 
         const numPhases = geometries.length - 1; // 3 transitions for 4 phases
 
-        // Weighted scroll zones: COSMOS gets more time (30%) for full appreciation
-        // NEURAL (25%), HELIX (20%), SINGULARITY (15%), COSMOS (30%) + Exit (10%)
-        const phaseWeights = [0.25, 0.20, 0.15, 0.30]; // Core phases = 90%
-        const phaseBreakpoints = [0, 0.25, 0.45, 0.60, 0.90]; // Last 10% for exit
+        // Weighted scroll zones: Balanced phases with extended exit
+        // NEURAL (25%), HELIX (20%), SINGULARITY (15%), COSMOS (25%) + Exit (15%)
+        const phaseWeights = [0.25, 0.20, 0.15, 0.25]; // Core phases = 85%
+        const phaseBreakpoints = [0, 0.25, 0.45, 0.60, 0.85]; // Last 15% for exit/ready
 
         // Reduced scroll "stickiness" at phase boundaries for better sync
         let adjustedProgress = prevScroll;
@@ -1944,14 +1944,14 @@ export function initHeroScene() {
         }
 
         // ─────────────────────────────────────────────────────────────
-        // SMOOTH EXIT TRANSITION (90-100% scroll progress)
+        // SMOOTH EXIT TRANSITION (85-100% scroll progress)
         // Fade out and zoom for seamless transition to projects
         // ─────────────────────────────────────────────────────────────
         let exitProgress = 0;
-        if (adjustedProgress > 0.90) {
-            exitProgress = (adjustedProgress - 0.90) / 0.10; // 0 to 1
+        if (adjustedProgress > 0.85) {
+            exitProgress = (adjustedProgress - 0.85) / 0.15; // 0 to 1
             // Clamp adjusted progress to keep COSMOS stable during exit
-            adjustedProgress = 0.90;
+            adjustedProgress = 0.85;
         }
 
         // Map adjustedProgress to phaseIndex and phaseProgress using weighted zones
