@@ -912,8 +912,8 @@
                     if (p > 0.02) txt = "01.NEURAL";
                     if (p > 0.25) txt = "02.HELIX";
                     if (p > 0.45) txt = "03.SINGULARITY";
-                    if (p > 0.60) txt = "04.CRYSTAL";
-                    if (p > 0.85) txt = "OK.READY"; // Extended ready state (15% of scroll)
+                    if (p > 0.70) txt = "04.CRYSTAL"; // Matches new breakpoint
+                    if (p > 0.85) txt = "OK.READY";
                     sysLabel.innerText = txt;
                 }
 

@@ -1889,10 +1889,10 @@ export function initHeroScene() {
 
         const numPhases = geometries.length - 1; // 3 transitions for 4 phases
 
-        // Weighted scroll zones: Balanced phases with extended exit
-        // NEURAL (25%), HELIX (20%), SINGULARITY (15%), CRYSTALLINE (25%) + Exit (15%)
-        const phaseWeights = [0.25, 0.20, 0.15, 0.25]; // Core phases = 85%
-        const phaseBreakpoints = [0, 0.25, 0.45, 0.60, 0.85]; // Last 15% for exit/ready
+        // Weighted scroll zones: SINGULARITY gets more time for ring formation
+        // NEURAL (25%), HELIX (20%), SINGULARITY (25%), CRYSTALLINE (15%) + Exit (15%)
+        const phaseWeights = [0.25, 0.20, 0.25, 0.15]; // Core phases = 85%
+        const phaseBreakpoints = [0, 0.25, 0.45, 0.70, 0.85]; // SINGULARITY: 0.45-0.70 (25%)
 
         // Reduced scroll "stickiness" at phase boundaries for better sync
         let adjustedProgress = prevScroll;
