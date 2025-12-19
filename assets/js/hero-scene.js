@@ -1943,12 +1943,12 @@ export function initHeroScene() {
 
         // Per-phase config: hold zone + rotation speed during appreciation
         const appreciationConfig = {
-            0: { holdZone: 0.35, morphEase: 'smooth', rotationSpeed: 0.0015 },     // NEURAL: 35% hold
-            1: { holdZone: 0.30, morphEase: 'dramatic', rotationSpeed: 0.0012 },   // HELIX: 30% hold
-            2: { holdZone: 0.10, morphEase: 'explosive', rotationSpeed: 0.0022 }   // SINGULARITY: 10% hold = 90% for ring formation!
+            0: { holdZone: 0.0, morphEase: 'smooth', rotationSpeed: 0.0015 },      // NEURAL: 0% hold - transform immediately!
+            1: { holdZone: 0.25, morphEase: 'dramatic', rotationSpeed: 0.0012 },   // HELIX: 25% hold
+            2: { holdZone: 0.05, morphEase: 'explosive', rotationSpeed: 0.0022 }   // SINGULARITY: 5% hold = 95% appreciation!
         };
 
-        const config = appreciationConfig[phaseIndex] || { holdZone: 0.20, morphEase: 'smooth', rotationSpeed: 0.0015 };
+        const config = appreciationConfig[phaseIndex] || { holdZone: 0.0, morphEase: 'smooth', rotationSpeed: 0.0015 };
         const holdZone = config.holdZone;
 
         // Calculate morph progress within the transformation zone
