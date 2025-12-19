@@ -1855,24 +1855,32 @@ export function initHeroScene() {
     let scrollVelocity = 0;
     let smoothScrollVelocity = 0;
     let hasFirstScrolled = false;
+    let initFrames = 0; // Track frames since init for smooth fade-in
 
     function animate() {
         requestAnimationFrame(animate);
         time += 0.006;
+        initFrames++;
 
-        // On FIRST scroll, snap prevScroll to currentScroll (prevents initial jump)
-        if (!hasFirstScrolled && currentScroll > 0.001) {
-            prevScroll = currentScroll;
+        // SMOOTH INITIALIZATION - Ultra-gentle lerp for first 60 frames
+        const isInitializing = initFrames < 60;
+
+        // On FIRST meaningful scroll, start smooth transition (not snap)
+        if (!hasFirstScrolled && currentScroll > 0.002) {
             hasFirstScrolled = true;
+            // Don't snap - let smooth lerp handle it
         }
 
         // Calculate and CLAMP scroll velocity to prevent bouncing on fast scroll
         const rawVelocity = Math.abs(currentScroll - prevScroll);
         const clampedVelocity = Math.min(rawVelocity, 0.015); // Max velocity cap
-        smoothScrollVelocity += (clampedVelocity - smoothScrollVelocity) * 0.1; // Smooth it
+        smoothScrollVelocity += (clampedVelocity - smoothScrollVelocity) * 0.1;
         scrollVelocity = smoothScrollVelocity;
 
-        prevScroll += (currentScroll - prevScroll) * 0.12; // Snappier tracking
+        // ADAPTIVE LERP: Ultra-smooth during init, snappier after
+        const baseLerp = isInitializing ? 0.03 : 0.08;
+        const lerpFactor = hasFirstScrolled ? baseLerp : 0.03; // Extra smooth before first scroll
+        prevScroll += (currentScroll - prevScroll) * lerpFactor;
 
         // ─────────────────────────────────────────────────────────────
         // PHASE CALCULATION - Weighted Scroll Zones
