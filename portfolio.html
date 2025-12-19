@@ -990,13 +990,13 @@
                 trigger: ".project-section",
                 start: "top top",
                 pin: true,
-                scrub: 1,
+                scrub: 0.8, // Slightly more responsive scrub
                 invalidateOnRefresh: true,
                 snap: {
                     snapTo: getProjectSnap,
-                    duration: { min: 0.2, max: 0.6 },
-                    delay: 0.1,
-                    ease: "power2.inOut"
+                    duration: { min: 0.1, max: 0.4 }, // Faster snap
+                    delay: 0.0, // Instant snap start (zero delay)
+                    ease: "power3.out" // Premium fast-start/soft-land
                 },
                 end: () => "+=" + (projectsContainer.scrollWidth + pauseScrollAmount)
             }
