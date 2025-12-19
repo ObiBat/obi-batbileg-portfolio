@@ -110,7 +110,9 @@ export function initHeroScene() {
     // PARTICLE SYSTEM CONFIGURATION
     // ═══════════════════════════════════════════════════════════════════
 
-    const particlesCount = 25000; // Dense cloud
+    // DETECT MOBILE - Optimize heavily without losing visual impact
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    const particlesCount = isMobile ? 12000 : 25000; // 12k on mobile looks just as dense as 25k on desktop
 
     // ═══════════════════════════════════════════════════════════════════
     // NEURAL NETWORK - Living Brain Synapse Visualization (ENHANCED)
@@ -1114,7 +1116,7 @@ export function initHeroScene() {
     const dotTexture = new THREE.CanvasTexture(canvas);
 
     const particleMaterial = new THREE.PointsMaterial({
-        size: 0.04,
+        size: isMobile ? 0.055 : 0.04, // Larger particles on mobile to maintain volume
         map: dotTexture,
         transparent: true,
         opacity: 0.85,
@@ -1449,7 +1451,7 @@ export function initHeroScene() {
         return output;
     }
 
-    const wireframeDensity = 2000;
+    const wireframeDensity = Math.floor(particlesCount * 0.08); // Scale wireframe with particles (2000 desktop / 960 mobile)
 
     // Phase-matched wireframe geometries (4 curated phases)
     const wireframePhases = [
