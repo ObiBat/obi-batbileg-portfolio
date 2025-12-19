@@ -2217,14 +2217,12 @@ export function initHeroScene() {
             const finalY = ty + curl.y * turbulenceIntensity + orbit.y + turbulence * 0.12 + pulse * ty + cursorEffect.y + harmonic.y;
             const finalZ = tz + curl.z * turbulenceIntensity + orbit.z + turbulence * 0.12 + pulse * tz + cursorEffect.z + harmonic.z;
 
-            // Apply with phase-specific spring physics
-            velocities[i3] = velocities[i3] * phyDampen + (finalX - posArray[i3]) * phySpring;
-            velocities[i3 + 1] = velocities[i3 + 1] * phyDampen + (finalY - posArray[i3 + 1]) * phySpring;
-            velocities[i3 + 2] = velocities[i3 + 2] * phyDampen + (finalZ - posArray[i3 + 2]) * phySpring;
-
-            posArray[i3] += velocities[i3];
-            posArray[i3 + 1] += velocities[i3 + 1];
-            posArray[i3 + 2] += velocities[i3 + 2];
+            // INSTANT STABILIZATION - Direct lerp instead of spring physics
+            // Higher lerp = faster snap to target (0.15 = crisp, immediate)
+            const lerpFactor = 0.15;
+            posArray[i3] += (finalX - posArray[i3]) * lerpFactor;
+            posArray[i3 + 1] += (finalY - posArray[i3 + 1]) * lerpFactor;
+            posArray[i3 + 2] += (finalZ - posArray[i3 + 2]) * lerpFactor;
 
             // ─────────────────────────────────────────────────────────
             // ENHANCED DYNAMIC COLORING WITH MORPH BLOOM
