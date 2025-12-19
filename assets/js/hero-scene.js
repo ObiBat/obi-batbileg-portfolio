@@ -1890,7 +1890,7 @@ export function initHeroScene() {
         const numPhases = geometries.length - 1; // 3 transitions for 4 phases
 
         // Weighted scroll zones: Balanced phases with extended exit
-        // NEURAL (25%), HELIX (20%), SINGULARITY (15%), COSMOS (25%) + Exit (15%)
+        // NEURAL (25%), HELIX (20%), SINGULARITY (15%), CRYSTALLINE (25%) + Exit (15%)
         const phaseWeights = [0.25, 0.20, 0.15, 0.25]; // Core phases = 85%
         const phaseBreakpoints = [0, 0.25, 0.45, 0.60, 0.85]; // Last 15% for exit/ready
 
@@ -1918,7 +1918,7 @@ export function initHeroScene() {
         let exitProgress = 0;
         if (adjustedProgress > 0.85) {
             exitProgress = (adjustedProgress - 0.85) / 0.15; // 0 to 1
-            // Clamp adjusted progress to keep COSMOS stable during exit
+            // Clamp adjusted progress to keep CRYSTALLINE stable during exit
             adjustedProgress = 0.85;
         }
 
@@ -1950,12 +1950,13 @@ export function initHeroScene() {
 
         // Per-phase config: hold zone + rotation speed during appreciation
         const appreciationConfig = {
-            0: { holdZone: 0.40, morphEase: 'smooth', rotationSpeed: 0.0015 },    // NEURAL: 40% hold
-            1: { holdZone: 0.40, morphEase: 'dramatic', rotationSpeed: 0.0012 },  // HELIX: 40% hold
-            2: { holdZone: 0.35, morphEase: 'explosive', rotationSpeed: 0.0018 }  // SINGULARITY: 35% hold
+            0: { holdZone: 0.40, morphEase: 'smooth', rotationSpeed: 0.0015 },     // NEURAL: 40% hold
+            1: { holdZone: 0.35, morphEase: 'dramatic', rotationSpeed: 0.0012 },   // HELIX: 35% hold
+            2: { holdZone: 0.25, morphEase: 'explosive', rotationSpeed: 0.0020 },  // SINGULARITY: 25% hold (more transform time = more rings appreciation!)
+            3: { holdZone: 0.15, morphEase: 'smooth', rotationSpeed: 0.0018 }      // CRYSTALLINE: 15% hold (final shape, minimal)
         };
 
-        const config = appreciationConfig[phaseIndex] || { holdZone: 0.30, morphEase: 'smooth', rotationSpeed: 0.0010 };
+        const config = appreciationConfig[phaseIndex] || { holdZone: 0.20, morphEase: 'smooth', rotationSpeed: 0.0015 };
         const holdZone = config.holdZone;
 
         // Calculate morph progress within the transformation zone
@@ -1990,7 +1991,7 @@ export function initHeroScene() {
                 mix = easeInOutCubic(morphProgress);
                 break;
             case 'explosive':
-                // SINGULARITY → COSMOS: Big bang expansion
+                // SINGULARITY → CRYSTALLINE: Explosive crystal formation
                 // Fast burst then graceful settling
                 mix = easeOutExpo(morphProgress);
                 break;
