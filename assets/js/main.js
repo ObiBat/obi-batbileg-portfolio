@@ -388,9 +388,17 @@ document.addEventListener('click', (e) => {
 function initTheme() {
     const themeToggle = document.getElementById('theme-toggle');
 
+    // Helper to sync meta theme-color for Safari immersive mode
+    const syncThemeColor = (theme) => {
+        const color = theme === 'dark' ? '#0A0A0A' : '#FFFFFF';
+        let meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = color;
+    };
+
     // Load saved theme immediately to prevent flash
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
+    syncThemeColor(savedTheme);
 
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
@@ -399,6 +407,7 @@ function initTheme() {
 
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
+            syncThemeColor(newTheme);
         });
     }
 }
