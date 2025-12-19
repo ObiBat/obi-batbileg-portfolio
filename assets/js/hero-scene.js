@@ -1901,10 +1901,17 @@ export function initHeroScene() {
     let prevScroll = 0;
     let scrollVelocity = 0;
     let smoothScrollVelocity = 0;
+    let hasFirstScrolled = false;
 
     function animate() {
         requestAnimationFrame(animate);
         time += 0.006;
+
+        // On FIRST scroll, snap prevScroll to currentScroll (prevents initial jump)
+        if (!hasFirstScrolled && currentScroll > 0.001) {
+            prevScroll = currentScroll;
+            hasFirstScrolled = true;
+        }
 
         // Calculate and CLAMP scroll velocity to prevent bouncing on fast scroll
         const rawVelocity = Math.abs(currentScroll - prevScroll);
@@ -1912,7 +1919,7 @@ export function initHeroScene() {
         smoothScrollVelocity += (clampedVelocity - smoothScrollVelocity) * 0.1; // Smooth it
         scrollVelocity = smoothScrollVelocity;
 
-        prevScroll += (currentScroll - prevScroll) * 0.08; // Smoother tracking (was 0.15)
+        prevScroll += (currentScroll - prevScroll) * 0.12; // Snappier tracking
 
         // ─────────────────────────────────────────────────────────────
         // PHASE CALCULATION - Weighted Scroll Zones
