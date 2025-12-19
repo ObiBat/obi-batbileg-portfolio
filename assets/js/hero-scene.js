@@ -2068,18 +2068,18 @@ export function initHeroScene() {
         const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
         const smoothMorphProgress = easeInOutQuad(morphProgress);
 
-        // Gentle morph intensity (reduced from aggressive sine wave)
-        const morphIntensity = smoothMorphProgress * (1 - smoothMorphProgress) * 4; // Smooth bell curve, max 1
-        const morphBoost = 1 + morphIntensity * 0.5; // Subtle 1.5x max (was 2.5x)
+        // Smooth morph intensity curve
+        const morphIntensity = smoothMorphProgress * (1 - smoothMorphProgress) * 4;
+        const morphBoost = 1 + morphIntensity * 0.6; // Subtle 1.6x max
 
-        // Color bloom: gentle vibrancy during transformation
-        const colorBloom = 1 + morphIntensity * 0.25; // Subtle 1.25x max (was 1.4x)
+        // Color bloom: enhanced vibrancy during transformation
+        const colorBloom = 1 + morphIntensity * 0.30; // 1.3x max for vibrant transitions
 
-        // Gentle morph motion patterns (significantly reduced)
+        // Masterpiece morph motion patterns
         const morphPattern = {
-            scatter: morphIntensity * 0.12,   // Gentle scatter (was 0.3)
-            spiral: morphIntensity * 0.20,    // Subtle spiral (was 0.5)
-            pulse: morphIntensity * 0.15      // Soft pulse (was 0.4)
+            scatter: morphIntensity * 0.15,   // Gentle outward push
+            spiral: morphIntensity * 0.25,    // Elegant spiral motion
+            pulse: morphIntensity * 0.18      // Subtle radial breathing
         };
 
         // Trigger wave on phase change
@@ -2095,10 +2095,10 @@ export function initHeroScene() {
         updateRipples(0.016);
         updateClickExplosion();
 
-        // Gentle turbulence (reduced intensity)
-        const turbulenceBase = 0.10 * phyTurbulence; // Reduced from 0.15
-        const turbulenceTransition = morphIntensity * 0.3 * phyTurbulence; // Reduced from 0.6
-        const turbulenceIntensity = turbulenceBase + turbulenceTransition; // No scroll velocity impact
+        // Subtle turbulence for organic masterpiece feel
+        const turbulenceBase = 0.12 * phyTurbulence;
+        const turbulenceTransition = morphIntensity * 0.35 * phyTurbulence;
+        const turbulenceIntensity = turbulenceBase + turbulenceTransition;
 
         // Harmonic resonance frequency based on phase
         const harmonicFreq = 1 + phaseIndex * 0.3;
@@ -2261,8 +2261,8 @@ export function initHeroScene() {
         targetRotX += (mouseY * 0.8 - targetRotX) * 0.02;
         targetRotY += (mouseX * 0.8 - targetRotY) * 0.02;
 
-        // UNIFIED ROTATION - exact same rotation for perfect sync
-        const baseRotation = 0.0008; // Constant rotation, no scroll velocity
+        // Subtle constant rotation for living feel
+        const baseRotation = 0.0012;
         particleSystem.rotation.y += baseRotation;
         particleSystem.rotation.x = targetRotX;
 
@@ -2284,8 +2284,8 @@ export function initHeroScene() {
         const linePosArray = lineGeometry.attributes.position.array;
         const lineColArray = lineGeometry.attributes.color.array;
 
-        // Unified breathing scale - same as particles would experience
-        const breathe = 1 + Math.sin(time * 2.5) * 0.03; // No scroll velocity impact
+        // Subtle breathing for organic masterpiece feel
+        const breathe = 1 + Math.sin(time * 2.5) * 0.04;
         wireframeSystem.scale.setScalar(breathe);
         lineSystem.scale.setScalar(breathe);
         particleSystem.scale.setScalar(breathe);
@@ -2392,8 +2392,8 @@ export function initHeroScene() {
         // CROSS-SYSTEM CONNECTIONS - Link particles to wireframe
         // ═══════════════════════════════════════════════════════════
 
-        let lineIdx = 0;
-        const connectionThreshold = 0.6 + Math.sin(time * 1.5) * 0.3; // Stable connections
+        // Dynamic connections with subtle time variation
+        const connectionThreshold = 0.55 + Math.sin(time * 1.2) * 0.25;
         const maxLines = 500;
 
         // Connect wireframe points to each other
