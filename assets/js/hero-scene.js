@@ -1976,18 +1976,18 @@ export function initHeroScene() {
         const target = geometries[phaseIndex + 1].data;
 
         // ─────────────────────────────────────────────────────────────
-        // INTENSIFIED APPRECIATION ZONES - Maximum peak clarity time
-        // Each shape holds at 100% stability for 55-60% of phase
+        // APPRECIATION ZONES WITH ROTATION
+        // Shorter holds + subtle rotation for visual interest
         // ─────────────────────────────────────────────────────────────
 
-        // Per-phase appreciation - INTENSIFIED for masterpiece viewing
+        // Per-phase config: hold zone + rotation speed during appreciation
         const appreciationConfig = {
-            0: { holdZone: 0.55, morphEase: 'smooth' },    // NEURAL: 55% hold - brain network clarity
-            1: { holdZone: 0.55, morphEase: 'dramatic' },  // HELIX: 55% hold - DNA structure clarity
-            2: { holdZone: 0.60, morphEase: 'explosive' }  // SINGULARITY: 60% hold - black hole clarity
+            0: { holdZone: 0.40, morphEase: 'smooth', rotationSpeed: 0.0015 },    // NEURAL: 40% hold
+            1: { holdZone: 0.40, morphEase: 'dramatic', rotationSpeed: 0.0012 },  // HELIX: 40% hold
+            2: { holdZone: 0.35, morphEase: 'explosive', rotationSpeed: 0.0018 }  // SINGULARITY: 35% hold
         };
 
-        const config = appreciationConfig[phaseIndex] || { holdZone: 0.60, morphEase: 'smooth' };
+        const config = appreciationConfig[phaseIndex] || { holdZone: 0.30, morphEase: 'smooth', rotationSpeed: 0.0010 };
         const holdZone = config.holdZone;
 
         // Calculate morph progress within the transformation zone
@@ -2261,8 +2261,8 @@ export function initHeroScene() {
         targetRotX += (mouseY * 0.8 - targetRotX) * 0.02;
         targetRotY += (mouseX * 0.8 - targetRotY) * 0.02;
 
-        // Subtle constant rotation for living feel
-        const baseRotation = 0.0012;
+        // Phase-specific rotation (from appreciationConfig)
+        const baseRotation = config.rotationSpeed || 0.0012;
         particleSystem.rotation.y += baseRotation;
         particleSystem.rotation.x = targetRotX;
 
