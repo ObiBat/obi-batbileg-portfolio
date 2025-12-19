@@ -736,8 +736,8 @@
                     <ul class="footer-links">
                         <li><a href="#projects" class="footer-link">Work</a></li>
                         <li><a href="#experience" class="footer-link">Journey</a></li>
-                        <li><a href="#skills" class="footer-link">Capabilities</a></li>
                         <li><a href="#" class="footer-link">Foundation</a></li>
+                        <li><a href="#skills" class="footer-link">Capabilities</a></li>
                     </ul>
                 </div>
 
@@ -939,30 +939,84 @@
             }
         });
 
-        // Projects Horizontal Pinning - Smooth Flow (No Snap/Pause)
+        // Projects Horizontal Pinning with Professional Pause & Snapping
         const projectsContainer = document.querySelector(".projects-wrapper");
+
+        // Configuration for the pause
+        const pauseScrollAmount = window.innerHeight * 0.6;
+
+        // Helper to recalculate snap points dynamically
+        const getProjectSnap = (value) => {
+            const containerWidth = projectsContainer.scrollWidth;
+            const screenW = window.innerWidth;
+            const maxScroll = containerWidth - screenW;
+
+            if (maxScroll <= 0) return value;
+
+            const totalDurationUnits = pauseScrollAmount + containerWidth;
+            const pauseRatio = pauseScrollAmount / totalDurationUnits;
+
+            // 1. If in Pause Zone
+            if (value < pauseRatio) {
+                return (value < pauseRatio / 2) ? 0 : pauseRatio;
+            }
+
+            // 2. If in Horizontal Scroll Zone
+            const progressInScroll = (value - pauseRatio) / (1 - pauseRatio);
+            const currentScrollX = progressInScroll * maxScroll;
+
+            // Find closest project item
+            const items = document.querySelectorAll(".project-item");
+            let closestDist = Infinity;
+            let closestOffset = 0;
+
+            items.forEach(item => {
+                const diff = Math.abs(item.offsetLeft - currentScrollX);
+                if (diff < closestDist) {
+                    closestDist = diff;
+                    closestOffset = item.offsetLeft;
+                }
+            });
+
+            const finalOffset = Math.min(closestOffset, maxScroll);
+            const targetProgressInScroll = finalOffset / maxScroll;
+
+            return pauseRatio + (targetProgressInScroll * (1 - pauseRatio));
+        };
 
         const projectTl = gsap.timeline({
             scrollTrigger: {
                 trigger: ".project-section",
                 start: "top top",
                 pin: true,
-                scrub: 1, // Smooth scrub
+                scrub: 1,
                 invalidateOnRefresh: true,
-                end: () => "+=" + projectsContainer.scrollWidth
+                snap: {
+                    snapTo: getProjectSnap,
+                    duration: { min: 0.2, max: 0.6 },
+                    delay: 0.1,
+                    ease: "power2.inOut"
+                },
+                end: () => "+=" + (projectsContainer.scrollWidth + pauseScrollAmount)
             }
         });
 
-        // The Horizontal Scroll
+        // Phase 1: The Pause (Hold Position)
+        projectTl.to({}, {
+            duration: pauseScrollAmount
+        });
+
+        // Phase 2: The Horizontal Scroll
         projectTl.to(projectsContainer, {
             x: () => -(projectsContainer.scrollWidth - window.innerWidth),
-            ease: "none"
+            ease: "none",
+            duration: projectsContainer.scrollWidth
         });
 
         // --------------------------------------------------------
         // Vertical Sections: Subtle Stops (Premium Pinning)
         // --------------------------------------------------------
-        const pinSections = gsap.utils.toArray("#experience, footer");
+        const pinSections = gsap.utils.toArray("footer");
         pinSections.forEach(section => {
             ScrollTrigger.create({
                 trigger: section,
