@@ -974,36 +974,33 @@ export function initHeroScene() {
         },
 
         // ═══════════════════════════════════════════════════════════════
-        // Phase 2: SINGULARITY - Power, Transformation, Event Horizon
-        // Morphs into CRYSTALLINE rings (the grand finale transformation)
+        // Phase 2: SINGULARITY - THE FINALE
+        // Black hole with event horizon - the final masterpiece shape
         // ═══════════════════════════════════════════════════════════════
         {
             data: getSingularity(particlesCount),
             name: 'SINGULARITY',
             physics: {
-                turbulence: 1.2,
-                attraction: 0.18,
-                orbit: 0.9,
-                pulse: 0.25,
-                spring: 0.025,
-                dampen: 0.92
+                turbulence: 0.8,      // Calmer for appreciation
+                attraction: 0.12,
+                orbit: 0.7,           // Smooth orbital motion
+                pulse: 0.20,
+                spring: 0.02,
+                dampen: 0.95          // Ultra smooth for final
             }
         },
 
-        // ═══════════════════════════════════════════════════════════════
-        // MORPH TARGET: CRYSTALLINE - The Ring Formation Finale
-        // This is what SINGULARITY morphs into - full appreciation to the morph!
-        // ═══════════════════════════════════════════════════════════════
+        // MORPH TARGET: Same SINGULARITY (keeps shape stable for extended appreciation)
         {
-            data: getCrystalline(particlesCount),
-            name: 'CRYSTALLINE',
+            data: getSingularity(particlesCount),
+            name: 'SINGULARITY_HOLD',
             physics: {
-                turbulence: 0.25,
-                attraction: 0.04,
-                orbit: 0.50,
-                pulse: 0.12,
-                spring: 0.02,
-                dampen: 0.985
+                turbulence: 0.6,
+                attraction: 0.10,
+                orbit: 0.6,
+                pulse: 0.15,
+                spring: 0.015,
+                dampen: 0.97
             }
         }
     ];
@@ -1831,18 +1828,14 @@ export function initHeroScene() {
     };
 
     // ═══════════════════════════════════════════════════════════════════
-    // COLOR PALETTES - 4 Distinct Phase Colors
+    // COLOR PALETTES - 3 Phase Colors + Final Hold
     // ═══════════════════════════════════════════════════════════════════
 
     const palettes = [
         { primary: new THREE.Color(0x00ddff), secondary: new THREE.Color(0x8855ff) }, // 0 NEURAL: Electric Cyan → Neural Purple
         { primary: new THREE.Color(0x00ff66), secondary: new THREE.Color(0x44ffaa) }, // 1 HELIX: DNA Green → Bio Mint
         { primary: new THREE.Color(0xff6600), secondary: new THREE.Color(0xff0044) }, // 2 SINGULARITY: Accretion Orange → Event Horizon Red
-        {
-            primary: new THREE.Color(0xeeffff),   // CRYSTALLINE: Diamond white
-            secondary: new THREE.Color(0x88ddff), // Ice blue facets
-            tertiary: new THREE.Color(0xaaeeff)   // Prismatic highlights
-        }
+        { primary: new THREE.Color(0xff4400), secondary: new THREE.Color(0xff0066) }  // 3 SINGULARITY_HOLD: Deeper Orange → Crimson
     ];
 
     // ═══════════════════════════════════════════════════════════════════
