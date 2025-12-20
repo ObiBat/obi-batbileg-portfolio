@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0F0F0F">
+    <meta name="description" content="RESUM8 — Agentic Resume Architect & Editor">
+    <title>RESUM8 — Resume Studio</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Newsreader:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Core Styles -->
+    <link rel="stylesheet" href="assets/css/style.css?v=1.0">
+    <!-- Editor Styles -->
+    <link rel="stylesheet" href="assets/css/resume-editor.css?v=1.0">
+
+    <style>
+        /* Embedded override for Agent Interface specific needs */
+        :root {
+            --agent-bg: #050505;
+            --agent-panel: #111111;
+            --agent-border: #222222;
+            --accent-cyan: #00FF9D;
+            --accent-green: #00FF9D;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-orange: #f97316;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+
+        body {
+            background-color: var(--agent-bg);
+            color: #ffffff;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container" id="app-container">
+        <!-- LEFT PANEL: DEV TERMINAL -->
+        <div class="panel-left" id="panel-left">
+            <div class="nav-header">
+                <div class="brand">RESUM8<span>.STUDIO</span></div>
+                <div class="nav-actions">
+                    <button id="expand-editor-btn" class="icon-btn" title="Expand Editor">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                        </svg>
+                    </button>
+                    <a href="portfolio.html" class="back-link">EXIT</a>
+                </div>
+            </div>
+
+            <!-- MODE TABS -->
+            <div class="mode-tabs">
+                <button class="mode-tab active" data-mode="generate">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <polyline points="2,17 12,22 22,17" />
+                        <polyline points="2,12 12,17 22,12" />
+                    </svg>
+                    GENERATE
+                </button>
+                <button class="mode-tab" data-mode="edit">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                    EDIT
+                </button>
+                <button class="mode-tab" data-mode="style">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="13.5" cy="6.5" r="2.5" />
+                        <circle cx="17.5" cy="10.5" r="2.5" />
+                        <circle cx="8.5" cy="7.5" r="2.5" />
+                        <circle cx="6.5" cy="12.5" r="2.5" />
+                        <path
+                            d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z" />
+                    </svg>
+                    STYLE
+                </button>
+                <button class="mode-tab" data-mode="analyze">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    ANALYZE
+                </button>
+            </div>
+
+            <!-- GENERATE PANEL -->
+            <div class="panel-content active" id="generate-panel">
+                <!-- NEURAL FLOW CHART -->
+                <div class="neural-flow">
+                    <div class="node active" id="node-input"><span class="node-label">INPUT</span></div>
+                    <div class="node" id="node-analyze"><span class="node-label">ANALYZE</span></div>
+                    <div class="node" id="node-strategy"><span class="node-label">STRATEGY</span></div>
+                    <div class="node" id="node-synth"><span class="node-label">SYNTHESIS</span></div>
+                </div>
+
+                <!-- INPUTS -->
+                <div class="editor-group">
+                    <div class="editor-header">
+                        <span>JOB_DESCRIPTION.txt</span>
+                    </div>
+                    <textarea id="job-description" class="code-editor"
+                        placeholder="// Paste Target Job Description vector data here..."></textarea>
+                </div>
+
+                <div class="editor-group">
+                    <div class="editor-header">
+                        <span>MASTER_RESUME.json</span>
+                    </div>
+                    <textarea id="master-resume" class="code-editor"
+                        placeholder="// Paste historical career data here..."></textarea>
+                </div>
+
+                <!-- CONTROLS -->
+                <div class="controls-grid">
+                    <div>
+                        <div class="editor-header" style="margin-bottom:4px">ENGINE_CORE</div>
+                        <select id="model-selector">
+                            <option value="gemini-3-flash-preview">GEMINI-3-FLASH [FAST]</option>
+                            <option value="gemini-3-pro-preview" selected>GEMINI-3-PRO [REASONING]</option>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="editor-header" style="margin-bottom:4px">STRATEGY_MODE</div>
+                        <select id="aggression-level">
+                            <option value="conservative">CONSERVATIVE</option>
+                            <option value="balanced" selected>BALANCED</option>
+                            <option value="visionary">VISIONARY</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- PORTFOLIO MODE TOGGLE -->
+                <div class="portfolio-toggle-container">
+                    <div class="toggle-wrapper">
+                        <input type="checkbox" id="portfolio-mode" class="toggle-checkbox">
+                        <label for="portfolio-mode" class="toggle-label">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <div class="toggle-info">
+                            <span class="toggle-title">PORTFOLIO MODE</span>
+                            <span class="toggle-desc">Auto-load Obi's professional data</span>
+                        </div>
+                    </div>
+                    <div id="portfolio-status" class="status-indicator hidden">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Portfolio data loaded</span>
+                    </div>
+                </div>
+
+                <button id="ignite-btn" class="run-btn">INITIALIZE_WORKFLOW()</button>
+            </div>
+
+            <!-- EDIT PANEL -->
+            <div class="panel-content" id="edit-panel">
+                <div class="edit-tools-header">
+                    <span class="section-label">SECTION EDITOR</span>
+                    <div class="edit-actions">
+                        <button id="undo-btn" class="tool-btn" title="Undo" disabled>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M3 7v6h6" />
+                                <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+                            </svg>
+                        </button>
+                        <button id="redo-btn" class="tool-btn" title="Redo" disabled>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21 7v6h-6" />
+                                <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section List (Draggable) -->
+                <div id="section-list" class="section-list">
+                    <div class="section-item" data-section="header" draggable="true">
+                        <span class="drag-handle">⋮⋮</span>
+                        <span class="section-icon">👤</span>
+                        <span class="section-name">Header & Contact</span>
+                        <button class="section-edit-btn">Edit</button>
+                    </div>
+                    <div class="section-item" data-section="summary" draggable="true">
+                        <span class="drag-handle">⋮⋮</span>
+                        <span class="section-icon">📝</span>
+                        <span class="section-name">Professional Summary</span>
+                        <button class="section-edit-btn">Edit</button>
+                    </div>
+                    <div class="section-item" data-section="skills" draggable="true">
+                        <span class="drag-handle">⋮⋮</span>
+                        <span class="section-icon">⚡</span>
+                        <span class="section-name">Technical Skills</span>
+                        <button class="section-edit-btn">Edit</button>
+                    </div>
+                    <div class="section-item" data-section="experience" draggable="true">
+                        <span class="drag-handle">⋮⋮</span>
+                        <span class="section-icon">💼</span>
+                        <span class="section-name">Experience</span>
+                        <button class="section-edit-btn">Edit</button>
+                    </div>
+                    <div class="section-item" data-section="projects" draggable="true">
+                        <span class="drag-handle">⋮⋮</span>
+                        <span class="section-icon">🚀</span>
+                        <span class="section-name">Projects</span>
+                        <button class="section-edit-btn">Edit</button>
+                    </div>
+                    <div class="section-item" data-section="education" draggable="true">
+                        <span class="drag-handle">⋮⋮</span>
+                        <span class="section-icon">🎓</span>
+                        <span class="section-name">Education</span>
+                        <button class="section-edit-btn">Edit</button>
+                    </div>
+                </div>
+
+                <!-- Section Edit Modal -->
+                <div id="section-editor-modal" class="section-editor-modal hidden">
+                    <div class="modal-header">
+                        <span id="modal-title">Edit Section</span>
+                        <button id="close-modal" class="close-btn">×</button>
+                    </div>
+                    <div id="modal-content" class="modal-content">
+                        <!-- Dynamic content loaded here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button id="apply-changes" class="apply-btn">Apply Changes</button>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button id="add-experience" class="quick-action-btn">+ Experience</button>
+                    <button id="add-project" class="quick-action-btn">+ Project</button>
+                    <button id="add-skill" class="quick-action-btn">+ Skill</button>
+                </div>
+
+                <!-- AI CONTENT TOOLS -->
+                <div class="ai-tools-section">
+                    <span class="section-label">AI CONTENT TOOLS</span>
+                    <div class="ai-tools-grid">
+                        <button id="ai-rewrite" class="ai-tool-btn" title="Rewrite selected text with AI">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                            </svg>
+                            Rewrite
+                        </button>
+                        <button id="ai-enhance" class="ai-tool-btn" title="Enhance with metrics">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M12 20V10M6 20V4M18 20v-4" />
+                            </svg>
+                            Quantify
+                        </button>
+                        <button id="ai-shorten" class="ai-tool-btn" title="Shorten text">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M17 8l4 4-4 4" />
+                                <path d="M3 12h18" />
+                            </svg>
+                            Shorten
+                        </button>
+                        <button id="ai-expand" class="ai-tool-btn" title="Expand text">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M7 8l-4 4 4 4" />
+                                <path d="M21 12H3" />
+                            </svg>
+                            Expand
+                        </button>
+                    </div>
+                    <div class="tone-selector">
+                        <span class="tone-label">Tone:</span>
+                        <select id="ai-tone">
+                            <option value="professional">Professional</option>
+                            <option value="confident">Confident</option>
+                            <option value="technical">Technical</option>
+                            <option value="creative">Creative</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ACTION VERBS -->
+                <div class="verbs-section">
+                    <span class="section-label">ACTION VERBS</span>
+                    <div id="action-verbs" class="action-verbs-container">
+                        <span class="verb-tag" data-verb="Spearheaded">Spearheaded</span>
+                        <span class="verb-tag" data-verb="Architected">Architected</span>
+                        <span class="verb-tag" data-verb="Engineered">Engineered</span>
+                        <span class="verb-tag" data-verb="Orchestrated">Orchestrated</span>
+                        <span class="verb-tag" data-verb="Transformed">Transformed</span>
+                        <span class="verb-tag" data-verb="Optimized">Optimized</span>
+                        <span class="verb-tag" data-verb="Pioneered">Pioneered</span>
+                        <span class="verb-tag" data-verb="Accelerated">Accelerated</span>
+                    </div>
+                    <button id="refresh-verbs" class="refresh-verbs-btn">↻ More Verbs</button>
+                </div>
+            </div>
+
+            <!-- STYLE PANEL -->
+            <div class="panel-content" id="style-panel">
+                <div class="style-section">
+                    <span class="section-label">TEMPLATE PRESETS</span>
+                    <div class="template-grid">
+                        <button class="template-card active" data-template="executive">
+                            <div class="template-preview executive"></div>
+                            <span>Executive</span>
+                        </button>
+                        <button class="template-card" data-template="modern">
+                            <div class="template-preview modern"></div>
+                            <span>Modern</span>
+                        </button>
+                        <button class="template-card" data-template="minimal">
+                            <div class="template-preview minimal"></div>
+                            <span>Minimal</span>
+                        </button>
+                        <button class="template-card" data-template="creative">
+                            <div class="template-preview creative"></div>
+                            <span>Creative</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="style-section">
+                    <span class="section-label">ACCENT COLOR</span>
+                    <div class="color-grid">
+                        <button class="color-swatch active" data-color="#00FF9D" style="background:#00FF9D"></button>
+                        <button class="color-swatch" data-color="#3b82f6" style="background:#3b82f6"></button>
+                        <button class="color-swatch" data-color="#a855f7" style="background:#a855f7"></button>
+                        <button class="color-swatch" data-color="#f97316" style="background:#f97316"></button>
+                        <button class="color-swatch" data-color="#ef4444" style="background:#ef4444"></button>
+                        <button class="color-swatch" data-color="#000000" style="background:#000000"></button>
+                    </div>
+                </div>
+
+                <div class="style-section">
+                    <span class="section-label">TYPOGRAPHY</span>
+                    <div class="typography-controls">
+                        <div class="control-row">
+                            <label>Heading Font</label>
+                            <select id="heading-font">
+                                <option value="'Outfit', sans-serif">Outfit</option>
+                                <option value="'Inter', sans-serif">Inter</option>
+                                <option value="Helvetica, Arial, sans-serif">Helvetica</option>
+                                <option value="Georgia, serif">Georgia</option>
+                                <option value="'Times New Roman', serif">Times New Roman</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label>Body Font</label>
+                            <select id="body-font">
+                                <option value="'Outfit', sans-serif">Outfit</option>
+                                <option value="'Inter', sans-serif">Inter</option>
+                                <option value="Helvetica, Arial, sans-serif">Helvetica</option>
+                                <option value="Georgia, serif">Georgia</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label>Font Scale</label>
+                            <input type="range" id="font-scale" min="80" max="120" value="100">
+                            <span id="font-scale-value">100%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="style-section">
+                    <span class="section-label">SPACING & LAYOUT</span>
+                    <div class="spacing-controls">
+                        <div class="control-row">
+                            <label>Section Spacing</label>
+                            <input type="range" id="section-spacing" min="60" max="150" value="100">
+                        </div>
+                        <div class="control-row">
+                            <label>Margins</label>
+                            <select id="margin-size">
+                                <option value="compact">Compact</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="wide">Wide</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALYZE PANEL -->
+            <div class="panel-content" id="analyze-panel">
+                <!-- ATS SCORE -->
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <span class="section-label">ATS COMPATIBILITY</span>
+                        <span id="ats-badge" class="ats-badge">--</span>
+                    </div>
+                    <div class="ats-score-container">
+                        <div id="ats-score-ring" class="score-ring">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="ring-bg" cx="50" cy="50" r="45" />
+                                <circle id="ring-progress" class="ring-progress" cx="50" cy="50" r="45" />
+                            </svg>
+                            <div class="score-value">
+                                <span id="ats-score-number">--</span>
+                                <span class="score-label">SCORE</span>
+                            </div>
+                        </div>
+                        <div class="ats-breakdown">
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Keywords Match</span>
+                                <div class="breakdown-bar">
+                                    <div id="keywords-bar" class="bar-fill" style="width:0%"></div>
+                                </div>
+                                <span id="keywords-pct" class="breakdown-value">--%</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Skills Coverage</span>
+                                <div class="breakdown-bar">
+                                    <div id="skills-bar" class="bar-fill" style="width:0%"></div>
+                                </div>
+                                <span id="skills-pct" class="breakdown-value">--%</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Format Score</span>
+                                <div class="breakdown-bar">
+                                    <div id="format-bar" class="bar-fill" style="width:0%"></div>
+                                </div>
+                                <span id="format-pct" class="breakdown-value">--%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="run-ats-analysis" class="analysis-btn">Run ATS Analysis</button>
+                </div>
+
+                <!-- KEYWORD ANALYSIS -->
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <span class="section-label">KEYWORD INTELLIGENCE</span>
+                    </div>
+                    <div class="keyword-container">
+                        <div class="keyword-section">
+                            <span class="keyword-title found">✓ Found Keywords</span>
+                            <div id="found-keywords" class="keyword-tags"></div>
+                        </div>
+                        <div class="keyword-section">
+                            <span class="keyword-title missing">✗ Missing Keywords</span>
+                            <div id="missing-keywords" class="keyword-tags"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOCUMENT STATS -->
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <span class="section-label">DOCUMENT STATISTICS</span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span id="stat-words" class="stat-value">--</span>
+                            <span class="stat-label">Words</span>
+                        </div>
+                        <div class="stat-item">
+                            <span id="stat-chars" class="stat-value">--</span>
+                            <span class="stat-label">Characters</span>
+                        </div>
+                        <div class="stat-item">
+                            <span id="stat-bullets" class="stat-value">--</span>
+                            <span class="stat-label">Bullet Points</span>
+                        </div>
+                        <div class="stat-item">
+                            <span id="stat-sections" class="stat-value">--</span>
+                            <span class="stat-label">Sections</span>
+                        </div>
+                    </div>
+                    <div class="reading-level">
+                        <span class="reading-label">Reading Level:</span>
+                        <span id="reading-level" class="reading-value">--</span>
+                    </div>
+                </div>
+
+                <!-- AI SUGGESTIONS -->
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <span class="section-label">AI SUGGESTIONS</span>
+                        <button id="get-suggestions" class="mini-btn">Generate</button>
+                    </div>
+                    <div id="ai-suggestions" class="suggestions-container">
+                        <div class="suggestion-placeholder">Click "Generate" to get AI-powered improvement suggestions
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SAVE/LOAD -->
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <span class="section-label">SAVE / LOAD</span>
+                    </div>
+                    <div class="save-load-controls">
+                        <div class="version-name-input">
+                            <input type="text" id="version-name" placeholder="Version name..." maxlength="30">
+                        </div>
+                        <div class="save-load-btns">
+                            <button id="save-resume" class="save-btn">Save Version</button>
+                            <button id="load-resume" class="load-btn">Load</button>
+                            <button id="export-json" class="export-btn">Export JSON</button>
+                        </div>
+                    </div>
+                    <div id="saved-versions" class="saved-versions-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: RESUME CANVAS -->
+        <div class="panel-right" id="preview-stage">
+            <!-- AGENT CONSOLE (Collapsible) -->
+            <div class="console-section collapsed" id="console-section">
+                <div class="console-header" id="console-toggle">
+                    <div class="console-left">
+                        <span class="console-indicator">●</span>
+                        <span class="console-title">AGENT_CONSOLE</span>
+                    </div>
+                    <button class="console-expand-btn">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="agent-logs" class="console-window">
+                    <div class="log-entry"><span class="log-time">[00:00]</span><span class="log-msg">Studio
+                            initialized. Ready for input...</span></div>
+                </div>
+            </div>
+
+            <!-- PREVIEW VIEWPORT (Expandable) -->
+            <div class="preview-viewport" id="preview-viewport">
+                <!-- BACKGROUND VISUALIZATION -->
+                <div class="agent-diagram" id="agent-diagram">
+                    <div class="diagram-circle"></div>
+                    <div class="status-readout">
+                        <span>STUDIO READY</span>
+                        <span style="opacity:0.5">AWAITING CONTENT</span>
+                    </div>
+                </div>
+
+                <!-- HUD OVERLAY (Framing) -->
+                <div class="hud-overlay">
+                    <div class="hud-corner top-left"></div>
+                    <div class="hud-corner top-right"></div>
+                    <div class="hud-corner bottom-left"></div>
+                    <div class="hud-corner bottom-right"></div>
+                </div>
+
+                <!-- SCANNER BEAM -->
+                <div id="scan-beam" class="scan-beam"></div>
+
+                <!-- DOCUMENT CANVAS -->
+                <div id="resume-document" class="hidden" contenteditable="false"></div>
+
+                <!-- INLINE EDITING TOOLBAR -->
+                <div id="inline-toolbar" class="inline-toolbar hidden">
+                    <button data-command="bold" title="Bold"><strong>B</strong></button>
+                    <button data-command="italic" title="Italic"><em>I</em></button>
+                    <button data-command="underline" title="Underline"><u>U</u></button>
+                    <span class="toolbar-divider"></span>
+                    <button data-command="insertUnorderedList" title="Bullet List">•</button>
+                    <button data-command="removeFormat" title="Clear Formatting">✕</button>
+                    <span class="toolbar-divider"></span>
+                    <button id="inline-ai-rewrite" class="ai-inline-btn" title="AI Rewrite">✨ AI</button>
+                </div>
+
+                <!-- AI REWRITE POPUP -->
+                <div id="ai-rewrite-popup" class="ai-popup hidden">
+                    <div class="ai-popup-header">
+                        <span>AI Rewrite</span>
+                        <button id="close-ai-popup" class="close-popup-btn">×</button>
+                    </div>
+                    <div class="ai-popup-content">
+                        <div class="original-text">
+                            <span class="popup-label">Original:</span>
+                            <p id="popup-original"></p>
+                        </div>
+                        <div class="ai-options">
+                            <button class="ai-option-btn" data-action="improve">✨ Improve</button>
+                            <button class="ai-option-btn" data-action="quantify">📊 Add Metrics</button>
+                            <button class="ai-option-btn" data-action="shorten">✂️ Shorten</button>
+                            <button class="ai-option-btn" data-action="expand">📝 Expand</button>
+                        </div>
+                        <div class="rewritten-text hidden">
+                            <span class="popup-label">Rewritten:</span>
+                            <p id="popup-rewritten"></p>
+                        </div>
+                        <div class="ai-popup-actions hidden">
+                            <button id="apply-rewrite" class="apply-rewrite-btn">Apply</button>
+                            <button id="regenerate-rewrite" class="regenerate-btn">↻ Regenerate</button>
+                        </div>
+                    </div>
+                    <div id="ai-loading" class="ai-loading hidden">
+                        <div class="loading-spinner"></div>
+                        <span>AI is thinking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MISSION CONTROL BAR (Bottom) -->
+            <div class="artifact-controls">
+                <div class="ctrl-group left">
+                    <button id="sidebar-toggle-bar" class="ctrl-btn-icon" title="Toggle Sidebar"
+                        style="margin-right: 0.5rem; border: 1px solid #333; padding: 4px; border-radius: 4px; width: 32px; height: 32px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <line x1="9" y1="3" x2="9" y2="21" />
+                        </svg>
+                    </button>
+                    <div class="ctrl-item">
+                        <span class="ctrl-label">STATUS</span>
+                        <span id="sys-status" class="ctrl-value standby">STANDBY</span>
+                    </div>
+                    <div class="ctrl-item">
+                        <span class="ctrl-label">FORMAT</span>
+                        <span class="ctrl-value">A4 / LIVE</span>
+                    </div>
+                    <div class="ctrl-item">
+                        <span class="ctrl-label">HISTORY</span>
+                        <span id="history-count" class="ctrl-value">0 / 50</span>
+                    </div>
+                </div>
+
+                <div class="ctrl-group center">
+                    <div class="zoom-cluster">
+                        <button id="zoom-out" class="ctrl-btn-icon" title="Zoom Out">−</button>
+                        <span id="zoom-level">85%</span>
+                        <button id="zoom-in" class="ctrl-btn-icon" title="Zoom In">+</button>
+                    </div>
+                    <button id="fit-view" class="ctrl-btn-text">FIT</button>
+                    <button id="toggle-edit-mode" class="ctrl-btn-text">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="margin-right:4px">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                        EDIT
+                    </button>
+                </div>
+
+                <div class="ctrl-group right">
+                    <button id="copy-clipboard" class="ctrl-btn-text" title="Copy to Clipboard">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="margin-right:4px">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                        COPY
+                    </button>
+                    <button id="print-resume" class="ctrl-btn-text" title="Print Resume">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="margin-right:4px">
+                            <polyline points="6 9 6 2 18 2 18 9" />
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                            <rect x="6" y="14" width="12" height="8" />
+                        </svg>
+                        PRINT
+                    </button>
+                    <button id="future-export" class="action-btn placeholder" title="PDF Export Coming Soon">
+                        <span class="btn-text">EXPORT_PDF</span>
+                        <span class="coming-soon-badge">SOON</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/resume-editor.js"></script>
+</body>
+
+</html>
