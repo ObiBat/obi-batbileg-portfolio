@@ -34,6 +34,12 @@ export default async function handler(request, response) {
 
     // Direct REST API Call to Selected Gemini Model
     const apiKey = process.env.GEMINI_API_KEY;
+    console.log(`[DEBUG] API Key present: ${apiKey ? 'YES (Length: ' + apiKey.length + ')' : 'NO'}`);
+
+    if (!apiKey) {
+      console.error("CRITICAL: process.env.GEMINI_API_KEY is missing in the server environment.");
+      return response.status(500).json({ error: "Server Misconfiguration: API Key missing" });
+    }
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
 
     console.log(`Connecting to ${selectedModel}...`);

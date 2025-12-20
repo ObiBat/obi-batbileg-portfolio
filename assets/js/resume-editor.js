@@ -48,10 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ===========================================
-    // MODE TABS SYSTEM
+    // MODE TABS SYSTEM (UPDATED FOR RAIL)
     // ===========================================
-    const modeTabs = document.querySelectorAll('.mode-tab');
+    const modeTabs = document.querySelectorAll('.rail-btn');
     const panelContents = document.querySelectorAll('.panel-content');
+    const panelTitle = document.getElementById('panel-title');
+
+    const MODE_TITLES = {
+        'generate': 'GENERATION_ENGINE',
+        'edit': 'EDITOR_CORE',
+        'style': 'AESTHETICS_LAB',
+        'analyze': 'INTELLIGENCE_UNIT'
+    };
 
     modeTabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -68,6 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     panel.classList.add('active');
                 }
             });
+
+            // Update Title
+            if (panelTitle && MODE_TITLES[mode]) {
+                panelTitle.textContent = MODE_TITLES[mode];
+            }
 
             log(`Switched to ${mode.toUpperCase()} mode`, 'info');
         });
@@ -318,10 +331,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
         // Skills Grid
+        // Skills Grid
         const skillsHTML = Object.entries(skills).map(([cat, list]) => `
             <div class="res-skill-row" data-editable="skill-${cat}">
-                <span class="res-skill-cat">${cat.replace(/_/g, ' ').toUpperCase()}:</span>
-                <span>${Array.isArray(list) ? list.join(', ') : list}</span>
+                <span class="res-skill-cat">${cat.replace(/_/g, ' ').toUpperCase()}</span>
+                <span class="res-skill-list">${Array.isArray(list) ? list.join(', ') : list}</span>
             </div>
         `).join('');
 
@@ -379,40 +393,59 @@ document.addEventListener('DOMContentLoaded', () => {
             const body = isObj ? coverLetter.body : coverLetter;
             const closing = isObj ? coverLetter.closing : "Sincerely,";
 
-            const bodyContent = (typeof body === 'string' && body.includes('\n\n')) || (typeof body === 'string' && !isObj)
-                ? body.split('\n\n').map(p => `<p>${p}</p>`).join('')
-                : `<p>${body}</p>`;
+            // Helper to strip markdown artifacts
+            const cleanMarkdown = (text) => text.replace(/\*\*|__|\*|_/g, '');
+
+            const cleanBody = cleanMarkdown(body);
+            const cleanOpening = cleanMarkdown(opening);
+
+            const bodyContent = (typeof cleanBody === 'string' && cleanBody.includes('\n\n')) || (typeof cleanBody === 'string' && !isObj)
+                ? cleanBody.split('\n\n').map(p => `<p class="cover-paragraph">${p}</p>`).join('')
+                : `<p class="cover-paragraph">${cleanBody}</p>`;
 
             coverLetterHTML = `
-            <div class="cover-letter-page" data-editable="cover-letter">
-                <div class="cover-header">
-                    <div class="cover-sender">
+            <div class="cover-letter-page">
+                <!-- MODERN HEADER LAYOUT -->
+                <div class="cover-header-modern" data-editable="cover-header">
+                    <div class="header-left">
                         <div class="cover-sender-name">${header.name}</div>
-                        <div>${header.contact.email} • ${header.contact.location}</div>
-                        <div>${header.contact.linkedin}</div>
-                        <div class="cover-portfolio-link">${header.contact.portfolio || ''}</div>
+                        <div class="cover-sender-title">${header.title}</div>
                     </div>
-                    <div class="cover-date">${today}</div>
-                </div>
-                
-                <div class="cover-recipient">
-                    <div class="cover-recipient-name">${recipient}</div>
-                    <div class="cover-recipient-role">Talent Acquisition Team</div>
+                    <div class="header-right">
+                        <div>${header.contact.email}</div>
+                        <div>${header.contact.linkedin}</div>
+                        <div>${header.contact.location}</div>
+                        <div class="cover-meta-date">${today}</div>
+                    </div>
                 </div>
 
-                <div class="cover-subject"><strong>RE: ${subject}</strong></div>
+                <div class="cover-divider"></div>
+                
+                <div class="cover-recipient-block" data-editable="cover-recipient">
+                    <div class="cover-recipient-label">TO:</div>
+                    <div>
+                        <div class="cover-recipient-name">${recipient}</div>
+                        <div class="cover-recipient-role">Talent Acquisition Team</div>
+                    </div>
+                </div>
+
+                <div class="cover-subject-block" data-editable="cover-subject">
+                    <span class="subject-label">SUBJECT:</span>
+                    <span class="subject-text">${subject.replace(/RE:\s*/i, '')}</span>
+                </div>
 
                 <div class="cover-salutation">Dear ${recipient.split(' ')[0] || "Hiring Team"},</div>
 
-                <div class="cover-body">
-                    ${opening ? `<p class="cover-opening"><strong>${opening}</strong></p>` : ''}
+                <div class="cover-body" data-editable="cover-body">
+                    ${cleanOpening ? `<p class="cover-opening cover-paragraph"><strong>${cleanOpening}</strong></p>` : ''}
                     ${bodyContent}
                 </div>
 
-                <div class="cover-closing">
-                    <div>${closing}</div>
-                    <div class="cover-signature">
-                        <div class="cover-signature-name">${header.name}</div>
+                <div class="cover-closing" data-editable="cover-closing">
+                    <div class="closing-text">${closing}</div>
+                    <div class="signature-block">
+                        <div class="handwritten-signature">${header.name}</div>
+                        <div class="printed-name">${header.name}</div>
                     </div>
                 </div>
             </div>`;
@@ -1018,6 +1051,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Font scale
         const scale = styleState.fontScale / 100;
+        // Apply base font size to container (inherits down)
         resumeDocument.style.fontSize = `${10 * scale}pt`;
 
         // Accent color (apply to highlights)
@@ -1035,7 +1069,12 @@ document.addEventListener('DOMContentLoaded', () => {
             'normal': '22mm 25mm',
             'wide': '28mm 30mm'
         };
-        resumeDocument.style.padding = margins[styleState.marginSize];
+
+        // Apply margins/padding to EACH page individually
+        const pages = document.querySelectorAll('.resume-page, .cover-letter-page');
+        pages.forEach(page => {
+            page.style.padding = margins[styleState.marginSize];
+        });
 
         // Heading font
         resumeDocument.querySelectorAll('.res-name, .res-section-title, .res-company').forEach(el => {
@@ -1043,8 +1082,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Body font
-        resumeDocument.querySelectorAll('.res-summary, .res-role, li').forEach(el => {
+        resumeDocument.querySelectorAll('.res-summary, .res-role, li, p').forEach(el => {
             el.style.fontFamily = styleState.bodyFont;
+        });
+
+        // Propagate body font to pages for inheritance
+        pages.forEach(page => {
+            page.style.fontFamily = styleState.bodyFont;
         });
     }
 
