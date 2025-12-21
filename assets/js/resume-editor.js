@@ -36,15 +36,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let redoStack = [];
     const MAX_HISTORY = 50;
 
-    // Style State
+
+
+    // Style State (Compact defaults for single-page fit)
     let styleState = {
         template: 'executive',
+        fontSystem: 'tech-modern',
         accentColor: '#00FF9D',
         headingFont: "'Outfit', sans-serif",
-        bodyFont: "'Outfit', sans-serif",
-        fontScale: 100,
-        sectionSpacing: 100,
-        marginSize: 'normal'
+        bodyFont: "'Inter', sans-serif",
+        fontScale: 95,
+        lineHeight: 140,
+        headerSpacing: 80,
+        sectionSpacing: 80,
+        bulletSpacing: 80,
+        marginSize: 'compact'
     };
 
     // ===========================================
@@ -91,6 +97,44 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===========================================
     consoleToggle.addEventListener('click', () => {
         consoleSection.classList.toggle('collapsed');
+    });
+
+    // ===========================================
+    // MOBILE DRAWER NAVIGATION
+    // ===========================================
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const drawerBackdrop = document.getElementById('drawer-backdrop');
+    const sidebarRail = document.querySelector('.sidebar-rail');
+
+    function openMobileDrawer() {
+        sidebarRail?.classList.add('open');
+        drawerBackdrop?.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileDrawer() {
+        sidebarRail?.classList.remove('open');
+        drawerBackdrop?.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    mobileMenuToggle?.addEventListener('click', () => {
+        if (sidebarRail?.classList.contains('open')) {
+            closeMobileDrawer();
+        } else {
+            openMobileDrawer();
+        }
+    });
+
+    drawerBackdrop?.addEventListener('click', closeMobileDrawer);
+
+    // Close drawer when a nav button is clicked (mobile)
+    document.querySelectorAll('.rail-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) {
+                closeMobileDrawer();
+            }
+        });
     });
 
     // ===========================================
@@ -327,10 +371,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // RESUME RENDERER
     // ===========================================
     function renderResume(data) {
-        const { header, summary, keyHighlights, skills, experience, education, projects, coverLetter } = data.resume;
+        // Resume data from data.resume, coverLetter is now a sibling
+        const { header, summary, keyHighlights, skills, experience, education, projects } = data.resume;
+        const coverLetter = data.coverLetter; // Separate from resume object
         const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-        // Skills Grid
         // Skills Grid
         const skillsHTML = Object.entries(skills).map(([cat, list]) => `
             <div class="res-skill-row" data-editable="skill-${cat}">
@@ -340,20 +385,31 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
 
         // Key Highlights (Executive Summary Addition)
+        // Parse markdown: **text** → <strong>text</strong>
+        const parseMarkdown = (text) => {
+            return text
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                .replace(/__([^_]+)__/g, '<strong>$1</strong>')
+                .replace(/_([^_]+)_/g, '<em>$1</em>');
+        };
+
         const highlightsHTML = (keyHighlights && keyHighlights.length > 0) ? `
-            <div class="res-highlights" data-editable="highlights">
-                <ul>
-                    ${keyHighlights.map(h => `<li>${h}</li>`).join('')}
+            <section class="res-section" data-editable="highlights">
+                <div class="res-section-title">Key Highlights</div>
+                <ul class="res-highlights-list">
+                    ${keyHighlights.map(h => `<li>${parseMarkdown(h)}</li>`).join('')}
                 </ul>
-            </div>
+            </section>
         ` : '';
 
-        // Experience
+        // Experience (Formal Letter Style - matches Cover Letter blocks)
         const expHTML = experience.map((job, i) => `
             <div class="res-job" data-editable="experience-${i}">
                 <div class="res-job-header">
-                    <div>
-                        <span class="res-company">${job.company}</span> <span class="res-divider">|</span> <span class="res-role">${job.role}</span>
+                    <div class="res-job-main">
+                        <span class="res-company">${job.company}</span>
+                        <span class="res-role">${job.role}</span>
                     </div>
                     <span class="res-date">${job.period}</span>
                 </div>
@@ -363,23 +419,30 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `).join('');
 
-        // Education
+        // Education (Same formal style)
         const eduHTML = education.map((edu, i) => `
-            <div class="res-job-header" data-editable="education-${i}">
-                <div><span class="res-company">${edu.school}</span></div>
-                <span class="res-date">${edu.year}</span>
+            <div class="res-job" data-editable="education-${i}">
+                <div class="res-job-header">
+                    <div class="res-job-main">
+                        <span class="res-company">${edu.school}</span>
+                        <span class="res-role">${edu.degree}</span>
+                    </div>
+                    <span class="res-date">${edu.year}</span>
+                </div>
+                ${edu.description ? `<p class="edu-description">${edu.description}</p>` : ''}
             </div>
-            <div class="res-degree">${edu.degree}</div>
         `).join('');
 
-        // Projects
+        // Projects (Consistent style)
         const projHTML = projects ? projects.map((p, i) => `
-            <div class="res-job" style="margin-bottom:0.8rem" data-editable="project-${i}">
+            <div class="res-job" data-editable="project-${i}">
                 <div class="res-job-header">
-                    <span class="res-company">${p.name}</span>
-                    <span class="res-date" style="font-size:0.75rem">${p.tech.join(' | ')}</span>
+                    <div class="res-job-main">
+                        <span class="res-company">${p.name}</span>
+                        <span class="res-role">${p.tech.join(' • ')}</span>
+                    </div>
                 </div>
-                <div style="font-size:0.9rem; margin-top:0.2rem">${p.description}</div>
+                <p class="edu-description">${p.description}</p>
             </div>
         `).join('') : '';
 
@@ -457,38 +520,42 @@ document.addEventListener('DOMContentLoaded', () => {
             
             <div class="resume-page">
                 <header class="res-header" data-editable="header">
-                    <h1 class="res-name">${header.name}</h1>
-                    <span class="res-title">${header.title}</span>
-                    <div class="res-contact">
-                        <span>${header.contact.email}</span>
-                        <span class="res-separator">•</span>
-                        <span>${header.contact.linkedin}</span>
-                        <span class="res-separator">•</span>
-                        <span>${header.contact.location}</span>
+                    <div class="header-left">
+                        <h1 class="res-name">${header.name}</h1>
+                        <span class="res-title">${header.title}</span>
+                    </div>
+                    <div class="header-right">
+                        <div>${header.contact.email}</div>
+                        <div>${header.contact.linkedin}</div>
+                        <div>${header.contact.location}</div>
+                        ${header.contact.portfolio ? `<div>${header.contact.portfolio}</div>` : ''}
                     </div>
                 </header>
 
+                <div class="res-divider"></div>
+
                 <section class="res-section" data-editable="summary">
+                    <div class="res-section-title">Professional Summary</div>
                     <div class="res-summary">${summary}</div>
                 </section>
 
                 ${highlightsHTML}
 
                 <section class="res-section" data-editable="skills">
-                    <div class="res-section-title">Core Competencies & Technical Skills</div>
+                    <div class="res-section-title">Technical Skills</div>
                     <div class="res-skills-grid">
                         ${skillsHTML}
                     </div>
                 </section>
 
-                <section class="res-section" data-editable="experience">
-                    <div class="res-section-title">Professional Experience</div>
+                <section class="res-section force-page-break" data-editable="experience">
+                    <div class="res-section-title">Experience</div>
                     ${expHTML}
                 </section>
 
                 ${projHTML ? `
-                <section class="res-section" data-editable="projects">
-                    <div class="res-section-title">Key Projects & Innovation</div>
+                <section class="res-section force-page-break" data-editable="projects">
+                    <div class="res-section-title">Projects</div>
                     ${projHTML}
                 </section>
                 ` : ''}
@@ -520,6 +587,11 @@ document.addEventListener('DOMContentLoaded', () => {
             log('ERROR: Missing Inputs.', 'error');
             return;
         }
+
+        // BTN STATE: Processing
+        igniteBtn.classList.add('processing');
+        igniteBtn.textContent = 'PROCESSING...';
+        igniteBtn.disabled = true;
 
         // Reset UI
         agentDiagram.style.display = 'block';
@@ -557,7 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
             activateNode('node-strategy');
             log('', 'info');
             log('→ PHASE 3: NARRATIVE STRATEGY SYNTHESIS', 'process');
-            const modelName = modelModel.includes('pro') ? 'Gemini 3.0 Pro' : 'Gemini 3.0 Flash';
+            const modelName = modelModel.includes('pro') ? 'Gemini 2.0 Pro' : 'Gemini 2.0 Flash'; // Updated to 2.0
             log(`  ├─ Initializing LLM: ${modelName}`, 'info');
             await new Promise(r => setTimeout(r, 200));
             log('  ├─ Dispatching inference request...', 'process');
@@ -603,12 +675,29 @@ document.addEventListener('DOMContentLoaded', () => {
             statusLabel.textContent = 'READY';
             statusLabel.className = 'ctrl-value ready';
 
+            // BTN STATE: Success
+            igniteBtn.classList.remove('processing');
+            igniteBtn.classList.add('success');
+            igniteBtn.textContent = '✓ SUCCESS';
+
+            setTimeout(() => {
+                igniteBtn.classList.remove('success');
+                igniteBtn.textContent = 'INITIALIZE_WORKFLOW()';
+                igniteBtn.disabled = false;
+            }, 3000);
+
             log('', 'info');
             log('═══════════════════════════════════════', 'success');
             log('✓ WORKFLOW COMPLETE - EDITOR READY', 'success');
             log('═══════════════════════════════════════', 'success');
             log('', 'info');
             log('Switch to EDIT tab to customize content', 'info');
+
+            // Automatically switch to editor tab for better UX
+            if (window.innerWidth <= 1024) {
+                // On mobile, scrolling to preview might be better
+                document.getElementById('preview-stage').scrollIntoView({ behavior: 'smooth' });
+            }
 
         } catch (err) {
             log('', 'error');
@@ -617,6 +706,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error(err);
             statusLabel.textContent = 'ERROR';
             statusLabel.className = 'ctrl-value';
+
+            // BTN STATE: Error
+            igniteBtn.classList.remove('processing');
+            igniteBtn.textContent = 'FAILED - RETRY';
+            igniteBtn.disabled = false;
         }
     });
 
@@ -650,18 +744,217 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ===========================================
-    // EDIT MODE TOGGLE
+    // EDIT MODE TOGGLE (Enhanced Feedback)
     // ===========================================
     const toggleEditBtn = document.getElementById('toggle-edit-mode');
+    // statusLabel is already declared at top of file
+
+    function updateEditModeUI() {
+        // Update button appearance
+        toggleEditBtn.classList.toggle('active', isEditMode);
+        toggleEditBtn.innerHTML = isEditMode
+            ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>EDITING`
+            : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>EDIT`;
+
+        // Update status indicator
+        if (statusLabel) {
+            if (isEditMode) {
+                statusLabel.textContent = 'EDITING';
+                statusLabel.className = 'ctrl-value editing';
+            } else {
+                statusLabel.textContent = 'READY';
+                statusLabel.className = 'ctrl-value ready';
+            }
+        }
+
+        // Update resume document styling
+        resumeDocument.classList.toggle('editing', isEditMode);
+
+        // Add/remove edit mode indicator on viewport
+        const viewport = document.getElementById('preview-viewport');
+        viewport?.classList.toggle('edit-mode-active', isEditMode);
+    }
 
     toggleEditBtn.addEventListener('click', () => {
         isEditMode = !isEditMode;
         resumeDocument.contentEditable = isEditMode;
-        resumeDocument.classList.toggle('editing', isEditMode);
-        toggleEditBtn.classList.toggle('active', isEditMode);
 
-        log(isEditMode ? 'Edit mode enabled - Click on content to edit' : 'Edit mode disabled', 'info');
+        updateEditModeUI();
+
+        if (isEditMode) {
+            log('✏️ EDIT MODE ENABLED - Click anywhere on the document to edit', 'success');
+            log('  ├─ Select text to see formatting toolbar', 'info');
+            log('  ├─ Drag spacing handles (═) to adjust vertical gaps', 'info');
+            log('  └─ Changes are auto-saved to history', 'info');
+            initSpacingHandles(); // Add draggable spacing handles
+        } else {
+            saveToHistory(); // Save any pending changes
+            removeSpacingHandles(); // Clean up handles
+            log('📄 Edit mode disabled - Document locked', 'info');
+        }
     });
+
+    // ===========================================
+    // VERTICAL SPACING HANDLES (Drag to Resize)
+    // ===========================================
+    let activeHandle = null;
+    let startY = 0;
+    let startMargin = 0;
+    let spacingTooltip = null;
+
+    function initSpacingHandles() {
+        // Remove any existing handles first
+        removeSpacingHandles();
+
+        // Create tooltip for showing values
+        spacingTooltip = document.createElement('div');
+        spacingTooltip.className = 'spacing-tooltip';
+        spacingTooltip.style.cssText = `
+            position: fixed;
+            background: #000;
+            color: #00FF9D;
+            font-family: var(--font-mono, monospace);
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 3px;
+            pointer-events: none;
+            z-index: 10000;
+            display: none;
+        `;
+        document.body.appendChild(spacingTooltip);
+
+        // Find all section/job elements that can have spacing adjusted
+        const spacingTargets = resumeDocument.querySelectorAll(`
+            .res-header,
+            .res-divider,
+            .res-section,
+            .res-job,
+            .res-highlights-list,
+            .cover-header-modern,
+            .cover-divider,
+            .cover-recipient-block,
+            .cover-subject-block,
+            .cover-body,
+            .cover-closing
+        `);
+
+        spacingTargets.forEach((target, index) => {
+            // Create handle element
+            const handle = document.createElement('div');
+            handle.className = 'spacing-handle';
+            handle.dataset.index = index;
+            handle.innerHTML = '═══';
+            handle.style.cssText = `
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -4px;
+                height: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: ns-resize;
+                color: rgba(0, 255, 157, 0.4);
+                font-size: 8px;
+                letter-spacing: 2px;
+                opacity: 0;
+                transition: opacity 0.2s, color 0.2s;
+                z-index: 100;
+                user-select: none;
+            `;
+
+            // Make target relative for handle positioning
+            const computedStyle = window.getComputedStyle(target);
+            if (computedStyle.position === 'static') {
+                target.style.position = 'relative';
+            }
+
+            // Add hover effects
+            target.addEventListener('mouseenter', () => {
+                if (isEditMode) handle.style.opacity = '1';
+            });
+            target.addEventListener('mouseleave', () => {
+                if (!activeHandle) handle.style.opacity = '0';
+            });
+
+            // Drag start
+            handle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                activeHandle = { element: target, handle };
+                startY = e.clientY;
+                startMargin = parseInt(window.getComputedStyle(target).marginBottom) || 0;
+                handle.style.color = '#00FF9D';
+                handle.style.opacity = '1';
+                document.body.style.cursor = 'ns-resize';
+
+                // Show tooltip
+                updateSpacingTooltip(e.clientX, e.clientY, startMargin);
+            });
+
+            target.appendChild(handle);
+        });
+
+        // Global mouse move
+        document.addEventListener('mousemove', handleSpacingDrag);
+        document.addEventListener('mouseup', handleSpacingDragEnd);
+    }
+
+    function handleSpacingDrag(e) {
+        if (!activeHandle) return;
+
+        const deltaY = e.clientY - startY;
+        // Allow extreme negative margins (-50px) for maximum compression, max 200px
+        const newMargin = Math.max(-50, Math.min(200, startMargin + deltaY));
+        activeHandle.element.style.marginBottom = `${newMargin}px`;
+
+        // Update tooltip with visual indicator for negative values
+        updateSpacingTooltip(e.clientX, e.clientY, newMargin);
+    }
+
+    function handleSpacingDragEnd() {
+        if (!activeHandle) return;
+
+        activeHandle.handle.style.color = 'rgba(0, 255, 157, 0.4)';
+        activeHandle.handle.style.opacity = '0';
+        document.body.style.cursor = '';
+        activeHandle = null;
+
+        // Hide tooltip
+        if (spacingTooltip) spacingTooltip.style.display = 'none';
+
+        // Save changes
+        saveToHistory();
+    }
+
+    function updateSpacingTooltip(x, y, value) {
+        if (!spacingTooltip) return;
+        spacingTooltip.textContent = `${Math.round(value)}px`;
+        spacingTooltip.style.left = `${x + 15}px`;
+        spacingTooltip.style.top = `${y - 10}px`;
+        spacingTooltip.style.display = 'block';
+    }
+
+    function removeSpacingHandles() {
+        // Remove all handles
+        document.querySelectorAll('.spacing-handle').forEach(h => h.remove());
+
+        // Remove tooltip
+        if (spacingTooltip) {
+            spacingTooltip.remove();
+            spacingTooltip = null;
+        }
+
+        // Remove event listeners
+        document.removeEventListener('mousemove', handleSpacingDrag);
+        document.removeEventListener('mouseup', handleSpacingDragEnd);
+    }
 
     // ===========================================
     // INLINE EDITING TOOLBAR
@@ -866,8 +1159,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 `).join('<hr style="border-color: #333; margin: 1rem 0;">');
                 break;
             case 'education':
-                formHTML = data.education.map((edu, i) => `
-                    <div class="education-block" data-index="${i}">
+                formHTML = data.education.map((edu, index) => `
+                    <div class="education-block" data-index="${index}">
                         <div class="form-group">
                             <label>School</label>
                             <input type="text" data-field="school" value="${edu.school}" class="form-input">
@@ -880,6 +1173,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             <label>Year</label>
                             <input type="text" data-field="year" value="${edu.year}" class="form-input">
                         </div>
+                        <div class="form-group">
+                             <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <label>Description (Optional context)</label>
+                                ${aiBtn(`edu-desc-${index}`)}
+                            </div>
+                            <textarea data-field="description" id="edu-desc-${index}" class="form-textarea" style="height:80px">${edu.description || ''}</textarea>
+                        </div>
                     </div>
                 `).join('<hr style="border-color: #333; margin: 1rem 0;">');
                 break;
@@ -891,6 +1191,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Add form styles
         addFormStyles();
+
+        // Attach AI Button Listeners
+        document.querySelectorAll('.mini-ai-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetId = e.target.dataset.target;
+                const targetInput = document.getElementById(targetId);
+                if (targetInput) {
+                    popupOriginal.textContent = targetInput.value;
+                    aiPopup.classList.remove('hidden');
+                    document.querySelector('.rewritten-text').classList.add('hidden');
+                    aiPopup.dataset.targetId = targetId;
+                }
+            });
+        });
     }
 
     function addFormStyles() {
@@ -982,6 +1296,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentResumeData.resume.education[i].school = block.querySelector('[data-field="school"]').value;
                     currentResumeData.resume.education[i].degree = block.querySelector('[data-field="degree"]').value;
                     currentResumeData.resume.education[i].year = block.querySelector('[data-field="year"]').value;
+                    currentResumeData.resume.education[i].description = block.querySelector('[data-field="description"]').value;
                 });
                 break;
         }
@@ -992,8 +1307,155 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ===========================================
-    // STYLE PANEL CONTROLS
+    // STYLE PANEL CONTROLS (V3 - Professional)
     // ===========================================
+
+    // Professional Font Systems (curated pairings)
+    const FONT_SYSTEMS = {
+        'tech-modern': {
+            name: 'Tech Modern',
+            headingFont: "'Outfit', sans-serif",
+            bodyFont: "'Inter', sans-serif"
+        },
+        'executive': {
+            name: 'Executive',
+            headingFont: "Georgia, serif",
+            bodyFont: "Helvetica, Arial, sans-serif"
+        },
+        'classic': {
+            name: 'Classic Editorial',
+            headingFont: "'Times New Roman', serif",
+            bodyFont: "Georgia, serif"
+        },
+        'minimal': {
+            name: 'Minimal',
+            headingFont: "'Inter', sans-serif",
+            bodyFont: "'Inter', sans-serif"
+        },
+        'bold': {
+            name: 'Bold Statement',
+            headingFont: "'Space Grotesk', sans-serif",
+            bodyFont: "'Outfit', sans-serif"
+        },
+        'custom': {
+            name: 'Custom',
+            headingFont: null, // Use manual selection
+            bodyFont: null
+        }
+    };
+
+    // Default style state (COMPACT by default for single-page fit)
+    const DEFAULT_STYLE_STATE = {
+        template: 'executive',
+        fontSystem: 'tech-modern',
+        accentColor: '#00FF9D',
+        headingFont: "'Outfit', sans-serif",
+        bodyFont: "'Inter', sans-serif",
+        fontScale: 95,
+        lineHeight: 140,
+        headerSpacing: 80,
+        sectionSpacing: 80,
+        bulletSpacing: 80,
+        marginSize: 'compact'
+    };
+
+    // Quick Presets (Ultra-compact to Spacious)
+    const QUICK_PRESETS = {
+        compact: {
+            fontScale: 85,
+            lineHeight: 125,
+            headerSpacing: 60,
+            sectionSpacing: 60,
+            bulletSpacing: 60,
+            marginSize: 'tight'
+        },
+        standard: {
+            fontScale: 95,
+            lineHeight: 140,
+            headerSpacing: 80,
+            sectionSpacing: 80,
+            bulletSpacing: 80,
+            marginSize: 'compact'
+        },
+        spacious: {
+            fontScale: 105,
+            lineHeight: 160,
+            headerSpacing: 120,
+            sectionSpacing: 120,
+            bulletSpacing: 110,
+            marginSize: 'normal'
+        }
+    };
+
+    // Font System Selection
+    document.querySelectorAll('.font-system-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const system = btn.dataset.system;
+            const fontConfig = FONT_SYSTEMS[system];
+
+            if (fontConfig) {
+                styleState.fontSystem = system;
+
+                // Update active state
+                document.querySelectorAll('.font-system-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Show/hide manual controls
+                const manualControls = document.getElementById('manual-font-controls');
+                if (system === 'custom') {
+                    manualControls?.classList.remove('hidden');
+                    // Use current manual selections
+                } else {
+                    manualControls?.classList.add('hidden');
+                    // Apply system fonts
+                    styleState.headingFont = fontConfig.headingFont;
+                    styleState.bodyFont = fontConfig.bodyFont;
+
+                    // Update manual dropdowns for reference
+                    const headingSelect = document.getElementById('heading-font');
+                    const bodySelect = document.getElementById('body-font');
+                    if (headingSelect) headingSelect.value = fontConfig.headingFont;
+                    if (bodySelect) bodySelect.value = fontConfig.bodyFont;
+                }
+
+                applyStyles();
+                log(`Font System: ${fontConfig.name}`, 'success');
+            }
+        });
+    });
+
+    // Quick Preset Selection
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const preset = btn.dataset.preset;
+            const settings = QUICK_PRESETS[preset];
+
+            if (settings) {
+                // Apply preset values to styleState
+                Object.assign(styleState, settings);
+
+                // Update UI controls to reflect new values
+                document.getElementById('font-scale').value = settings.fontScale;
+                document.getElementById('font-scale-value').textContent = `${settings.fontScale}%`;
+                document.getElementById('line-height').value = settings.lineHeight;
+                document.getElementById('line-height-value').textContent = (settings.lineHeight / 100).toFixed(1);
+                document.getElementById('header-spacing').value = settings.headerSpacing;
+                document.getElementById('header-spacing-value').textContent = `${settings.headerSpacing}%`;
+                document.getElementById('section-spacing').value = settings.sectionSpacing;
+                document.getElementById('section-spacing-value').textContent = `${settings.sectionSpacing}%`;
+                document.getElementById('bullet-spacing').value = settings.bulletSpacing;
+                document.getElementById('bullet-spacing-value').textContent = `${settings.bulletSpacing}%`;
+                document.getElementById('margin-size').value = settings.marginSize;
+
+                // Update active state
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                applyStyles();
+                log(`Applied ${preset.toUpperCase()} preset`, 'success');
+            }
+        });
+    });
 
     // Template Selection
     document.querySelectorAll('.template-card').forEach(card => {
@@ -1006,90 +1468,396 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Color Selection
+    // Color Selection (Preset Swatches)
     document.querySelectorAll('.color-swatch').forEach(swatch => {
         swatch.addEventListener('click', () => {
             document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
             swatch.classList.add('active');
             styleState.accentColor = swatch.dataset.color;
+
+            // Sync custom picker
+            document.getElementById('custom-color-picker').value = swatch.dataset.color;
+            document.getElementById('color-hex-display').textContent = swatch.dataset.color.toUpperCase();
+
             applyStyles();
             log(`Accent: ${swatch.dataset.color}`, 'info');
         });
     });
 
+    // Custom Color Picker
+    document.getElementById('custom-color-picker')?.addEventListener('input', (e) => {
+        const color = e.target.value;
+        styleState.accentColor = color;
+        document.getElementById('color-hex-display').textContent = color.toUpperCase();
+
+        // Deselect preset swatches
+        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+
+        applyStyles();
+    });
+
     // Typography Controls
-    document.getElementById('heading-font').addEventListener('change', (e) => {
+    document.getElementById('heading-font')?.addEventListener('change', (e) => {
         styleState.headingFont = e.target.value;
         applyStyles();
     });
 
-    document.getElementById('body-font').addEventListener('change', (e) => {
+    document.getElementById('body-font')?.addEventListener('change', (e) => {
         styleState.bodyFont = e.target.value;
         applyStyles();
     });
 
-    document.getElementById('font-scale').addEventListener('input', (e) => {
+    document.getElementById('font-scale')?.addEventListener('input', (e) => {
         styleState.fontScale = parseInt(e.target.value);
         document.getElementById('font-scale-value').textContent = `${styleState.fontScale}%`;
         applyStyles();
     });
 
-    // Spacing Controls
-    document.getElementById('section-spacing').addEventListener('input', (e) => {
-        styleState.sectionSpacing = parseInt(e.target.value);
+    // Line Height Control
+    document.getElementById('line-height')?.addEventListener('input', (e) => {
+        styleState.lineHeight = parseInt(e.target.value);
+        document.getElementById('line-height-value').textContent = (styleState.lineHeight / 100).toFixed(1);
         applyStyles();
     });
 
-    document.getElementById('margin-size').addEventListener('change', (e) => {
+    // Spacing Controls
+    document.getElementById('header-spacing')?.addEventListener('input', (e) => {
+        styleState.headerSpacing = parseInt(e.target.value);
+        document.getElementById('header-spacing-value').textContent = `${styleState.headerSpacing}%`;
+        applyStyles();
+    });
+
+    document.getElementById('bullet-spacing')?.addEventListener('input', (e) => {
+        styleState.bulletSpacing = parseInt(e.target.value);
+        document.getElementById('bullet-spacing-value').textContent = `${styleState.bulletSpacing}%`;
+        applyStyles();
+    });
+
+    document.getElementById('margin-size')?.addEventListener('change', (e) => {
         styleState.marginSize = e.target.value;
         applyStyles();
     });
 
-    // Apply Styles Function
+    // Component-specific spacing controls
+    const componentSpacingControls = ['summary', 'highlights', 'skills', 'experience', 'projects', 'education'];
+
+    // Sync slider with section margin
+    function updateComponentSpacing(component, value) {
+        const input = document.getElementById(`${component}-spacing`);
+        const display = document.getElementById(`${component}-spacing-value`);
+        const section = document.querySelector(`[data-editable="${component}"]`);
+
+        if (input) input.value = value;
+        if (display) display.textContent = `${value}px`;
+        if (section) section.style.marginBottom = `${value}px`;
+    }
+
+    componentSpacingControls.forEach(component => {
+        const input = document.getElementById(`${component}-spacing`);
+        const display = document.getElementById(`${component}-spacing-value`);
+
+        if (input && display) {
+            input.addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                display.textContent = `${value}px`;
+                const section = document.querySelector(`[data-editable="${component}"]`);
+                if (section) {
+                    section.style.marginBottom = `${value}px`;
+                }
+            });
+        }
+    });
+
+    // ===========================================
+    // DRAG SPACING HANDLES (Visual in Edit Mode)
+    // ===========================================
+    function injectSpacingHandles() {
+        // Only inject in edit mode
+        if (!resumeDocument?.classList.contains('editing')) return;
+
+        // Target sections with data-editable
+        const sections = resumeDocument.querySelectorAll('[data-editable]');
+
+        sections.forEach(section => {
+            // Skip if already has handles
+            if (section.querySelector('.spacing-handle')) return;
+
+            // Make section position relative for absolute handles
+            section.style.position = 'relative';
+
+            // Create top handle (controls margin-top)
+            const topHandle = document.createElement('div');
+            topHandle.className = 'spacing-handle spacing-handle-top';
+            topHandle.dataset.direction = 'top';
+            section.appendChild(topHandle);
+
+            // Create bottom handle (controls margin-bottom)
+            const bottomHandle = document.createElement('div');
+            bottomHandle.className = 'spacing-handle spacing-handle-bottom';
+            bottomHandle.dataset.direction = 'bottom';
+            section.appendChild(bottomHandle);
+
+            // Add drag functionality
+            [topHandle, bottomHandle].forEach(handle => {
+                let startY = 0;
+                let startMargin = 0;
+                let tooltip = null;
+
+                handle.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    startY = e.clientY;
+                    const direction = handle.dataset.direction;
+                    const computedStyle = window.getComputedStyle(section);
+                    startMargin = parseInt(computedStyle[direction === 'top' ? 'marginTop' : 'marginBottom']) || 0;
+
+                    handle.classList.add('active');
+
+                    // Create tooltip
+                    tooltip = document.createElement('div');
+                    tooltip.className = 'spacing-tooltip';
+                    document.body.appendChild(tooltip);
+
+                    const onMove = (moveE) => {
+                        const deltaY = moveE.clientY - startY;
+                        let newMargin = direction === 'top'
+                            ? startMargin + deltaY
+                            : startMargin - deltaY;
+
+                        // Clamp to -800 to 100
+                        newMargin = Math.max(-800, Math.min(100, newMargin));
+
+                        if (direction === 'top') {
+                            section.style.marginTop = `${newMargin}px`;
+                        } else {
+                            section.style.marginBottom = `${newMargin}px`;
+
+                            // Sync with slider if this is a main component
+                            const editableType = section.dataset.editable;
+                            if (componentSpacingControls.includes(editableType)) {
+                                const input = document.getElementById(`${editableType}-spacing`);
+                                const display = document.getElementById(`${editableType}-spacing-value`);
+                                if (input) input.value = newMargin;
+                                if (display) display.textContent = `${newMargin}px`;
+                            }
+                        }
+
+                        // Update tooltip
+                        tooltip.textContent = `${newMargin}px`;
+                        tooltip.style.left = `${moveE.clientX + 15}px`;
+                        tooltip.style.top = `${moveE.clientY - 10}px`;
+                    };
+
+                    const onUp = () => {
+                        handle.classList.remove('active');
+                        if (tooltip) tooltip.remove();
+                        document.removeEventListener('mousemove', onMove);
+                        document.removeEventListener('mouseup', onUp);
+                    };
+
+                    document.addEventListener('mousemove', onMove);
+                    document.addEventListener('mouseup', onUp);
+                });
+            });
+        });
+    }
+
+    // Inject handles when entering edit mode
+    const originalEditToggle = document.querySelector('.rail-btn[data-mode="edit"]');
+    if (originalEditToggle) {
+        originalEditToggle.addEventListener('click', () => {
+            setTimeout(injectSpacingHandles, 100);
+        });
+    }
+
+    // Also inject when resume renders
+    const originalRenderResume = window.renderResume;
+    if (typeof originalRenderResume === 'function') {
+        window.renderResume = function (...args) {
+            originalRenderResume.apply(this, args);
+            setTimeout(injectSpacingHandles, 100);
+        };
+    }
+
+    // Reset Styles Button (Enhanced)
+    document.getElementById('reset-styles')?.addEventListener('click', () => {
+        // Reset to defaults
+        Object.assign(styleState, DEFAULT_STYLE_STATE);
+
+        // Update all UI controls (compact defaults)
+        document.getElementById('font-scale').value = 95;
+        document.getElementById('font-scale-value').textContent = '95%';
+        document.getElementById('line-height').value = 140;
+        document.getElementById('line-height-value').textContent = '1.4';
+        document.getElementById('header-spacing').value = 80;
+        document.getElementById('header-spacing-value').textContent = '80%';
+        document.getElementById('bullet-spacing').value = 80;
+        document.getElementById('bullet-spacing-value').textContent = '80%';
+        document.getElementById('margin-size').value = 'compact';
+
+        // Reset component spacing
+        ['summary', 'highlights', 'skills', 'experience', 'projects', 'education'].forEach(comp => {
+            const input = document.getElementById(`${comp}-spacing`);
+            const display = document.getElementById(`${comp}-spacing-value`);
+            const section = document.querySelector(`[data-editable="${comp}"]`);
+            if (input) input.value = 10;
+            if (display) display.textContent = '10px';
+            if (section) section.style.marginBottom = '';
+        });
+        document.getElementById('heading-font').value = "'Outfit', sans-serif";
+        document.getElementById('body-font').value = "'Inter', sans-serif";
+        document.getElementById('custom-color-picker').value = '#00FF9D';
+        document.getElementById('color-hex-display').textContent = '#00FF9D';
+
+        // Reset template cards
+        document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+        document.querySelector('.template-card[data-template="executive"]')?.classList.add('active');
+
+        // Reset color swatches
+        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+        document.querySelector('.color-swatch[data-color="#00FF9D"]')?.classList.add('active');
+
+        // Reset preset buttons
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('.preset-btn[data-preset="standard"]')?.classList.add('active');
+
+        // Reset font system
+        document.querySelectorAll('.font-system-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('.font-system-btn[data-system="tech-modern"]')?.classList.add('active');
+        document.getElementById('manual-font-controls')?.classList.add('hidden');
+
+        applyStyles();
+        log('Styles reset to defaults', 'success');
+    });
+
+    // ===========================================
+    // PAGINATION ENGINE (Multi-Page Logic)
+    // ===========================================
+    function repaginate() {
+        // 1. Reset: Consolidate everything into the first page
+        const pages = document.querySelectorAll('.resume-page');
+        if (pages.length > 1) {
+            const firstPage = pages[0];
+            for (let i = 1; i < pages.length; i++) {
+                while (pages[i].firstChild) {
+                    firstPage.appendChild(pages[i].firstChild);
+                }
+                pages[i].remove();
+            }
+        }
+
+        const pageOne = document.querySelector('.resume-page');
+        if (!pageOne) return;
+
+        const PAGE_HEIGHT = 1122;
+        const MARGIN_BOTTOM = 60;
+        const MAX_H = PAGE_HEIGHT - MARGIN_BOTTOM;
+
+        let currentPage = pageOne;
+        const children = Array.from(pageOne.children);
+
+        const createPage = () => {
+            const newPage = document.createElement('div');
+            newPage.className = pageOne.className;
+            newPage.style.cssText = pageOne.style.cssText;
+            resumeDocument.appendChild(newPage);
+            return newPage;
+        };
+
+        children.forEach((child, index) => {
+            // 1. Force Page Break Check
+            if (child.classList.contains('force-page-break') && index > 0) {
+                currentPage = createPage();
+                currentPage.appendChild(child);
+                return;
+            }
+
+            // 2. Overflow Check
+            // Always move to currentPage to check valid height
+            if (currentPage !== pageOne) {
+                currentPage.appendChild(child);
+            }
+
+            const childBottom = child.offsetTop + child.offsetHeight;
+            if (childBottom > MAX_H) {
+                // Move to new page (if strict overflow and not the only item)
+                if (currentPage.children.length > 1) {
+                    currentPage = createPage();
+                    currentPage.appendChild(child);
+                }
+            }
+        });
+
+        log(`Paginated into ${document.querySelectorAll('.resume-page').length} pages`, 'info');
+    }
+
+    // Apply Styles Function (AESTHETICS LAB CORE)
     function applyStyles() {
         if (!resumeDocument) return;
 
-        // Font scale
+        // 1. GLOBAL VARIABLES (Fonts, Colors, Scaling)
+        const root = document.documentElement;
+
+        // Font Scale (Base rem/em sizing)
         const scale = styleState.fontScale / 100;
-        // Apply base font size to container (inherits down)
         resumeDocument.style.fontSize = `${10 * scale}pt`;
 
-        // Accent color (apply to highlights)
-        document.documentElement.style.setProperty('--resume-accent', styleState.accentColor);
+        // Accent Color
+        root.style.setProperty('--resume-accent', styleState.accentColor);
 
-        // Section spacing
-        const spacingScale = styleState.sectionSpacing / 100;
-        resumeDocument.querySelectorAll('.res-section').forEach(section => {
-            section.style.marginBottom = `${1.8 * spacingScale}rem`;
-        });
+        // Spacing Scales
+        const headerScale = (styleState.headerSpacing || 100) / 100;
+        const sectionScale = (styleState.sectionSpacing || 100) / 100;
+        const bulletScale = (styleState.bulletSpacing || 100) / 100;
 
-        // Margin sizes
-        const margins = {
-            'compact': '15mm 18mm',
-            'normal': '22mm 25mm',
-            'wide': '28mm 30mm'
-        };
+        root.style.setProperty('--res-header-scale', headerScale);
+        root.style.setProperty('--res-gap-scale', sectionScale);
+        root.style.setProperty('--res-bullet-scale', bulletScale);
 
-        // Apply margins/padding to EACH page individually
+        // Line Height
+        const lineHeightValue = (styleState.lineHeight || 150) / 100;
+        root.style.setProperty('--res-line-height', lineHeightValue);
+
+        // Fonts (Sanitize quotes just in case)
+        styleState.headingFont = styleState.headingFont.replace(/"/g, "'");
+        styleState.bodyFont = styleState.bodyFont.replace(/"/g, "'");
+
+        root.style.setProperty('--res-font-header', styleState.headingFont);
+        root.style.setProperty('--res-font-body', styleState.bodyFont);
+
+        // 2. TEMPLATE APPLICATION
         const pages = document.querySelectorAll('.resume-page, .cover-letter-page');
+        const templates = ['executive', 'modern', 'minimal', 'creative'];
+
         pages.forEach(page => {
+            // Reset templates
+            templates.forEach(t => page.classList.remove(`template-${t}`));
+            // Apply current
+            page.classList.add(`template-${styleState.template || 'executive'}`);
+
+            // Apply Margins (All 4 sides identical)
+            const margins = {
+                'tight': '12mm',
+                'compact': '15mm',
+                'normal': '20mm',
+                'wide': '25mm',
+                'spacious': '30mm'
+            };
             page.style.padding = margins[styleState.marginSize];
-        });
 
-        // Heading font
-        resumeDocument.querySelectorAll('.res-name, .res-section-title, .res-company').forEach(el => {
-            el.style.fontFamily = styleState.headingFont;
-        });
-
-        // Body font
-        resumeDocument.querySelectorAll('.res-summary, .res-role, li, p').forEach(el => {
-            el.style.fontFamily = styleState.bodyFont;
-        });
-
-        // Propagate body font to pages for inheritance
-        pages.forEach(page => {
+            // Force Fonts (CSS Variables handle most, but explicit override helps fallback)
             page.style.fontFamily = styleState.bodyFont;
+
+            // Update Headers explicitly if needed
+            const headers = page.querySelectorAll('.res-name, .res-section-title, .res-company, .res-header-modern, .cover-header-modern');
+            headers.forEach(h => h.style.fontFamily = styleState.headingFont);
         });
+
+        // Run pagination after styles settle
+        setTimeout(repaginate, 50);
+
+        log(`Applied Style: ${styleState.template ? styleState.template.toUpperCase() : 'DEFAULT'}`, 'success');
     }
 
     // ===========================================
@@ -1144,10 +1912,339 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ===========================================
-    // FUTURE EXPORT PLACEHOLDER
+    // PROFESSIONAL EXPORT SYSTEM
     // ===========================================
-    document.getElementById('future-export').addEventListener('click', () => {
-        log('PDF Export coming soon! Modern library integration planned.', 'info');
+
+    // Export Dropdown Toggle
+    const exportDropdown = document.getElementById('export-dropdown');
+    const exportToggle = document.getElementById('export-toggle');
+
+    exportToggle?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportDropdown.classList.toggle('open');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!exportDropdown?.contains(e.target)) {
+            exportDropdown?.classList.remove('open');
+        }
+    });
+
+    // Helper: Get candidate name for filename
+    function getExportFilename(extension) {
+        const name = currentResumeData?.resume?.header?.name || 'Resume';
+        const cleanName = name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+        const date = new Date().toISOString().split('T')[0];
+        return `${cleanName}_${date}.${extension}`;
+    }
+
+    // ===========================================
+    // PDF EXPORT (Direct - Reliable)
+    // ===========================================
+    document.getElementById('export-pdf')?.addEventListener('click', async () => {
+        if (!currentResumeData) {
+            log('No resume to export', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('export-pdf');
+        btn.classList.add('loading');
+        log('📄 Generating PDF...', 'process');
+        exportDropdown.classList.remove('open');
+
+        try {
+            const element = document.getElementById('resume-document');
+            await document.fonts.ready;
+
+            const opt = {
+                margin: [0, 0, 0, 0],
+                filename: getExportFilename('pdf'),
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: -window.scrollY },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: 'avoid-all' }
+            };
+
+            await html2pdf().set(opt).from(element).save();
+
+            btn.classList.remove('loading');
+            btn.classList.add('success');
+            log('✓ PDF exported successfully!', 'success');
+            setTimeout(() => btn.classList.remove('success'), 2000);
+        } catch (err) {
+            console.error('PDF Export Error:', err);
+            log(`PDF Export failed: ${err.message}`, 'error');
+            btn.classList.remove('loading');
+        }
+    });
+
+    // ===========================================
+    // WORD EXPORT (docx.js - Full Document)
+    // ===========================================
+    document.getElementById('export-word')?.addEventListener('click', async () => {
+        if (!currentResumeData) {
+            log('No resume to export', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('export-word');
+        btn.classList.add('loading');
+        log('📝 Generating Word document...', 'process');
+        exportDropdown.classList.remove('open');
+
+        try {
+            const { Document, Packer, Paragraph, TextRun, PageBreak, BorderStyle } = docx;
+            const data = currentResumeData.resume;
+            const cover = currentResumeData.coverLetter;
+
+            // Font configuration - Match Preview Styling
+            const FONTS = {
+                heading: 'Outfit',      // Same as preview headers
+                body: 'Inter',          // Same as preview body
+                mono: 'IBM Plex Mono'   // Same as preview monospace
+            };
+
+            // Build Resume Section
+            const resumeContent = [];
+
+            // Name
+            resumeContent.push(new Paragraph({
+                children: [new TextRun({
+                    text: data.header.name.toUpperCase(),
+                    bold: true,
+                    size: 44,
+                    font: FONTS.heading
+                })],
+                spacing: { after: 80 }
+            }));
+
+            // Title
+            resumeContent.push(new Paragraph({
+                children: [new TextRun({
+                    text: data.header.title,
+                    size: 24,
+                    color: '555555',
+                    font: FONTS.body
+                })],
+                spacing: { after: 160 }
+            }));
+
+            // Contact
+            const contact = [data.header.contact.email, data.header.contact.linkedin, data.header.contact.location].filter(Boolean).join('  •  ');
+            resumeContent.push(new Paragraph({
+                children: [new TextRun({ text: contact, size: 18, color: '666666', font: FONTS.mono })],
+                spacing: { after: 300 }
+            }));
+
+            // Divider
+            resumeContent.push(new Paragraph({
+                border: { bottom: { color: 'CCCCCC', style: BorderStyle.SINGLE, size: 8 } },
+                spacing: { after: 300 }
+            }));
+
+            // Summary
+            resumeContent.push(new Paragraph({
+                children: [new TextRun({ text: 'PROFESSIONAL SUMMARY', bold: true, size: 20, color: '888888', font: FONTS.heading })],
+                spacing: { after: 160 }
+            }));
+            resumeContent.push(new Paragraph({
+                children: [new TextRun({ text: data.summary, size: 22, font: FONTS.body })],
+                spacing: { after: 300 }
+            }));
+
+            // Skills
+            if (data.skills && Object.keys(data.skills).length > 0) {
+                resumeContent.push(new Paragraph({
+                    children: [new TextRun({ text: 'SKILLS', bold: true, size: 20, color: '888888', font: FONTS.heading })],
+                    spacing: { before: 160, after: 160 }
+                }));
+                Object.entries(data.skills).forEach(([cat, skills]) => {
+                    const list = Array.isArray(skills) ? skills.join(', ') : skills;
+                    resumeContent.push(new Paragraph({
+                        children: [
+                            new TextRun({ text: `${cat.replace(/_/g, ' ').toUpperCase()}: `, bold: true, size: 20, font: FONTS.body }),
+                            new TextRun({ text: list, size: 20, font: FONTS.body })
+                        ],
+                        spacing: { after: 80 }
+                    }));
+                });
+            }
+
+            // Experience
+            if (data.experience?.length > 0) {
+                resumeContent.push(new Paragraph({
+                    children: [new TextRun({ text: 'EXPERIENCE', bold: true, size: 20, color: '888888', font: FONTS.heading })],
+                    spacing: { before: 300, after: 160 }
+                }));
+                data.experience.forEach(job => {
+                    resumeContent.push(new Paragraph({
+                        children: [
+                            new TextRun({ text: job.company, bold: true, size: 22, font: FONTS.body }),
+                            new TextRun({ text: `  |  ${job.period}`, size: 18, color: '888888', font: FONTS.mono })
+                        ]
+                    }));
+                    resumeContent.push(new Paragraph({
+                        children: [new TextRun({ text: job.role, italics: true, size: 20, color: '555555', font: FONTS.body })],
+                        spacing: { after: 100 }
+                    }));
+                    job.bullets?.forEach(b => {
+                        resumeContent.push(new Paragraph({
+                            children: [new TextRun({ text: `• ${b}`, size: 20, font: FONTS.body })],
+                            indent: { left: 300 },
+                            spacing: { after: 60 }
+                        }));
+                    });
+                    resumeContent.push(new Paragraph({ spacing: { after: 160 } }));
+                });
+            }
+
+            // Education
+            if (data.education?.length > 0) {
+                resumeContent.push(new Paragraph({
+                    children: [new TextRun({ text: 'EDUCATION', bold: true, size: 20, color: '888888', font: FONTS.heading })],
+                    spacing: { before: 160, after: 160 }
+                }));
+                data.education.forEach(edu => {
+                    resumeContent.push(new Paragraph({
+                        children: [
+                            new TextRun({ text: edu.school, bold: true, size: 22, font: FONTS.body }),
+                            new TextRun({ text: `  |  ${edu.year}`, size: 18, color: '888888', font: FONTS.mono })
+                        ]
+                    }));
+                    resumeContent.push(new Paragraph({
+                        children: [new TextRun({ text: edu.degree, size: 20, font: FONTS.body })],
+                        spacing: { after: 160 }
+                    }));
+                });
+            }
+
+            // Build Cover Letter Section (if exists)
+            const coverContent = [];
+            if (cover) {
+                // Page break before cover letter
+                coverContent.push(new Paragraph({ children: [new PageBreak()] }));
+
+                // Header
+                coverContent.push(new Paragraph({
+                    children: [new TextRun({ text: cover.header?.name?.toUpperCase() || data.header.name.toUpperCase(), bold: true, size: 44, font: FONTS.heading })],
+                    spacing: { after: 80 }
+                }));
+                coverContent.push(new Paragraph({
+                    children: [new TextRun({ text: cover.header?.title || data.header.title, size: 24, color: '555555', font: FONTS.body })],
+                    spacing: { after: 300 }
+                }));
+
+                // Divider
+                coverContent.push(new Paragraph({
+                    border: { bottom: { color: 'CCCCCC', style: BorderStyle.SINGLE, size: 8 } },
+                    spacing: { after: 300 }
+                }));
+
+                // Recipient
+                if (cover.recipient) {
+                    coverContent.push(new Paragraph({
+                        children: [new TextRun({ text: cover.recipient.name, bold: true, size: 22, font: FONTS.body })],
+                        spacing: { after: 40 }
+                    }));
+                    coverContent.push(new Paragraph({
+                        children: [new TextRun({ text: cover.recipient.title || '', size: 20, color: '555555', font: FONTS.body })],
+                        spacing: { after: 40 }
+                    }));
+                    coverContent.push(new Paragraph({
+                        children: [new TextRun({ text: cover.recipient.company || '', size: 20, font: FONTS.body })],
+                        spacing: { after: 200 }
+                    }));
+                }
+
+                // Subject
+                if (cover.subject) {
+                    coverContent.push(new Paragraph({
+                        children: [new TextRun({ text: `RE: ${cover.subject}`, bold: true, size: 22, font: FONTS.body })],
+                        spacing: { after: 300 }
+                    }));
+                }
+
+                // Body paragraphs
+                if (cover.body) {
+                    // Handle body as string or array
+                    const bodyParagraphs = Array.isArray(cover.body) ? cover.body : [cover.body];
+                    bodyParagraphs.forEach(para => {
+                        if (para && typeof para === 'string') {
+                            coverContent.push(new Paragraph({
+                                children: [new TextRun({ text: para, size: 22, font: FONTS.body })],
+                                spacing: { after: 200 }
+                            }));
+                        }
+                    });
+                }
+
+                // Closing
+                coverContent.push(new Paragraph({ spacing: { after: 300 } }));
+                coverContent.push(new Paragraph({
+                    children: [new TextRun({ text: cover.closing || 'Best regards,', size: 22, font: FONTS.body })],
+                    spacing: { after: 100 }
+                }));
+                coverContent.push(new Paragraph({
+                    children: [new TextRun({ text: data.header.name, bold: true, size: 22, font: FONTS.body })]
+                }));
+            }
+
+            // Create document with both sections
+            const doc = new Document({
+                sections: [{
+                    properties: { page: { margin: { top: 720, right: 720, bottom: 720, left: 720 } } },
+                    children: [...resumeContent, ...coverContent]
+                }]
+            });
+
+            const blob = await Packer.toBlob(doc);
+            saveAs(blob, getExportFilename('docx'));
+
+            btn.classList.remove('loading');
+            btn.classList.add('success');
+            log('✓ Word document exported (Resume + Cover Letter)', 'success');
+            setTimeout(() => btn.classList.remove('success'), 2000);
+        } catch (err) {
+            console.error('Word Export Error:', err);
+            log(`Word Export failed: ${err.message}`, 'error');
+            btn.classList.remove('loading');
+        }
+    });
+
+    // ===========================================
+    // JSON EXPORT (Data Backup)
+    // ===========================================
+    document.getElementById('export-json')?.addEventListener('click', () => {
+        if (!currentResumeData) {
+            log('No resume to export', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('export-json');
+        btn.classList.add('loading');
+        exportDropdown.classList.remove('open');
+
+        try {
+            const json = JSON.stringify(currentResumeData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = getExportFilename('json');
+            a.click();
+            URL.revokeObjectURL(url);
+
+            btn.classList.remove('loading');
+            btn.classList.add('success');
+            log('✓ JSON data exported successfully!', 'success');
+
+            setTimeout(() => btn.classList.remove('success'), 2000);
+        } catch (err) {
+            log(`JSON Export failed: ${err.message}`, 'error');
+            btn.classList.remove('loading');
+        }
     });
 
     // ===========================================
@@ -1215,15 +2312,96 @@ document.addEventListener('DOMContentLoaded', () => {
 
     refreshVerbsBtn.addEventListener('click', displayRandomVerbs);
 
+    // ATS ANALYSIS SYSTEM (V2 - Intelligence Upgrade)
     // ===========================================
-    // ATS ANALYSIS SYSTEM
-    // ===========================================
-    const commonKeywords = [
-        'leadership', 'management', 'project', 'team', 'strategy', 'development',
-        'analysis', 'implementation', 'optimization', 'collaboration', 'communication',
-        'problem-solving', 'innovation', 'agile', 'scrum', 'javascript', 'react',
-        'python', 'sql', 'aws', 'cloud', 'devops', 'api', 'testing', 'deployment'
+
+    // Expanded keyword dictionary with synonyms
+    const keywordSynonyms = {
+        'javascript': ['js', 'ecmascript', 'es6', 'es2015'],
+        'typescript': ['ts'],
+        'python': ['py', 'python3'],
+        'machine learning': ['ml', 'deep learning', 'neural network', 'ai'],
+        'artificial intelligence': ['ai', 'machine learning', 'ml'],
+        'project management': ['pm', 'project manager', 'scrum master'],
+        'react': ['reactjs', 'react.js'],
+        'node': ['nodejs', 'node.js'],
+        'amazon web services': ['aws', 'ec2', 's3', 'lambda'],
+        'google cloud': ['gcp', 'google cloud platform'],
+        'database': ['db', 'sql', 'nosql', 'mongodb', 'postgresql', 'mysql'],
+        'api': ['rest', 'restful', 'graphql', 'endpoints'],
+        'continuous integration': ['ci', 'ci/cd', 'jenkins', 'github actions'],
+        'user experience': ['ux', 'ui/ux'],
+        'user interface': ['ui', 'frontend', 'front-end']
+    };
+
+    // Common stopwords to filter out
+    const stopwords = new Set([
+        'the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had', 'her', 'was', 'one', 'our', 'out',
+        'has', 'have', 'been', 'being', 'will', 'with', 'this', 'that', 'from', 'they', 'would', 'there', 'their',
+        'what', 'about', 'which', 'when', 'make', 'like', 'time', 'just', 'know', 'take', 'people', 'into', 'year',
+        'your', 'good', 'some', 'could', 'them', 'than', 'then', 'look', 'only', 'come', 'over', 'such', 'also',
+        'back', 'after', 'work', 'first', 'well', 'even', 'want', 'because', 'these', 'give', 'most', 'working',
+        'ability', 'strong', 'experience', 'looking', 'join', 'role', 'position', 'company', 'team', 'must', 'etc'
+    ]);
+
+    // Power action verbs for resume scoring
+    const powerVerbs = [
+        'achieved', 'accelerated', 'architected', 'automated', 'built', 'created', 'delivered', 'designed',
+        'developed', 'drove', 'engineered', 'established', 'executed', 'generated', 'grew', 'implemented',
+        'improved', 'increased', 'initiated', 'innovated', 'launched', 'led', 'managed', 'optimized',
+        'orchestrated', 'pioneered', 'reduced', 'redesigned', 'scaled', 'spearheaded', 'streamlined',
+        'transformed', 'tripled', 'doubled'
     ];
+
+    function extractKeyPhrases(text) {
+        const cleanText = text.toLowerCase().replace(/[^\w\s-]/g, ' ');
+        const words = cleanText.split(/\s+/).filter(w => w.length > 2 && !stopwords.has(w));
+
+        // Single words (unigrams)
+        const unigrams = [...new Set(words)];
+
+        // Two-word phrases (bigrams) - important for tech terms
+        const bigrams = [];
+        for (let i = 0; i < words.length - 1; i++) {
+            const phrase = `${words[i]} ${words[i + 1]}`;
+            if (!stopwords.has(words[i]) && !stopwords.has(words[i + 1])) {
+                bigrams.push(phrase);
+            }
+        }
+
+        // Count frequency to identify important terms
+        const freqMap = {};
+        words.forEach(w => { freqMap[w] = (freqMap[w] || 0) + 1; });
+
+        // Important terms: high frequency OR technical-looking (contains numbers, hyphens)
+        const importantTerms = unigrams.filter(w =>
+            freqMap[w] >= 2 ||
+            /\d/.test(w) ||
+            w.includes('-') ||
+            w.length > 6
+        );
+
+        return { unigrams: importantTerms, bigrams: [...new Set(bigrams)] };
+    }
+
+    function checkKeywordMatch(resumeText, keyword) {
+        const lowerResume = resumeText.toLowerCase();
+        const lowerKeyword = keyword.toLowerCase();
+
+        // Direct match
+        if (lowerResume.includes(lowerKeyword)) return true;
+
+        // Check synonyms
+        for (const [term, synonyms] of Object.entries(keywordSynonyms)) {
+            if (lowerKeyword === term || synonyms.includes(lowerKeyword)) {
+                // Check if resume has the term or any synonym
+                if (lowerResume.includes(term)) return true;
+                if (synonyms.some(syn => lowerResume.includes(syn))) return true;
+            }
+        }
+
+        return false;
+    }
 
     document.getElementById('run-ats-analysis').addEventListener('click', () => {
         if (!currentResumeData) {
@@ -1231,48 +2409,94 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        log('Running ATS analysis...', 'process');
+        log('Running intelligent ATS analysis...', 'process');
 
-        const resumeText = resumeDocument.innerText.toLowerCase();
-        const jobText = jobDescriptionInput.value.toLowerCase();
+        const resumeText = resumeDocument.innerText;
+        const jobText = jobDescriptionInput.value;
 
-        // Extract keywords from job description
-        const jobWords = jobText.match(/\b[a-z]{4,}\b/g) || [];
-        const uniqueJobWords = [...new Set(jobWords)].filter(w =>
-            commonKeywords.includes(w) || jobWords.filter(x => x === w).length > 1
-        );
+        if (!jobText.trim()) {
+            log('Job description required for accurate analysis', 'error');
+            return;
+        }
 
-        // Check which keywords are found
+        // 1. KEYWORD ANALYSIS (Improved)
+        const jdPhrases = extractKeyPhrases(jobText);
+        const allJdKeywords = [...jdPhrases.unigrams.slice(0, 20), ...jdPhrases.bigrams.slice(0, 10)];
+
         const foundKeywords = [];
         const missingKeywords = [];
 
-        uniqueJobWords.slice(0, 15).forEach(keyword => {
-            if (resumeText.includes(keyword)) {
+        allJdKeywords.forEach(keyword => {
+            if (checkKeywordMatch(resumeText, keyword)) {
                 foundKeywords.push(keyword);
             } else {
                 missingKeywords.push(keyword);
             }
         });
 
-        // Calculate scores
-        const keywordScore = uniqueJobWords.length > 0
-            ? Math.round((foundKeywords.length / uniqueJobWords.length) * 100)
+        const keywordScore = allJdKeywords.length > 0
+            ? Math.round((foundKeywords.length / allJdKeywords.length) * 100)
             : 50;
 
-        const bulletCount = (resumeText.match(/•|▪|◦|-\s/g) || []).length;
-        const hasQuantifiables = /\d+%|\$\d+|\d+\+|\d+x/g.test(resumeText);
-        const formatScore = Math.min(100, 60 + bulletCount * 2 + (hasQuantifiables ? 20 : 0));
+        // 2. SKILLS COVERAGE (Actually compares to JD)
+        const resumeSkills = currentResumeData.resume.skills
+            ? Object.values(currentResumeData.resume.skills).flat().map(s => s.toLowerCase())
+            : [];
 
-        const skillCategories = currentResumeData.resume.skills ? Object.keys(currentResumeData.resume.skills).length : 0;
-        const skillsScore = Math.min(100, skillCategories * 25);
+        // Extract skill-like terms from JD (nouns, tech terms)
+        const jdSkillTerms = jdPhrases.unigrams.filter(w =>
+            w.length > 3 &&
+            !['years', 'experience', 'work', 'team', 'role'].includes(w)
+        ).slice(0, 15);
 
-        const overallScore = Math.round((keywordScore + formatScore + skillsScore) / 3);
+        let matchedSkills = 0;
+        jdSkillTerms.forEach(skill => {
+            if (resumeSkills.some(rs => rs.includes(skill) || skill.includes(rs))) {
+                matchedSkills++;
+            }
+        });
+
+        const skillsScore = jdSkillTerms.length > 0
+            ? Math.round((matchedSkills / jdSkillTerms.length) * 100)
+            : (resumeSkills.length > 10 ? 80 : 60);
+
+        // 3. FORMAT SCORE (More comprehensive)
+        const bulletCount = (resumeText.match(/•|▪|◦|–\s/g) || []).length;
+        const hasQuantifiables = (resumeText.match(/\d+%|\$[\d,]+|\d+\+|\d+x|\d+ million|\d+ users/gi) || []).length;
+        const actionVerbCount = powerVerbs.filter(v => resumeText.toLowerCase().includes(v)).length;
+        const sectionCount = resumeDocument.querySelectorAll('.res-section').length;
+        const wordCount = resumeText.trim().split(/\s+/).length;
+
+        // Scoring components
+        let formatScore = 40; // Base
+        formatScore += Math.min(20, bulletCount * 1.5);  // Up to 20 for bullets (13+ bullets)
+        formatScore += Math.min(15, hasQuantifiables * 5); // Up to 15 for metrics (3+ metrics)
+        formatScore += Math.min(15, actionVerbCount * 2);  // Up to 15 for action verbs (7+ verbs)
+        formatScore += Math.min(10, sectionCount * 2);     // Up to 10 for structure
+
+        // Penalty for too short or too long
+        if (wordCount < 300) formatScore -= 15;
+        else if (wordCount > 800) formatScore += 5; // Comprehensive is good
+
+        formatScore = Math.max(0, Math.min(100, Math.round(formatScore)));
+
+        // 4. OVERALL SCORE (Weighted)
+        // Keywords are most important for ATS, then skills, then format
+        const overallScore = Math.round(
+            (keywordScore * 0.45) +
+            (skillsScore * 0.35) +
+            (formatScore * 0.20)
+        );
 
         // Update UI
         updateATSDisplay(overallScore, keywordScore, skillsScore, formatScore);
         displayKeywords(foundKeywords, missingKeywords);
         updateDocumentStats();
 
+        // Detailed logging
+        log(`Keywords: ${foundKeywords.length}/${allJdKeywords.length} matched`, 'info');
+        log(`Skills: ${matchedSkills}/${jdSkillTerms.length} covered`, 'info');
+        log(`Format: ${bulletCount} bullets, ${hasQuantifiables} metrics, ${actionVerbCount} power verbs`, 'info');
         log(`ATS Score: ${overallScore}%`, overallScore >= 70 ? 'success' : 'process');
     });
 
@@ -1413,33 +2637,60 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function aiRewriteText(text, action) {
-        // Simulate AI response for now (would connect to actual API)
-        await new Promise(r => setTimeout(r, 800));
+        try {
+            const response = await fetch('/api/generate-content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    text: text,
+                    action: action,
+                    context: currentResumeData ? currentResumeData.resume.header.title : "Professional"
+                })
+            });
 
-        const prompts = {
-            improve: `More impactful version: ${text.charAt(0).toUpperCase() + text.slice(1)}`,
-            quantify: text.replace(/improved|increased|reduced/gi, match =>
-                `${match} by 35%`),
-            shorten: text.split(' ').slice(0, Math.ceil(text.split(' ').length * 0.6)).join(' '),
-            expand: `${text}. This initiative demonstrated strong leadership and delivered measurable results.`
-        };
+            if (!response.ok) throw new Error('AI request failed');
 
-        return prompts[action] || text;
+            const data = await response.json();
+            return data.result.replace(/^"|"$/g, ''); // Clean quotes if present
+        } catch (error) {
+            console.error(error);
+            log('AI Service Unavailable. Check API Key.', 'error');
+            // Fallback for demo/offline
+            const prompts = {
+                improve: `More impactful version: ${text.charAt(0).toUpperCase() + text.slice(1)}`,
+                quantify: text.replace(/improved|increased|reduced/gi, match => `${match} by 35%`),
+                shorten: text.split(' ').slice(0, Math.ceil(text.split(' ').length * 0.6)).join(' '),
+                expand: `${text}. This initiative demonstrated strong leadership and technical expertise.`
+            };
+            return prompts[action] || text;
+        }
     }
 
     document.getElementById('apply-rewrite')?.addEventListener('click', () => {
-        if (!selectedTextRange || !popupRewritten.textContent) return;
+        const newText = popupRewritten.textContent;
+        if (!newText) return;
 
         saveToHistory();
 
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(selectedTextRange);
-
-        document.execCommand('insertText', false, popupRewritten.textContent);
+        // Mode 1: Form Input (Brainstorming)
+        if (aiPopup.dataset.targetId) {
+            const input = document.getElementById(aiPopup.dataset.targetId);
+            if (input) {
+                input.value = newText;
+                log('Applied AI suggestions to form', 'success');
+            }
+            aiPopup.dataset.targetId = ''; // Clear target
+        }
+        // Mode 2: Inline Text Selection
+        else if (selectedTextRange) {
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(selectedTextRange);
+            document.execCommand('insertText', false, newText);
+            log('Text rewritten successfully', 'success');
+        }
 
         aiPopup.classList.add('hidden');
-        log('Text rewritten successfully', 'success');
     });
 
     document.getElementById('regenerate-rewrite')?.addEventListener('click', () => {
@@ -1568,23 +2819,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentResumeData = versions[0].data;
         renderResume(currentResumeData);
         log('Loaded most recent version', 'success');
-    });
-
-    document.getElementById('export-json')?.addEventListener('click', () => {
-        if (!currentResumeData) {
-            log('No resume to export', 'error');
-            return;
-        }
-
-        const blob = new Blob([JSON.stringify(currentResumeData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'resume-data.json';
-        a.click();
-        URL.revokeObjectURL(url);
-
-        log('Resume exported as JSON', 'success');
     });
 
     // ===========================================

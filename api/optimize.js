@@ -64,11 +64,14 @@ export default async function handler(request, response) {
          - **Balanced**: High impact, metric-driven, strong leadership signals.
          - **Visionary**: Thought leadership, innovation, redefining the role, "Founder Mentality."
 
-      CONTENT GENERATION RULES (The "Google XYZ" & "STAR" Standard):
-      1. NEVER use passive voice (e.g., "Responsible for..."). Use POWER ACTORS (e.g., "Orchestrated," "Architected," "Engineered").
-      2. QUANTIFY EVERYTHING: If a number isn't available, estimate a proxy metric (e.g., "Reduced latency..." implied efficiency).
-      3. SUMMARY IS HOLY GROUND: The summary must be a "Hook." No fluff. "10+ years exp..." is boring. Try "Award-winning System Architect with a decade of..."
-      4. SKILLS CLUSTERING: Group skills logically (e.g., "Core Infrastructure," "AI/ML," "Leadership").
+      CONTENT GENERATION RULES (Massive Content Expansion):
+      1. EXPAND TO FILL 2-3 PAGES: Do not summarize. Elaborate on every detail. This must be a comprehensive "CV-style" resume.
+      2. BULLET POINT DENSITY: Generate at least 5-7 deep, technical bullet points per role.
+      3. EDUCATION DETAILS: Include a rich description for education (Relevant Coursework, Honors, Thesis).
+      4. NEVER use passive voice. Use POWER ACTORS (e.g., "Orchestrated," "Architected," "Engineered").
+      5. QUANTIFY EVERYTHING: Use proxy metrics if necessary.
+      6. SUMMARY IS A STORY: Write a substantial 4-5 line executive summary.
+      7. SKILLS CLUSTERING: Group skills logically.
 
       COVER LETTER STRATEGY:
       - Write a "T-Shape" Cover Letter: 
@@ -92,7 +95,7 @@ export default async function handler(request, response) {
             "title": string (Target Title), 
             "contact": { "email": string, "linkedin": string, "portfolio": string, "location": string } 
           },
-          "summary": string (A powerful, 3-4 line narrative pitch),
+          "summary": string (A powerful, 4-5 line narrative pitch),
           "keyHighlights": string[] (3 bullet points of absolute peak achievements, can be empty if not applicable),
           "skills": { 
              "category1_name": string[], 
@@ -100,22 +103,23 @@ export default async function handler(request, response) {
              "category3_name": string[] 
           },
           "experience": [
-            { "company": string, "role": string, "period": string, "bullets": string[] }
+            { "company": string, "role": string, "period": string, "bullets": string[] (MIN 5 bullets) }
           ],
-          "education": [ { "school": string, "degree": string, "year": string } ],
-          "projects": [ { "name": string, "tech": string[], "description": string } ],
-          "coverLetter": {
-            "recipient": string (e.g., "Hiring Team" or specific name),
-            "subject": string (Compelling subject line),
-            "opening": string (The Hook),
-            "body": string (The Evidence - 2 paragraphs),
-            "closing": string (Call to Action)
-          }
+          "education": [ { "school": string, "degree": string, "year": string, "description": string (Coursework, Awards) } ],
+          "projects": [ { "name": string, "tech": string[], "description": string } ]
+        },
+        "coverLetter": {
+          "recipient": string (e.g., "Hiring Team" or specific name),
+          "subject": string (Compelling subject line),
+          "opening": string (The Hook),
+          "body": string (The Evidence - 2 paragraphs),
+          "closing": string (Call to Action)
+        }
+      }
+
       INSTRUCTIONS FOR BRANDING & DEEP CONTEXT:
       1. If the Master Resume contains a "branding" object (Philosophy/Values), you MUST infuse this tone into the "Summary" and "Cover Letter" to ensure authenticity.
       2. Use the "context" fields in projects (Role, Year, Category) to build more authoritative descriptions.
-
-
 
       CRITICAL: Return ONLY valid JSON. No markdown fencing. No preamble.
 

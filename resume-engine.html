@@ -20,6 +20,11 @@
     <!-- Editor Styles -->
     <link rel="stylesheet" href="assets/css/resume-editor.css?v=2.0">
 
+    <!-- Export Libraries (PDF & Word) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.0.0/build/index.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" defer></script>
+
     <style>
         /* Embedded override for Agent Interface specific needs */
         :root {
@@ -34,12 +39,23 @@
         body {
             background-color: var(--agent-bg);
             color: #ffffff;
-            overflow: hidden;
         }
     </style>
 </head>
 
 <body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+
+    <!-- Drawer Backdrop -->
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
     <div class="app-container" id="app-container">
         <!-- LEFT PANEL: DEV TERMINAL -->
         <div class="panel-left" id="panel-left">
@@ -52,7 +68,6 @@
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.5">
                             <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                            <circle cx="12" cy="17" r="5" /> <!-- Modified Icon for Atomic/Core -->
                             <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
                         </svg>
                     </button>
@@ -308,6 +323,26 @@
 
                 <!-- STYLE PANEL -->
                 <div class="panel-content" id="style-panel">
+                    <!-- QUICK PRESETS -->
+                    <div class="style-section">
+                        <span class="section-label">QUICK PRESETS</span>
+                        <div class="quick-presets-grid">
+                            <button class="preset-btn" data-preset="compact" title="Dense, single-page friendly">
+                                <span class="preset-icon">▪▪▪</span>
+                                <span>Compact</span>
+                            </button>
+                            <button class="preset-btn active" data-preset="standard" title="Balanced professional">
+                                <span class="preset-icon">▪ ▪ ▪</span>
+                                <span>Standard</span>
+                            </button>
+                            <button class="preset-btn" data-preset="spacious" title="Executive, airy layout">
+                                <span class="preset-icon">▪ ▪ ▪</span>
+                                <span>Spacious</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TEMPLATES -->
                     <div class="style-section">
                         <span class="section-label">TEMPLATE PRESETS</span>
                         <div class="template-grid">
@@ -330,65 +365,187 @@
                         </div>
                     </div>
 
+                    <!-- ACCENT COLOR -->
                     <div class="style-section">
                         <span class="section-label">ACCENT COLOR</span>
-                        <div class="color-grid">
-                            <button class="color-swatch active" data-color="#00FF9D"
-                                style="background:#00FF9D"></button>
-                            <button class="color-swatch" data-color="#3b82f6" style="background:#3b82f6"></button>
-                            <button class="color-swatch" data-color="#a855f7" style="background:#a855f7"></button>
-                            <button class="color-swatch" data-color="#f97316" style="background:#f97316"></button>
-                            <button class="color-swatch" data-color="#ef4444" style="background:#ef4444"></button>
-                            <button class="color-swatch" data-color="#000000" style="background:#000000"></button>
+                        <div class="color-controls">
+                            <div class="color-grid">
+                                <button class="color-swatch active" data-color="#00FF9D"
+                                    style="background:#00FF9D"></button>
+                                <button class="color-swatch" data-color="#3b82f6" style="background:#3b82f6"></button>
+                                <button class="color-swatch" data-color="#a855f7" style="background:#a855f7"></button>
+                                <button class="color-swatch" data-color="#f97316" style="background:#f97316"></button>
+                                <button class="color-swatch" data-color="#ef4444" style="background:#ef4444"></button>
+                                <button class="color-swatch" data-color="#000000" style="background:#000000"></button>
+                            </div>
+                            <div class="custom-color-row">
+                                <label>Custom:</label>
+                                <input type="color" id="custom-color-picker" value="#00FF9D">
+                                <span id="color-hex-display">#00FF9D</span>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- TYPOGRAPHY SYSTEM -->
                     <div class="style-section">
-                        <span class="section-label">TYPOGRAPHY</span>
-                        <div class="typography-controls">
+                        <span class="section-label">FONT SYSTEM</span>
+                        <div class="font-system-grid">
+                            <button class="font-system-btn active" data-system="tech-modern" title="Modern Tech">
+                                <span class="fs-name">Tech Modern</span>
+                                <span class="fs-preview">Outfit + Inter</span>
+                            </button>
+                            <button class="font-system-btn" data-system="executive" title="Executive Professional">
+                                <span class="fs-name">Executive</span>
+                                <span class="fs-preview">Georgia + Helvetica</span>
+                            </button>
+                            <button class="font-system-btn" data-system="classic" title="Classic Editorial">
+                                <span class="fs-name">Classic</span>
+                                <span class="fs-preview">Times + Georgia</span>
+                            </button>
+                            <button class="font-system-btn" data-system="minimal" title="Clean Minimal">
+                                <span class="fs-name">Minimal</span>
+                                <span class="fs-preview">Inter + Inter</span>
+                            </button>
+                            <button class="font-system-btn" data-system="bold" title="Bold Statement">
+                                <span class="fs-name">Bold</span>
+                                <span class="fs-preview">Space Grotesk + Outfit</span>
+                            </button>
+                            <button class="font-system-btn" data-system="custom" title="Custom Selection">
+                                <span class="fs-name">Custom</span>
+                                <span class="fs-preview">Manual Pick</span>
+                            </button>
+                        </div>
+
+                        <!-- Manual Font Override (shown when Custom is selected) -->
+                        <div id="manual-font-controls" class="manual-font-controls hidden">
                             <div class="control-row">
                                 <label>Heading Font</label>
                                 <select id="heading-font">
-                                    <option value="'Outfit', sans-serif">Outfit</option>
-                                    <option value="'Inter', sans-serif">Inter</option>
-                                    <option value="Helvetica, Arial, sans-serif">Helvetica</option>
-                                    <option value="Georgia, serif">Georgia</option>
-                                    <option value="'Times New Roman', serif">Times New Roman</option>
+                                    <optgroup label="Modern Sans">
+                                        <option value="'Outfit', sans-serif">Outfit</option>
+                                        <option value="'Inter', sans-serif">Inter</option>
+                                        <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+                                        <option value="'Poppins', sans-serif">Poppins</option>
+                                    </optgroup>
+                                    <optgroup label="Classic Sans">
+                                        <option value="Helvetica, Arial, sans-serif">Helvetica</option>
+                                        <option value="'Arial', sans-serif">Arial</option>
+                                        <option value="'Calibri', sans-serif">Calibri</option>
+                                    </optgroup>
+                                    <optgroup label="Serif">
+                                        <option value="Georgia, serif">Georgia</option>
+                                        <option value="'Times New Roman', serif">Times New Roman</option>
+                                        <option value="'Garamond', serif">Garamond</option>
+                                        <option value="'Playfair Display', serif">Playfair Display</option>
+                                    </optgroup>
                                 </select>
                             </div>
                             <div class="control-row">
                                 <label>Body Font</label>
                                 <select id="body-font">
-                                    <option value="'Outfit', sans-serif">Outfit</option>
-                                    <option value="'Inter', sans-serif">Inter</option>
-                                    <option value="Helvetica, Arial, sans-serif">Helvetica</option>
-                                    <option value="Georgia, serif">Georgia</option>
+                                    <optgroup label="Modern Sans">
+                                        <option value="'Outfit', sans-serif">Outfit</option>
+                                        <option value="'Inter', sans-serif">Inter</option>
+                                        <option value="'Poppins', sans-serif">Poppins</option>
+                                    </optgroup>
+                                    <optgroup label="Classic Sans">
+                                        <option value="Helvetica, Arial, sans-serif">Helvetica</option>
+                                        <option value="'Arial', sans-serif">Arial</option>
+                                        <option value="'Calibri', sans-serif">Calibri</option>
+                                    </optgroup>
+                                    <optgroup label="Serif">
+                                        <option value="Georgia, serif">Georgia</option>
+                                        <option value="'Times New Roman', serif">Times New Roman</option>
+                                    </optgroup>
                                 </select>
-                            </div>
-                            <div class="control-row">
-                                <label>Font Scale</label>
-                                <input type="range" id="font-scale" min="80" max="120" value="100">
-                                <span id="font-scale-value">100%</span>
                             </div>
                         </div>
                     </div>
 
+                    <!-- TYPOGRAPHY SCALE -->
                     <div class="style-section">
-                        <span class="section-label">SPACING & LAYOUT</span>
+                        <span class="section-label">TEXT SCALE</span>
+                        <div class="typography-controls">
+                            <div class="control-row">
+                                <label>Font Size</label>
+                                <input type="range" id="font-scale" min="60" max="140" value="95">
+                                <span id="font-scale-value">95%</span>
+                            </div>
+                            <div class="control-row">
+                                <label>Line Height</label>
+                                <input type="range" id="line-height" min="100" max="220" value="140">
+                                <span id="line-height-value">1.4</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ADVANCED SPACING -->
+                    <div class="style-section">
+                        <span class="section-label">GLOBAL SPACING</span>
                         <div class="spacing-controls">
                             <div class="control-row">
-                                <label>Section Spacing</label>
-                                <input type="range" id="section-spacing" min="60" max="150" value="100">
+                                <label>Header Gap</label>
+                                <input type="range" id="header-spacing" min="20" max="200" value="80">
+                                <span id="header-spacing-value">80%</span>
+                            </div>
+                            <div class="control-row">
+                                <label>Bullets Gap</label>
+                                <input type="range" id="bullet-spacing" min="20" max="200" value="80">
+                                <span id="bullet-spacing-value">80%</span>
                             </div>
                             <div class="control-row">
                                 <label>Margins</label>
                                 <select id="margin-size">
-                                    <option value="compact">Compact</option>
-                                    <option value="normal" selected>Normal</option>
-                                    <option value="wide">Wide</option>
+                                    <option value="tight">Tight (12mm)</option>
+                                    <option value="compact" selected>Compact (15mm)</option>
+                                    <option value="normal">Normal (20mm)</option>
+                                    <option value="wide">Wide (25mm)</option>
                                 </select>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- COMPONENT SPACING (supports negative/overlap) -->
+                    <div class="style-section">
+                        <span class="section-label">COMPONENT SPACING <small style="color:#666">(drag handles in Edit
+                                mode)</small></span>
+                        <div class="spacing-controls">
+                            <div class="control-row">
+                                <label>Summary</label>
+                                <input type="range" id="summary-spacing" min="-800" max="100" value="10">
+                                <span id="summary-spacing-value">10px</span>
+                            </div>
+                            <div class="control-row">
+                                <label>Highlights</label>
+                                <input type="range" id="highlights-spacing" min="-800" max="100" value="10">
+                                <span id="highlights-spacing-value">10px</span>
+                            </div>
+                            <div class="control-row">
+                                <label>Skills</label>
+                                <input type="range" id="skills-spacing" min="-800" max="100" value="10">
+                                <span id="skills-spacing-value">10px</span>
+                            </div>
+                            <div class="control-row">
+                                <label>Experience</label>
+                                <input type="range" id="experience-spacing" min="-800" max="100" value="10">
+                                <span id="experience-spacing-value">10px</span>
+                            </div>
+                            <div class="control-row">
+                                <label>Projects</label>
+                                <input type="range" id="projects-spacing" min="-800" max="100" value="10">
+                                <span id="projects-spacing-value">10px</span>
+                            </div>
+                            <div class="control-row">
+                                <label>Education</label>
+                                <input type="range" id="education-spacing" min="-800" max="100" value="10">
+                                <span id="education-spacing-value">10px</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RESET BUTTON -->
+                    <div class="style-section reset-section">
+                        <button id="reset-styles" class="reset-btn">↻ Reset to Defaults</button>
                     </div>
                 </div>
 
@@ -669,10 +826,56 @@
                         </svg>
                         PRINT
                     </button>
-                    <button id="future-export" class="action-btn placeholder" title="PDF Export Coming Soon">
-                        <span class="btn-text">EXPORT_PDF</span>
-                        <span class="coming-soon-badge">SOON</span>
-                    </button>
+
+                    <!-- Professional Export Dropdown -->
+                    <div class="export-dropdown" id="export-dropdown">
+                        <button id="export-toggle" class="ctrl-btn-text export-btn" title="Export Document">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" style="margin-right:4px">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            EXPORT
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" style="margin-left:4px">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+                        <div class="export-menu" id="export-menu">
+                            <button id="export-pdf" class="export-option">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <line x1="16" y1="13" x2="8" y2="13" />
+                                    <line x1="16" y1="17" x2="8" y2="17" />
+                                    <polyline points="10 9 9 9 8 9" />
+                                </svg>
+                                <span>Export as PDF</span>
+                                <span class="export-badge">Recommended</span>
+                            </button>
+                            <button id="export-word" class="export-option">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <line x1="16" y1="13" x2="8" y2="13" />
+                                    <line x1="16" y1="17" x2="8" y2="17" />
+                                </svg>
+                                <span>Export as Word (.docx)</span>
+                            </button>
+                            <div class="export-divider"></div>
+                            <button id="export-json" class="export-option">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="16 18 22 12 16 6" />
+                                    <polyline points="8 6 2 12 8 18" />
+                                </svg>
+                                <span>Export Data (JSON)</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
